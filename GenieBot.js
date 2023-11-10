@@ -626,7 +626,7 @@ bot.on('callback_query', async (callbackQuery) => {
             
                         if (!isNaN(gasBuffer) && gasBuffer >= 1 && gasBuffer <= 100) {
                             console.log('Gas Buffer value:', gasBuffer);
-                            await setAsync(`settings:gas_buffer:${username}`, JSON.stringify({ slippage }));
+                            await setAsync(`settings:gas_buffer:${username}`, JSON.stringify({ gasBuffer }));
                             await bot.sendMessage(chatId, `gasBuffer of ${gasBuffer}% has been set.`);
                         } else {
                             await bot.sendMessage(chatId, 'Invalid gasBuffer value. Please enter a number between 1 and 100.');
