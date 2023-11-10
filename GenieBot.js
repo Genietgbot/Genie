@@ -218,7 +218,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 console.log(balanceEther);
                 console.log(amountToBuy);
                 if(balanceEther<=amountToBuy){
-                    bot.sendMessage(chatId, `${safeUsername} Funds too low!`, { parse_mode: 'Markdown' });
+                    bot.sendMessage(chatId, `@${safeUsername} Funds too low!`, { parse_mode: 'Markdown' });
                     return;
                     }
                 const estimatedGas = await uniswapRouter.estimateGas.swapExactETHForTokens(
@@ -255,7 +255,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 console.log('Total Max Cost:', totalMaxCostInEth);
                 
                 if(balanceEther<=totalMaxCostInEth){
-                    bot.sendMessage(chatId, `${safeUsername} Funds too low!`, { parse_mode: 'Markdown' });
+                    bot.sendMessage(chatId, `@${safeUsername} Funds too low!`, { parse_mode: 'Markdown' });
                 }
                 await bot.sendMessage(userChatId, 'Your transaction was initiated!');
                 const transaction = await uniswapRouter.swapExactETHForTokens(
@@ -272,6 +272,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 await bot.sendMessage(userChatId, message, { parse_mode: 'Markdown' });
                 await transaction.wait();
                 await bot.sendMessage(userChatId, 'Your transaction was successful!');
+                await bot.sendMessage(chatId, `@${safeUsername} Wish Granted!`);
                 console.log("Success");
             } catch (error) {
                 await bot.sendMessage(userChatId, 'Your transaction experienced an ERROR, please try again. Check for your settings!');
