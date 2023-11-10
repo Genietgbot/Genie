@@ -10,7 +10,11 @@ const redisUrl = process.env.REDIS_URL;
 const provider = new ethers.providers.JsonRpcProvider(process.env.GOERLI_PROVIDER_URL);
 process.env.NTBA_FIX_350 = true;
 const sharp = require('sharp');
+const PORT = process.env.PORT || 3000;
 
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
 
 const client = redis.createClient({ 
     url: redisUrl,
