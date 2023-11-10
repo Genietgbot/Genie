@@ -226,7 +226,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                     Date.now() + 1000 * 60 * 2,
                     { value: ethers.utils.parseEther(amountToBuy.toString()) }
                 );
-                const increasedGasPrice = gasPrice.mul(ethers.BigNumber.from(1).add(gasBuffer)).div(ethers.BigNumber.from(1e9));
+                const increasedGasPrice = gasPrice.mul(ethers.BigNumber.from(1).add(gasBuffer)).mul(ethers.BigNumber.from(1e9));
                 console.log(increasedGasPrice);
                 console.log('Estimated Gas:', estimatedGas);
 
