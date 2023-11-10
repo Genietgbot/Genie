@@ -538,15 +538,11 @@ bot.on('callback_query', async (callbackQuery) => {
                             { text: '40%', callback_data: `gas_buffer_40_${username}_${interactionId}` }
                         ],
                         [
-                            { text: '60%', callback_data: `gas_buffer_60_${username}_${interactionId}` }
-                        ],
-                        [
                             { text: 'custom', callback_data: `custom_gas_${username}_${interactionId}` }
                         ]
                     ]
                 };
                 
-        
                 const message2 = await bot.sendMessage(chatId, 'Select your Gas Buffer:', { reply_markup: JSON.stringify(gasBufferKeyboard) });
                 lastMessageId2 = message2.message_id;
             } else if (data.startsWith('set_slippage_')) {
@@ -566,7 +562,6 @@ bot.on('callback_query', async (callbackQuery) => {
                     ]
                 };
                 
-        
                 const message2 = await bot.sendMessage(chatId, 'Select your Slippage:', { reply_markup: JSON.stringify(slippageKeyboard) });
                 lastMessageId2 = message2.message_id;
             }
