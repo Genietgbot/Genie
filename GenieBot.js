@@ -203,6 +203,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 const slippagePercentage = parseFloat(JSON.parse(slippage).slippage);
 
                 gasBuffer = JSON.parse(gasBuffer).gasBuffer;
+                console.log("gasbuffer: ", gasBuffer);
                 console.log("debug");
                 console.log('Amount to Buy:', amountToBuy);
                 console.log('Slippage Percentage:', slippagePercentage);
