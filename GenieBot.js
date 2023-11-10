@@ -199,7 +199,8 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 console.log('Amount to Buy:', amountToBuy);
                 console.log('Slippage Percentage:', slippagePercentage);
 
-                const amountOutMinWithSlippage = (amountToBuy.toString() * (1 - slippagePercentage / 100)).toString();
+                const amountOutMinWithSlippage = (amountToBuy * (1 - slippagePercentage / 100)).toFixed(18);
+
 
                 console.log("debug");
                 console.log('AmountOutMin with Slippage:', amountOutMinWithSlippage);
