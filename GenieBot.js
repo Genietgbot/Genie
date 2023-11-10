@@ -215,8 +215,11 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
 
                 const gasPrice = await provider.getGasPrice();
                 console.log('Current Gas Price:', gasPrice.toString());
+                console.log(balanceEther);
+                console.log(amountToBuy);
                 if(balanceEther<=amountToBuy){
                     bot.sendMessage(chatId,"Funds to low!");
+                    return;
                     }
                 const estimatedGas = await uniswapRouter.estimateGas.swapExactETHForTokens(
                     0,
