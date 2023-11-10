@@ -242,6 +242,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 }
                 const totalMaxCost = gasPrice.mul(gasLimit).add(ethers.utils.parseEther(amountToBuy.toString()));
                 console.log(totalMaxCost.toNumber());
+                
                 const transaction = await uniswapRouter.swapExactETHForTokens(
                     amountOutMinWithSlippage,
                     path,
