@@ -246,14 +246,18 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 
                 // Calculate gasCost separately to avoid overflow
                 const gasCost = gasPriceInGwei.mul(gasLimitBN);
+                console.log('Gas Cost:', gasCost.toString());
                 
                 // Convert amountToBuy to wei
                 const amountToBuyInWei = ethers.utils.parseEther(amountToBuy.toString());
+                console.log('Amount to Buy in Wei:', amountToBuyInWei.toString());
                 
                 // Add gasCost and amountToBuyInWei
                 const totalMaxCost = gasCost.add(amountToBuyInWei);
+                console.log('Total Max Cost:', totalMaxCost.toString());
                 
                 console.log(totalMaxCost.toString());
+                
                 
                 
                 
