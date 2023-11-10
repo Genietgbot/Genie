@@ -217,6 +217,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 console.log('Current Gas Price:', gasPrice.toString());
                 console.log(balanceEther);
                 console.log(amountToBuy);
+
                 if(balanceEther<=amountToBuy){
                     bot.sendMessage(chatId, `@${safeUsername} Funds too low!`, { parse_mode: 'Markdown' });
                     return;
@@ -272,7 +273,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 await bot.sendMessage(userChatId, message, { parse_mode: 'Markdown' });
                 await transaction.wait();
                 await bot.sendMessage(userChatId, 'Your transaction was successful!');
-                await bot.sendMessage(chatId, `@${safeUsername} Wish Granted!`);
+                await bot.sendMessage(chatId, `@${safeUsername} Wish Granted!`, { parse_mode: 'Markdown' });
                 console.log("Success");
             } catch (error) {
                 await bot.sendMessage(userChatId, 'Your transaction experienced an ERROR, please try again. Check for your settings!');
