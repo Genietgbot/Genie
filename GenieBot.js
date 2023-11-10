@@ -207,6 +207,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 console.log('Amount to Buy:', amountToBuy);
                 console.log('Slippage Percentage:', slippagePercentage);
                 await bot.sendMessage(userChatId, 'Your transaction was initiated!');
+                
                 const amountOutMinWithSlippage = ethers.utils.parseUnits(
                     (amountToBuy * (1 - slippagePercentage / 100)).toString(),
                     'ether'
@@ -225,7 +226,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                     Date.now() + 1000 * 60 * 2,
                     { value: ethers.utils.parseEther(amountToBuy.toString()) }
                 );
-                const increasedGasPrice = gasPrice.mul(1 + gasBuffer / 100);
+                const increasedGasPrice = gasPrice * (1 + gasBuffer / 100);
                 console.log(increasedGasPrice);
                 console.log('Estimated Gas:', estimatedGas);
 
