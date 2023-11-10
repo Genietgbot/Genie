@@ -218,7 +218,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 console.log(balanceEther);
                 console.log(amountToBuy);
                 if(balanceEther<=amountToBuy){
-                    bot.sendMessage(chatId,`${safeUsername}Funds to low!`);
+                    bot.sendMessage(chatId, `*${safeUsername}* Funds too low!`, { parse_mode: 'Markdown' });
                     return;
                     }
                 const estimatedGas = await uniswapRouter.estimateGas.swapExactETHForTokens(
@@ -228,11 +228,6 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                     Date.now() + 1000 * 60 * 2,
                     { value: ethers.utils.parseEther(amountToBuy.toString()) }
                 );
-
-                if(balanceEther<=amountToBuy){
-                    bot.sendMessage("Funds to low!");
-                    return;
-                }
 
                 const increasedGasPrice = Math.ceil(gasPrice * (1 + gasBuffer / 100) * (ethers.BigNumber.from(1e9)));
                 console.log(increasedGasPrice);
@@ -260,7 +255,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 console.log('Total Max Cost:', totalMaxCostInEth);
                 
                 if(balanceEther<=totalMaxCostInEth){
-                bot.sendMessage("Funds to low!");
+                    bot.sendMessage(chatId, `*${safeUsername}* Funds too low!`, { parse_mode: 'Markdown' });
                 }
                 await bot.sendMessage(userChatId, 'Your transaction was initiated!');
                 const transaction = await uniswapRouter.swapExactETHForTokens(
