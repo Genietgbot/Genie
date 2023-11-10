@@ -241,8 +241,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                     throw new Error('Invalid Gas Limit');
                 }
 
-                const gasPriceInWei = ethers.utils.parseUnits(gasPrice.toString(), 'gwei');
-                const totalMaxCost = gasPriceInWei.mul(estimatedGas).add(ethers.utils.parseEther(amountToBuy.toString()));
+                const totalMaxCost = increasedGasPrice * gasLimit / ethers.BigNumber.from(1e9);
                 console.log(totalMaxCost.toString());
                 
                 
