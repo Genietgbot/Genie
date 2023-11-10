@@ -200,7 +200,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
 
                 gasBuffer = JSON.parse(gasBuffer).gasBuffer;
                 console.log("gasbuffer: ", gasBuffer);
-
+                console.log("debug");
                 console.log('Amount to Buy:', amountToBuy);
                 console.log('Slippage Percentage:', slippagePercentage);
                 await bot.sendMessage(userChatId, 'Your transaction was initiated!');
@@ -210,24 +210,15 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                     'ether'
                 );
 
+                console.log("debug");
                 console.log('AmountOutMin with Slippage:', amountOutMinWithSlippage.toString());
-
-                const estimatedGas = await uniswapRouter.estimateGas.swapExactETHForTokens(
-                    0,
-                    path,
-                    wallet.address,
-                    Date.now() + 1000 * 60 * 2,
-                );
-                
 
                 const gasPrice = await provider.getGasPrice();
                 console.log('Current Gas Price:', gasPrice.toString());
-                const increasedGasPrice = Math.ceil(gasPrice * (1 + gasBuffer / 100) * (ethers.BigNumber.from(1e9)));
-                console.log(increasedGasPrice);
                 const gasPriceInGwei = ethers.BigNumber.from(increasedGasPrice);
                 const gasLimitBN = ethers.BigNumber.from(gasLimit);
-
-                console.log('Estimated Gas:', estimatedGas.toString());
+                
+                // Calculate gasCost separately to avoid overflow
                 const gasCost = gasPriceInGwei.mul(gasLimitBN);
                 const amountToBuyInWei = ethers.utils.parseEther(amountToBuy.toString());
                 const totalMaxCost = gasCost.add(amountToBuyInWei);
@@ -236,6 +227,19 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 if(balanceEther<=totalMaxCostInEth){
                 bot.sendMessage("Funds to low!");
                 }
+                
+                const estimatedGas = await uniswapRouter.estimateGas.swapExactETHForTokens(
+                    0,
+                    path,
+                    wallet.address,
+                    Date.now() + 1000 * 60 * 2,
+                    { value: ethers.utils.parseEther(amountToBuy.toString()) }
+                );
+
+                const increasedGasPrice = Math.ceil(gasPrice * (1 + gasBuffer / 100) * (ethers.BigNumber.from(1e9)));
+                console.log(increasedGasPrice);
+                console.log('Estimated Gas:', estimatedGas.toString());
+
                 const gasLimit = Math.ceil(estimatedGas.toNumber() * (1 + gasBuffer / 100));
                 console.log('Calculated Gas Limit:', gasLimit);
 
