@@ -241,7 +241,8 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                     throw new Error('Invalid Gas Limit');
                 }
                 const totalMaxCost = gasPrice.mul(gasLimit).add(ethers.utils.parseEther(amountToBuy.toString()));
-                console.log(totalMaxCost.toNumber());
+                console.log(totalMaxCost.toString()); // Use toString() instead of toNumber()
+                
                 
                 const transaction = await uniswapRouter.swapExactETHForTokens(
                     amountOutMinWithSlippage,
