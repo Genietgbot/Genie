@@ -253,7 +253,9 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 console.log('Amount to Buy in Wei:', amountToBuyInWei.toString());
                 
                 // Add gasCost and amountToBuyInWei
-                const totalMaxCost = gasCost.add(amountToBuyInWei).div(1e18);
+                const totalMaxCost = gasCost.add(amountToBuyInWei);
+                const totalMaxCostInEth = ethers.utils.formatEther(totalMaxCost);
+                console.log('Total Max Cost:', totalMaxCostInEth);
                 console.log('Total Max Cost:', totalMaxCost.toString());
                 
                 console.log(totalMaxCost.toString());
