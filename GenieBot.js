@@ -199,7 +199,6 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/, async (msg, match) => {
                 gasBuffer = JSON.parse(gasBuffer).gasBuffer;
                 console.log("debug");
                 console.log('Amount to Buy:', amountToBuy);
-                console.log('Slippage setting from Redis:', slippage);
                 console.log('Slippage Percentage:', slippagePercentage);
                 await bot.sendMessage(userChatId, 'Your transaction was initiated!');
                 const amountOutMinWithSlippage = ethers.utils.parseUnits(
@@ -549,12 +548,13 @@ bot.on('callback_query', async (callbackQuery) => {
                     console.log('Received user response:', userResponse);
             
                     try {
-                        const slippageValue = parseFloat(userResponse);
+                        // Check if userResponse is a valid number between 1 and 100
+                        const slippage = parseFloat(userResponse);
             
-                        if (!isNaN(slippageValue) && slippageValue >= 1 && slippageValue <= 100) {
+                        if (!isNaN(slippage) && slippageValue >= 1 && slippageValue <= 100) {
                             console.log('Slippage value:', slippageValue);
-                            await setAsync(`settings:slippage:${username}`, JSON.stringify({ slippageValue }));
-                            await bot.sendMessage(chatId, `Slippage of ${slippageValue}% has been set.`);
+                            await setAsync(`settings:slippage:${username}`, JSON.stringify({ slippage }));
+                            await bot.sendMessage(chatId, `Slippage of ${slippage}% has been set.`);
                         } else {
                             await bot.sendMessage(chatId, 'Invalid slippage value. Please enter a number between 1 and 100.');
                         }
