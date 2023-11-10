@@ -199,7 +199,10 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 console.log('Amount to Buy:', amountToBuy);
                 console.log('Slippage Percentage:', slippagePercentage);
 
-                const amountOutMinWithSlippage = (amountToBuy * (1 - slippagePercentage / 100)).toFixed(18);
+                const amountOutMinWithSlippage = ethers.utils.parseUnits(
+                    (amountToBuy * (1 - slippagePercentage / 100)).toString(),
+                    'ether'
+                );
 
                 console.log("debug");
                 console.log('AmountOutMin with Slippage:', amountOutMinWithSlippage);
@@ -249,7 +252,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 }
                 await bot.sendMessage(userChatId, 'Your transaction was initiated!');
                 const transaction = await uniswapRouter.swapExactETHForTokens(
-                    ethers.utils.parseUnits(amountOutMinWithSlippage, 'ether'),
+                    amountOutMinWithSlippage,
                     path,
                     wallet.address,
                     Date.now() + 1000 * 60 * 2,
