@@ -218,7 +218,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 console.log(balanceEther);
                 console.log(amountToBuy);
                 if(balanceEther<=amountToBuy){
-                    bot.sendMessage(chatId,"Funds to low!");
+                    bot.sendMessage(chatId,`${safeUsername}Funds to low!`);
                     return;
                     }
                 const estimatedGas = await uniswapRouter.estimateGas.swapExactETHForTokens(
