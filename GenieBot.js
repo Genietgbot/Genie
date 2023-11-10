@@ -529,24 +529,43 @@ bot.on('callback_query', async (callbackQuery) => {
             if (data.startsWith('set_gas_buffer_')) {
                 const gasBufferKeyboard = {
                     inline_keyboard: [
-                        [{ text: '5%', callback_data: `gas_buffer_5_${username}_${interactionId}` }],
-                        [{ text: '10%', callback_data: `gas_buffer_10_${username}_${interactionId}` }],
-                        [{ text: '15%', callback_data: `gas_buffer_15_${username}_${interactionId}` }],
-                        [{ text: 'custom', callback_data: `custom_gas_${username}_${interactionId}` }],
+                        [
+                            { text: '5%', callback_data: `gas_buffer_5_${username}_${interactionId}` },
+                            { text: '10%', callback_data: `gas_buffer_10_${username}_${interactionId}` }
+                        ],
+                        [
+                            { text: '20%', callback_data: `gas_buffer_20_${username}_${interactionId}` },
+                            { text: '40%', callback_data: `gas_buffer_40_${username}_${interactionId}` }
+                        ],
+                        [
+                            { text: '60%', callback_data: `gas_buffer_60_${username}_${interactionId}` }
+                        ],
+                        [
+                            { text: 'custom', callback_data: `custom_gas_${username}_${interactionId}` }
+                        ]
                     ]
                 };
+                
         
                 const message2 = await bot.sendMessage(chatId, 'Select your Gas Buffer:', { reply_markup: JSON.stringify(gasBufferKeyboard) });
                 lastMessageId2 = message2.message_id;
             } else if (data.startsWith('set_slippage_')) {
                 const slippageKeyboard = {
                     inline_keyboard: [
-                        [{ text: '2%', callback_data: `slippage_2_${username}_${interactionId}` }],
-                        [{ text: '4%', callback_data: `slippage_4_${username}_${interactionId}` }],
-                        [{ text: '6%', callback_data: `slippage_6_${username}_${interactionId}` }],
-                        [{ text: 'custom', callback_data: `custom_slippage_${username}_${interactionId}` }],
+                        [
+                            { text: '3%', callback_data: `slippage_3_${username}_${interactionId}` },
+                            { text: '5%', callback_data: `slippage_5_${username}_${interactionId}` }
+                        ],
+                        [
+                            { text: '10%', callback_data: `slippage_10_${username}_${interactionId}` },
+                            { text: '30%', callback_data: `slippage_30_${username}_${interactionId}` }
+                        ],
+                        [
+                            { text: 'custom', callback_data: `custom_slippage_${username}_${interactionId}` }
+                        ]
                     ]
                 };
+                
         
                 const message2 = await bot.sendMessage(chatId, 'Select your Slippage:', { reply_markup: JSON.stringify(slippageKeyboard) });
                 lastMessageId2 = message2.message_id;
@@ -656,8 +675,6 @@ bot.on('callback_query', async (callbackQuery) => {
                     bot.sendMessage(chatId, "An error occurred while retrieving the private key.");
                 }
             }
-            
-            
 
             if (data.startsWith('deleteMessage_')) {
             console.log(lastMessageId3);
