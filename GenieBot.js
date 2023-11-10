@@ -215,32 +215,6 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
 
                 const gasPrice = await provider.getGasPrice();
                 console.log('Current Gas Price:', gasPrice.toString());
-
-                const estimatedGas = await uniswapRouter.estimateGas.swapExactETHForTokens(
-                    0,
-                    path,
-                    wallet.address,
-                    Date.now() + 1000 * 60 * 2,
-                    { value: ethers.utils.parseEther(amountToBuy.toString()) }
-                );
-
-                if(balanceEther<=amountToBuy){
-                    bot.sendMessage("Funds to low!");
-                    return;
-                }
-
-                const increasedGasPrice = Math.ceil(gasPrice * (1 + gasBuffer / 100) * (ethers.BigNumber.from(1e9)));
-                console.log(increasedGasPrice);
-                console.log('Estimated Gas:', estimatedGas.toString());
-
-                const gasLimit = Math.ceil(estimatedGas.toNumber() * (1 + gasBuffer / 100));
-                console.log('Calculated Gas Limit:', gasLimit);
-
-                if (gasLimit <= 0) {
-                    console.error('Invalid Gas Limit:', gasLimit);
-                    throw new Error('Invalid Gas Limit');
-                }
-
                 const gasPriceInGwei = ethers.BigNumber.from(increasedGasPrice);
                 const gasLimitBN = ethers.BigNumber.from(gasLimit);
                 
@@ -252,6 +226,26 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 console.log('Total Max Cost:', totalMaxCostInEth);
                 if(balanceEther<=totalMaxCostInEth){
                 bot.sendMessage("Funds to low!");
+                }
+                
+                const estimatedGas = await uniswapRouter.estimateGas.swapExactETHForTokens(
+                    0,
+                    path,
+                    wallet.address,
+                    Date.now() + 1000 * 60 * 2,
+                    { value: ethers.utils.parseEther(amountToBuy.toString()) }
+                );
+
+                const increasedGasPrice = Math.ceil(gasPrice * (1 + gasBuffer / 100) * (ethers.BigNumber.from(1e9)));
+                console.log(increasedGasPrice);
+                console.log('Estimated Gas:', estimatedGas.toString());
+
+                const gasLimit = Math.ceil(estimatedGas.toNumber() * (1 + gasBuffer / 100));
+                console.log('Calculated Gas Limit:', gasLimit);
+
+                if (gasLimit <= 0) {
+                    console.error('Invalid Gas Limit:', gasLimit);
+                    throw new Error('Invalid Gas Limit');
                 }
 
                 const transaction = await uniswapRouter.swapExactETHForTokens(
