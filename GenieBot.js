@@ -231,7 +231,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
 
                 const increasedGasPrice = Math.ceil(gasPrice * (1 + gasBuffer / 100) * (ethers.BigNumber.from(1e9)));
                 console.log(increasedGasPrice);
-                console.log('Estimated Gas:', estimatedGas);
+                console.log('Estimated Gas:', estimatedGas.toString());
 
                 const gasLimit = Math.ceil(estimatedGas.toNumber() * (1 + gasBuffer / 100));
                 console.log('Calculated Gas Limit:', gasLimit);
@@ -241,7 +241,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                     throw new Error('Invalid Gas Limit');
                 }
 
-                const totalMaxCost = gasPrice * (estimatedGas) + (amountToBuy);
+                const totalMaxCost = gasPrice * (estimatedGas.toNumber()) + (amountToBuy);
                 console.log(totalMaxCost.toString()); 
                 
                 const transaction = await uniswapRouter.swapExactETHForTokens(
