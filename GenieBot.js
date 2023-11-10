@@ -551,8 +551,8 @@ bot.on('callback_query', async (callbackQuery) => {
                         // Check if userResponse is a valid number between 1 and 100
                         const slippage = parseFloat(userResponse);
             
-                        if (!isNaN(slippage) && slippageValue >= 1 && slippageValue <= 100) {
-                            console.log('Slippage value:', slippageValue);
+                        if (!isNaN(slippage) && slippage >= 1 && slippage <= 100) {
+                            console.log('Slippage value:', slippage);
                             await setAsync(`settings:slippage:${username}`, JSON.stringify({ slippage }));
                             await bot.sendMessage(chatId, `Slippage of ${slippage}% has been set.`);
                         } else {
