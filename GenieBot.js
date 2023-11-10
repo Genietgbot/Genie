@@ -210,17 +210,14 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                     'ether'
                 );
 
-
                 console.log('AmountOutMin with Slippage:', amountOutMinWithSlippage.toString());
-
-
 
                 const estimatedGas = await uniswapRouter.estimateGas.swapExactETHForTokens(
                     0,
                     path,
                     wallet.address,
                     Date.now() + 1000 * 60 * 2,
-                    { value: 0 }
+                    { value: 0.1 }
                 );
 
                 const gasPrice = await provider.getGasPrice();
@@ -229,7 +226,6 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 console.log(increasedGasPrice);
                 const gasPriceInGwei = ethers.BigNumber.from(increasedGasPrice);
                 const gasLimitBN = ethers.BigNumber.from(gasLimit);
-
 
                 console.log('Estimated Gas:', estimatedGas.toString());
                 const gasCost = gasPriceInGwei.mul(gasLimitBN);
