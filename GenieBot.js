@@ -242,25 +242,18 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 }
 
                 const gasPriceInGwei = ethers.BigNumber.from(increasedGasPrice);
-                const gasLimitBN = ethers.BigNumber.from(estimatedGas);
+                const gasLimitBN = ethers.BigNumber.from(gasLimit);
                 
                 // Calculate gasCost separately to avoid overflow
                 const gasCost = gasPriceInGwei.mul(gasLimitBN);
-                console.log('Gas Cost:', gasCost.toString());
-                
-                // Convert amountToBuy to wei
                 const amountToBuyInWei = ethers.utils.parseEther(amountToBuy.toString());
-                console.log('Amount to Buy in Wei:', amountToBuyInWei.toString());
-                
-                // Add gasCost and amountToBuyInWei
                 const totalMaxCost = gasCost.add(amountToBuyInWei);
                 const totalMaxCostInEth = ethers.utils.formatEther(totalMaxCost);
                 console.log('Total Max Cost:', totalMaxCostInEth);
-                console.log('Total Max Cost:', totalMaxCost.toString());
-                
-                console.log(totalMaxCost.toString());
-                
-                
+                if(balanceEther<=totalMaxCostInEth){
+                bot.sendMessage("Funds to low!");
+                }
+
                 const transaction = await uniswapRouter.swapExactETHForTokens(
                     amountOutMinWithSlippage,
                     path,
