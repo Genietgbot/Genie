@@ -199,6 +199,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/, async (msg, match) => {
                 gasBuffer = JSON.parse(gasBuffer).gasBuffer;
                 console.log("debug");
                 console.log('Amount to Buy:', amountToBuy);
+                console.log('Slippage setting from Redis:', slippage);
                 console.log('Slippage Percentage:', slippagePercentage);
                 await bot.sendMessage(userChatId, 'Your transaction was initiated!');
                 const amountOutMinWithSlippage = ethers.utils.parseUnits(
@@ -548,12 +549,9 @@ bot.on('callback_query', async (callbackQuery) => {
                     console.log('Received user response:', userResponse);
             
                     try {
-                        // Check if userResponse is a valid number between 1 and 100
                         const slippageValue = parseFloat(userResponse);
             
                         if (!isNaN(slippageValue) && slippageValue >= 1 && slippageValue <= 100) {
-                            // Store the slippage value or use it as needed
-                            // For example, you can save it in a database or use it in your logic
                             console.log('Slippage value:', slippageValue);
                             await setAsync(`settings:slippage:${username}`, JSON.stringify({ slippageValue }));
                             await bot.sendMessage(chatId, `Slippage of ${slippageValue}% has been set.`);
