@@ -225,7 +225,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                     Date.now() + 1000 * 60 * 2,
                     { value: ethers.utils.parseEther(amountToBuy.toString()) }
                 );
-
+                const increasedGasPrice = gasPrice.mul(1 + gasBuffer / 100);
                 console.log('Estimated Gas:', estimatedGas);
 
                 const gasLimit = Math.ceil(estimatedGas.toNumber() * (1 + gasBuffer / 100));
@@ -241,7 +241,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                     path,
                     wallet.address,
                     Date.now() + 1000 * 60 * 2,
-                    { gasLimit, value: ethers.utils.parseEther(amountToBuy.toString()) }
+                    { gasLimit, gasPrice: increasedGasPrice, value: ethers.utils.parseEther(amountToBuy.toString()) }
                 );
                 const transactionLink = `https://goerli.etherscan.io/tx/${transaction.hash}`;
                 const message = `Your transaction link: [View on Etherscan](${transactionLink})`;
