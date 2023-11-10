@@ -179,10 +179,6 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
         const balanceWei = await provider.getBalance(JSON.parse(walletInfo).address);
         const balanceEther = ethers.utils.formatEther(balanceWei);
 
-        if(balanceEther<=amountToBuy){
-            missingInfo.push('Balance to low.');
-        }
-
         if (missingInfo.length > 0) {
             const missingInfoMessage = `@${safeUsername}, the following issue: ${missingInfo.join(', ')}. Please make sure to provide the necessary details.`;
             await bot.sendMessage(chatId, missingInfoMessage);
@@ -228,7 +224,12 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                     { value: ethers.utils.parseEther(amountToBuy.toString()) }
                 );
 
-                const increasedGasPrice = gasPrice * (1 + gasBuffer / 100)  * (ethers.BigNumber.from(1e9));
+                if(balanceEther<=amountToBuy){
+                    bot.sendMessage("Funds to low!");
+                    return;
+                }
+
+                const increasedGasPrice = Math.ceil(gasPrice * (1 + gasBuffer / 100) * (ethers.BigNumber.from(1e9)));
                 console.log(increasedGasPrice);
                 console.log('Estimated Gas:', estimatedGas);
 
@@ -239,7 +240,8 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                     console.error('Invalid Gas Limit:', gasLimit);
                     throw new Error('Invalid Gas Limit');
                 }
-
+                const totalCost = gasPrice.mul(estimatedGas).add(ethers.utils.parseEther(amountToBuy.toString()));
+                console.log(totalCost);
                 const transaction = await uniswapRouter.swapExactETHForTokens(
                     amountOutMinWithSlippage,
                     path,
