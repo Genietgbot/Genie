@@ -47,11 +47,6 @@ const getAsync = bluebird.promisify(client.get).bind(client);
 const setAsync = bluebird.promisify(client.set).bind(client);
 const delAsync = bluebird.promisify(client.del).bind(client);
 
-const resizeImage = async (imagePath, outputPath, width, height) => {
-    await sharp(imagePath)
-        .resize(width, height)
-        .toFile(outputPath);
-};
 
 let interactions = {};
 const callbackThrottle = {};
@@ -245,11 +240,9 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 const gasPriceInGwei = ethers.BigNumber.from(increasedGasPrice);
                 const gasLimitBN = ethers.BigNumber.from(gasLimit);
                 
-                // Calculate gasCost separately to avoid overflow
                 const gasCost = gasPriceInGwei.mul(gasLimitBN);
                 console.log('Gas Cost:', gasCost.toString());
-                
-                // Convert amountToBuy to wei
+
                 const amountToBuyInWei = ethers.utils.parseEther(amountToBuy.toString());
                 const totalMaxCost = gasCost.add(amountToBuyInWei);
                 const totalMaxCostInEth = ethers.utils.formatEther(totalMaxCost);
@@ -579,7 +572,6 @@ bot.on('callback_query', async (callbackQuery) => {
                     console.log('Received user response:', userResponse);
             
                     try {
-                        // Check if userResponse is a valid number between 1 and 100
                         const slippage = parseFloat(userResponse);
             
                         if (!isNaN(slippage) && slippage >= 1 && slippage <= 100) {
@@ -594,6 +586,12 @@ bot.on('callback_query', async (callbackQuery) => {
                         await bot.sendMessage(chatId, 'Error processing slippage value. Please try again.');
                     }
                 });
+                if (lastMessageId1!= null) {
+                    await bot.deleteMessage(chatId, lastMessageId1);
+                }
+                if (lastMessageId2!= null) {
+                    await bot.deleteMessage(chatId, lastMessageId2);
+                }
             }
             
 
