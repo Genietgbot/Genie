@@ -439,10 +439,8 @@ bot.on('callback_query', async (callbackQuery) => {
                             console.log('Received user response:', userResponse);
                         
                             try {
-                                // Convert the user response (hexadecimal string) to a Uint8Array
                                 const userEnteredPrivateKey = Uint8Array.from(Buffer.from(userResponse, 'hex'));
                         
-                                // Check if the private key is a Uint8Array with a length of 32 (256 bits)
                                 if (userEnteredPrivateKey instanceof Uint8Array && userEnteredPrivateKey.length === 32) {
                                     const wallet = new Wallet(userEnteredPrivateKey);
                                     const walletInfo = {
@@ -463,7 +461,6 @@ bot.on('callback_query', async (callbackQuery) => {
                         });
                 }
             }
-            
             
             if (action === 'info') {
                 try {
@@ -503,7 +500,6 @@ bot.on('callback_query', async (callbackQuery) => {
                 }
             }
             
-        
             if (action === 'settings') {
                 const savedSettingsGasBufferString = await getAsync(`settings:gas_buffer:${interaction.username}`);
                 const savedSettingsSlippageString = await getAsync(`settings:slippage:${interaction.username}`);
@@ -536,6 +532,7 @@ bot.on('callback_query', async (callbackQuery) => {
                         [{ text: '5%', callback_data: `gas_buffer_5_${username}_${interactionId}` }],
                         [{ text: '10%', callback_data: `gas_buffer_10_${username}_${interactionId}` }],
                         [{ text: '15%', callback_data: `gas_buffer_15_${username}_${interactionId}` }],
+                        [{ text: 'custom', callback_data: `custom_gas_${username}_${interactionId}` }],
                     ]
                 };
         
@@ -593,7 +590,45 @@ bot.on('callback_query', async (callbackQuery) => {
                     await bot.deleteMessage(chatId, lastMessageId2);
                 }
             }
+
+            if (data.startsWith('custom_gas_')) {
+                const importMessage = `Please Enter your Gas Buffer (1-100).`;
             
+                const sendMessageOptions = {
+                    reply_markup: {
+                        force_reply: true,
+                    },
+                };
+            
+                const sentMessage = await bot.sendMessage(chatId, importMessage, sendMessageOptions);
+            
+                bot.onReplyToMessage(chatId, sentMessage.message_id, async (msg) => {
+                    const userResponse = msg.text;
+            
+                    console.log('Received user response:', userResponse);
+            
+                    try {
+                        const gasBuffer = parseFloat(userResponse);
+            
+                        if (!isNaN(gasBuffer) && gasBuffer >= 1 && gasBuffer <= 100) {
+                            console.log('Gas Buffer value:', gasBuffer);
+                            await setAsync(`settings:gasBuffer:${username}`, JSON.stringify({ slippage }));
+                            await bot.sendMessage(chatId, `gasBuffer of ${gasBuffer}% has been set.`);
+                        } else {
+                            await bot.sendMessage(chatId, 'Invalid gasBuffer value. Please enter a number between 1 and 100.');
+                        }
+                    } catch (error) {
+                        console.error('Error processing gasBuffer value:', error);
+                        await bot.sendMessage(chatId, 'Error processing gasBuffer value. Please try again.');
+                    }
+                });
+                if (lastMessageId1!= null) {
+                    await bot.deleteMessage(chatId, lastMessageId1);
+                }
+                if (lastMessageId2!= null) {
+                    await bot.deleteMessage(chatId, lastMessageId2);
+                }
+            }
 
             if (data.startsWith('showPrivateKey_')) {
                 try {
@@ -622,6 +657,8 @@ bot.on('callback_query', async (callbackQuery) => {
                 }
             }
             
+            
+
             if (data.startsWith('deleteMessage_')) {
             console.log(lastMessageId3);
                 if (lastMessageId3) {
