@@ -75,7 +75,7 @@ bot.onText(/\/start/i, async (msg) => {
         setAsync(`chatID:${username}`, chatId);
         const safeUsername = username.replace(/_/g, '\\_');
         
-        let response = `🧞‍♂️ Welcome to the Genie Wish Maker Bot, @${safeUsername}! 🧞‍♂️\n\n`;
+        let response = `🧞‍♂️ Welcome to the Genie Wish Granter Bot, @${safeUsername}! 🧞‍♂️\n\n`;
 
         if (walletAddress) {
             const shortWalletAddress = shortenWalletAddress(walletAddress);
@@ -199,11 +199,8 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 console.log('Amount to Buy:', amountToBuy);
                 console.log('Slippage Percentage:', slippagePercentage);
 
-                
-                const amountOutMinWithSlippage = ethers.utils.parseUnits(
-                    (amountToBuy * (1 - slippagePercentage / 100)).toString(),
-                    'ether'
-                );
+                const amountOutMinWithSlippage =
+                    (amountToBuy * (1 - slippagePercentage / 100)).toString();
 
                 console.log("debug");
                 console.log('AmountOutMin with Slippage:', amountOutMinWithSlippage.toString());
