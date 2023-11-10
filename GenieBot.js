@@ -217,8 +217,8 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                     path,
                     wallet.address,
                     Date.now() + 1000 * 60 * 2,
-                    { value: 0.1 }
                 );
+                
 
                 const gasPrice = await provider.getGasPrice();
                 console.log('Current Gas Price:', gasPrice.toString());
