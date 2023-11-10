@@ -203,7 +203,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 console.log("debug");
                 console.log('Amount to Buy:', amountToBuy);
                 console.log('Slippage Percentage:', slippagePercentage);
-                await bot.sendMessage(userChatId, 'Your transaction was initiated!');
+
                 
                 const amountOutMinWithSlippage = ethers.utils.parseUnits(
                     (amountToBuy * (1 - slippagePercentage / 100)).toString(),
@@ -262,7 +262,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 if(balanceEther<=totalMaxCostInEth){
                 bot.sendMessage("Funds to low!");
                 }
-
+                await bot.sendMessage(userChatId, 'Your transaction was initiated!');
                 const transaction = await uniswapRouter.swapExactETHForTokens(
                     amountOutMinWithSlippage,
                     path,
