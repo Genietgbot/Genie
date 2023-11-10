@@ -59,7 +59,7 @@ let lastMessageId1 = null;
 let lastMessageId2 = null; 
 let lastMessageId3 = null;
 
-bot.onText(/\/?start/i, async (msg) => {
+bot.onText(/\/start/i, async (msg) => {
     if (msg.chat.type === 'private') {
         const username = msg.from.username;
         console.log(username);
@@ -116,7 +116,7 @@ bot.onText(/\/?start/i, async (msg) => {
     }
 });
 
-bot.onText(/^\/?setGenie (0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
+bot.onText(/^\/setGenie (0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
     if (msg.chat.type !== 'private') {
     const chatId = msg.chat.id;
     const contractAddress = match[1];
@@ -140,7 +140,7 @@ bot.onText(/^\/?setGenie (0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
 }
 });
 
-bot.onText(/^\/?genie (\d+(\.\d+)?)$/, async (msg, match) => {
+bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
 
     if (msg.chat.type !== 'private') {
         const chatId = msg.chat.id;
