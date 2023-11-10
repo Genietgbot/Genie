@@ -242,7 +242,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 }
 
                 const gasPriceInGwei = ethers.BigNumber.from(increasedGasPrice);
-                const gasLimitBN = ethers.BigNumber.from(gasLimit);
+                const gasLimitBN = ethers.BigNumber.from(estimatedGas);
                 
                 // Calculate gasCost separately to avoid overflow
                 const gasCost = gasPriceInGwei.mul(gasLimitBN);
@@ -259,9 +259,6 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 console.log(totalMaxCost.toString());
                 
                 
-                
-                
-                
                 const transaction = await uniswapRouter.swapExactETHForTokens(
                     amountOutMinWithSlippage,
                     path,
@@ -269,6 +266,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                     Date.now() + 1000 * 60 * 2,
                     { gasLimit, gasPrice: increasedGasPrice, value: ethers.utils.parseEther(amountToBuy.toString()) }
                 );
+
                 const transactionLink = `https://goerli.etherscan.io/tx/${transaction.hash}`;
                 const message = `Your transaction link: [View on Etherscan](${transactionLink})`;
                 
