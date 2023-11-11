@@ -733,44 +733,27 @@ async function fetchEthToUsdExchangeRate() {
         throw error;
     }
 }
-async function getCurrentTokenPrice(tokenAddress) {
+const getCurrentTokenPrice = async (tokenAddress) => {
     try {
-        const query = `
-            {
-                pair(id: "${tokenAddress.toLowerCase()}") {
-                    token0 {
-                        symbol
-                    }
-                    token1 {
-                        symbol
-                    }
-                    reserve0
-                    reserve1
-                }
-            }
-        `;
+ 
+        const wethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'; 
 
-        const response = await axios.post('https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2', { query });
+        // Get the pair address from the factory
+        const factoryAddress = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f'; // Uniswap V2 Factory address
+        const factoryABI = ['function getPair(address tokenA, address tokenB) external view returns (address pair)'];
+        const factoryContract = new ethers.Contract(factoryAddress, factoryABI, provider);
+        const pairAddress = await factoryContract.getPair(wethAddress, tokenAddress);
 
-        if (response.data.errors) {
-            throw new Error(response.data.errors[0].message);
-        }
+        // Get the price from the pair using the reserves
+        const pairABI = ['function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)'];
+        const pairContract = new ethers.Contract(pairAddress, pairABI, provider);
+        const { reserve0, reserve1 } = await pairContract.getReserves();
 
-        const pairData = response.data.data.pair;
+        // Calculate the token price in terms of Ether
+        const tokenPriceInEth = reserve1 / reserve0; // Assuming token is token1 in the pair
 
-        if (!pairData) {
-            throw new Error(`Pair data not available for token with address: ${tokenAddress}`);
-        }
-
-        const token0Amount = parseFloat(pairData.reserve0);
-        const token1Amount = parseFloat(pairData.reserve1);
-
-        // Calculate the current price of the token in terms of Ether
-        const currentTokenPriceInEth = token0Amount / token1Amount;
-
-        return currentTokenPriceInEth;
+        return tokenPriceInEth;
     } catch (error) {
-        console.error(`Error fetching current token price: ${error.message}`);
-        throw error;
+        return error;
     }
-}
+};
