@@ -205,13 +205,13 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 const amountOutMinWithSlippage = (amountToBuy * (1 - slippagePercentage / 100) / currentTokenPrice);
                 console.log('AmountToBuy - Value:', amountToBuy);
                 console.log('AmountToBuy - Type:', typeof amountToBuy);
-                console.log('Slippage Adjusted Percentage - Value:', slippageAdjustedPercentage);
-                console.log('Slippage Adjusted Percentage - Type:', typeof slippageAdjustedPercentage);
+                console.log('Slippage Adjusted Percentage - Value:', slippagePercentage);
+                console.log('Slippage Adjusted Percentage - Type:', typeof slippagePercentage);
                 console.log('Current Token Price in ETH - Value:', currentTokenPrice);
                 console.log('Current Token Price in ETH - Type:', typeof currentTokenPrice);
-                
                 console.log('AmountOutMin with Slippage - Value:', amountOutMinWithSlippage);
                 console.log('AmountOutMin with Slippage - Type:', typeof amountOutMinWithSlippage);
+
                 console.log('AmountOutMin with Slippage:', amountOutMinWithSlippage.toString());
                 const amountOutMinWithSlippageNumber = parseFloat(amountOutMinWithSlippage);
                 const gasPrice = await provider.getGasPrice();
