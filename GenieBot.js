@@ -205,7 +205,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
 
                 console.log('AmountOutMin with Slippage:', amountOutMinWithSlippage);
                 try {
-                    const currentTokenPrice = await getCurrentTokenPrice(tokenToBuyAddress);
+                    const currentTokenPrice = await getCurrentTokenPrice(tokenToBuyAddress) / ethers.BigNumber.from(1e9);
                     console.log(`Current Token Price in ETH: ${currentTokenPrice}`);
                 } catch (error) {
                     console.error(`Error: ${error.message}`);
