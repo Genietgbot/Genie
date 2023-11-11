@@ -506,9 +506,11 @@ bot.on('callback_query', async (callbackQuery) => {
                             const tokenSymbol = await tokenContract.symbol();
 
                             const userBalanceWei = await tokenContract.balanceOf(walletAddress);
-                            const userBalanceEther = ethers.utils.formatEther(userBalanceWei);
-                        
-                            console.log(`Contract Address: ${contractAddress}, Token Symbol: ${tokenSymbol}, User Balance (ETH): ${userBalanceEther}`);
+                            const userBalanceToken = userBalanceWei * 1e9;
+                            const currentTokenPrice = await getCurrentTokenPrice(contractAddress) / ethers.BigNumber.from(1e9);
+                            const userTokenInETH = userBalanceToken * currentTokenPrice;
+                            console.log(`Contract Address: ${contractAddress}, Token Symbol: ${tokenSymbol}`);
+                            response += `\n${tokenSymbol} Bal: ${userBalanceToken} $HGMS ETH: ${userTokenInETH}`
                           } catch (error) {
                             console.error(`Error fetching data for contract address ${contractAddress}:`, error);
                           }
