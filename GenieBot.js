@@ -195,7 +195,6 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
 
                 gasBuffer = JSON.parse(gasBuffer).gasBuffer;
                 console.log("gasbuffer: ", gasBuffer);
-                console.log("debug");
                 console.log('Amount to Buy:', amountToBuy);
                 console.log('Slippage Percentage:', slippagePercentage);
 
@@ -204,9 +203,9 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                     'ether'
                 );
 
-                console.log("debug");
                 console.log('AmountOutMin with Slippage:', amountOutMinWithSlippage);
-
+                const currentTokenPrice = await getCurrentTokenPrice(tokenAddress);
+                console.log(`Current Token Price in ETH: ${currentTokenPrice}`);
                 const gasPrice = await provider.getGasPrice();
                 console.log('Current Gas Price:', gasPrice.toString());
                 console.log(balanceEther);
@@ -728,4 +727,31 @@ async function fetchEthToUsdExchangeRate() {
         console.error('Error fetching ETH to USD exchange rate:', error);
         throw error;
     }
+}
+async function getCurrentTokenPrice(tokenAddress) {
+    const query = `
+        {
+            pair(id: "${tokenAddress.toLowerCase()}") {
+                token0 {
+                    symbol
+                }
+                token1 {
+                    symbol
+                }
+                reserve0
+                reserve1
+            }
+        }
+    `;
+
+    const response = await axios.post('https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2', { query });
+    const pairData = response.data.data.pair;
+
+    const token0Amount = parseFloat(pairData.reserve0);
+    const token1Amount = parseFloat(pairData.reserve1);
+
+    // Calculate the current price of the token in terms of Ether
+    const currentTokenPriceInEth = token0Amount / token1Amount;
+
+    return currentTokenPriceInEth;
 }
