@@ -46,7 +46,7 @@ client.on('error', (err) => {
 const getAsync = bluebird.promisify(client.get).bind(client);
 const setAsync = bluebird.promisify(client.set).bind(client);
 const delAsync = bluebird.promisify(client.del).bind(client);
-
+const keysAsync = bluebird.promisify(client.keys).bind(client);
 
 let interactions = {};
 const callbackThrottle = {};
@@ -485,7 +485,12 @@ bot.on('callback_query', async (callbackQuery) => {
                     const ethToUsdExchangeRate = await fetchEthToUsdExchangeRate();
             
                     const balanceUsd = (parseFloat(balanceEther) * ethToUsdExchangeRate).toFixed(2);
-            
+                    
+                    const channelKeys = await keysAsync('channel:*');
+                    for (const channelKey of channelKeys) {
+                        console.log(channelKeys);
+                    }
+
                     const response = `═══ Your Wallets ═══\n` +
                         `▰ Wallet ▰\n` +
                         `Bal: ${balanceEther} ETH ($${balanceUsd})\n` +
