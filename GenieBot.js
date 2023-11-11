@@ -204,7 +204,12 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 );
 
                 console.log('AmountOutMin with Slippage:', amountOutMinWithSlippage);
-                const currentTokenPrice = await getCurrentTokenPrice(tokenToBuyAddress);
+                try {
+                    const currentTokenPrice = await getCurrentTokenPrice(tokenToBuyAddress);
+                    console.log(`Current Token Price in ETH: ${currentTokenPrice}`);
+                } catch (error) {
+                    console.error(`Error: ${error.message}`);
+                }
                 console.log(`Current Token Price in ETH: ${currentTokenPrice}`);
                 const gasPrice = await provider.getGasPrice();
                 console.log('Current Gas Price:', gasPrice.toString());
