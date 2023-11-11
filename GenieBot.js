@@ -735,22 +735,22 @@ async function fetchEthToUsdExchangeRate() {
 }
 const getCurrentTokenPrice = async (tokenAddress) => {
     try {
- 
         const wethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'; 
 
         // Get the pair address from the factory
-        const factoryAddress = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f'; // Uniswap V2 Factory address
+        const factoryAddress = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f';
         const factoryABI = ['function getPair(address tokenA, address tokenB) external view returns (address pair)'];
         const factoryContract = new ethers.Contract(factoryAddress, factoryABI, provider);
         const pairAddress = await factoryContract.getPair(wethAddress, tokenAddress);
 
-        // Get the price from the pair using the reserves
         const pairABI = ['function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)'];
         const pairContract = new ethers.Contract(pairAddress, pairABI, provider);
         const { reserve0, reserve1 } = await pairContract.getReserves();
 
-        // Calculate the token price in terms of Ether
-        const tokenPriceInEth = reserve1 / reserve0; // Assuming token is token1 in the pair
+        const decimals = 18; // Assuming 18 decimal places for both token and Ether
+
+        // Calculate the token price in terms of Ether with decimal adjustment
+        const tokenPriceInEth = (reserve1 / 10**decimals) / (reserve0 / 10**decimals);
 
         return tokenPriceInEth;
     } catch (error) {
