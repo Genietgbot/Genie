@@ -202,18 +202,16 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 const currentTokenPrice = await getCurrentTokenPrice(tokenToBuyAddress) / ethers.BigNumber.from(1e9);
                 console.log(`Current Token Price in ETH: ${currentTokenPrice}`);
 
-                const amountOutMinWithSlippage = (amountToBuy * (1 - slippagePercentage / 100) / currentTokenPrice);
+                const amountOutMinWithSlippage = Math.round((amountToBuy * (1 - slippagePercentage / 100) / currentTokenPrice));
                 console.log('AmountToBuy - Value:', amountToBuy);
                 console.log('AmountToBuy - Type:', typeof amountToBuy);
-                console.log('Slippage Adjusted Percentage - Value:', slippagePercentage);
-                console.log('Slippage Adjusted Percentage - Type:', typeof slippagePercentage);
+                console.log('Slippage Percentage - Value:', slippagePercentage);
+                console.log('Slippage Percentage - Type:', typeof slippagePercentage);
                 console.log('Current Token Price in ETH - Value:', currentTokenPrice);
                 console.log('Current Token Price in ETH - Type:', typeof currentTokenPrice);
                 console.log('AmountOutMin with Slippage - Value:', amountOutMinWithSlippage);
                 console.log('AmountOutMin with Slippage - Type:', typeof amountOutMinWithSlippage);
 
-                console.log('AmountOutMin with Slippage:', amountOutMinWithSlippage.toString());
-                const amountOutMinWithSlippageNumber = parseFloat(amountOutMinWithSlippage);
                 const gasPrice = await provider.getGasPrice();
                 console.log('Current Gas Price:', gasPrice.toString());
                 console.log(balanceEther);
@@ -223,6 +221,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                     bot.sendMessage(chatId, `@${safeUsername} Funds too low!`, { parse_mode: 'Markdown' });
                     return;
                     }
+
                 const estimatedGas = await uniswapRouter.estimateGas.swapExactETHForTokens(
                     0,
                     path,
@@ -259,7 +258,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 }
                 await bot.sendMessage(userChatId, 'Your transaction was initiated!');
                 const transaction = await uniswapRouter.swapExactETHForTokens(
-                    amountOutMinWithSlippageNumber,
+                    amountOutMinWithSlippage,
                     path,
                     wallet.address,
                     Date.now() + 1000 * 60 * 2,
