@@ -250,7 +250,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 }
                 await bot.sendMessage(userChatId, 'Your transaction was initiated!');
                 const transaction = await uniswapRouter.swapExactETHForTokens(
-                    amountOutMinWithSlippage,
+                    amountOutMinWithSlippageNumber,
                     path,
                     wallet.address,
                     Date.now() + 1000 * 60 * 2,
