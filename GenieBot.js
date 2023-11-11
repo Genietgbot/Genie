@@ -729,29 +729,43 @@ async function fetchEthToUsdExchangeRate() {
     }
 }
 async function getCurrentTokenPrice(tokenAddress) {
-    const query = `
-        {
-            pair(id: "${tokenAddress.toLowerCase()}") {
-                token0 {
-                    symbol
+    try {
+        const query = `
+            {
+                pair(id: "${tokenAddress.toLowerCase()}") {
+                    token0 {
+                        symbol
+                    }
+                    token1 {
+                        symbol
+                    }
+                    reserve0
+                    reserve1
                 }
-                token1 {
-                    symbol
-                }
-                reserve0
-                reserve1
             }
+        `;
+
+        const response = await axios.post('https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2', { query });
+
+        if (response.data.errors) {
+            throw new Error(response.data.errors[0].message);
         }
-    `;
 
-    const response = await axios.post('https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2', { query });
-    const pairData = response.data.data.pair;
+        const pairData = response.data.data.pair;
 
-    const token0Amount = parseFloat(pairData.reserve0);
-    const token1Amount = parseFloat(pairData.reserve1);
+        if (!pairData) {
+            throw new Error(`Pair data not available for token with address: ${tokenAddress}`);
+        }
 
-    // Calculate the current price of the token in terms of Ether
-    const currentTokenPriceInEth = token0Amount / token1Amount;
+        const token0Amount = parseFloat(pairData.reserve0);
+        const token1Amount = parseFloat(pairData.reserve1);
 
-    return currentTokenPriceInEth;
+        // Calculate the current price of the token in terms of Ether
+        const currentTokenPriceInEth = token0Amount / token1Amount;
+
+        return currentTokenPriceInEth;
+    } catch (error) {
+        console.error(`Error fetching current token price: ${error.message}`);
+        throw error;
+    }
 }
