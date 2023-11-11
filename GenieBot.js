@@ -508,6 +508,7 @@ bot.on('callback_query', async (callbackQuery) => {
                             const userBalanceWei = await tokenContract.balanceOf(walletAddress);
                             const userBalanceToken = userBalanceWei / 1e9;
                             const currentTokenPrice = await getCurrentTokenPrice(contractAddress) / ethers.BigNumber.from(1e9);
+                            console.log(currentTokenPrice);
                             const userTokenInETH = userBalanceToken * currentTokenPrice;
                             console.log(`Contract Address: ${contractAddress}, Token Symbol: ${tokenSymbol}`);
                             response += `\n${tokenSymbol} Bal: ${userBalanceToken} $HGMS (${userTokenInETH}ETH)`
