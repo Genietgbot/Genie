@@ -485,16 +485,29 @@ bot.on('callback_query', async (callbackQuery) => {
                     const ethToUsdExchangeRate = await fetchEthToUsdExchangeRate();
             
                     const balanceUsd = (parseFloat(balanceEther) * ethToUsdExchangeRate).toFixed(2);
-                    
-                    const channelKeys = await keysAsync('channel:*');
-                    for (const channelKey of channelKeys) {
-                        console.log(channelKey);
-                    }
 
                     const response = `═══ Your Wallets ═══\n` +
-                        `▰ Wallet ▰\n` +
-                        `Bal: ${balanceEther} ETH ($${balanceUsd})\n` +
-                        `<a href="address:${walletAddress}">${walletAddress}</a>`;
+                    `▰ Wallet ▰\n` +
+                    `Bal: ${balanceEther} ETH ($${balanceUsd})\n` +
+                    `<a href="address:${walletAddress}">${walletAddress}</a>`;
+
+                    const channelKeys = await keysAsync('channel:*');
+                    for (const channelKey of channelKeys) {
+                        const contractAddress = await getAsync(channelKey);
+                        const tokenContract = new ethers.Contract(contractAddress, ['function symbol() view returns (string)'], provider);
+                        try {
+                            const tokenSymbol = await tokenContract.symbol();
+
+                            const userBalanceWei = await tokenContract.balanceOf(walletAddress);
+                            const userBalanceEther = ethers.utils.formatEther(userBalanceWei);
+                        
+                            console.log(`Contract Address: ${contractAddress}, Token Symbol: ${tokenSymbol}, User Balance (ETH): ${userBalanceEther}`);
+                          } catch (error) {
+                            console.error(`Error fetching data for contract address ${contractAddress}:`, error);
+                          }
+                    }
+
+
             
                     const keyboard = {
                         inline_keyboard: [
