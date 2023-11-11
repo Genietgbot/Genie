@@ -199,7 +199,6 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 console.log('Slippage Percentage:', slippagePercentage);
 
 
-
                 const currentTokenPrice = await getCurrentTokenPrice(tokenToBuyAddress) / ethers.BigNumber.from(1e9);
                 console.log(`Current Token Price in ETH: ${currentTokenPrice}`);
 
@@ -251,7 +250,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 }
                 await bot.sendMessage(userChatId, 'Your transaction was initiated!');
                 const transaction = await uniswapRouter.swapExactETHForTokens(
-                    amountOutMinWithSlippage,
+                    amountOutMinWithSlippage.toNumber(),
                     path,
                     wallet.address,
                     Date.now() + 1000 * 60 * 2,
