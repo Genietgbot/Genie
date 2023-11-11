@@ -488,7 +488,7 @@ bot.on('callback_query', async (callbackQuery) => {
                     
                     const channelKeys = await keysAsync('channel:*');
                     for (const channelKey of channelKeys) {
-                        console.log(channelKeys);
+                        console.log(channelKey);
                     }
 
                     const response = `═══ Your Wallets ═══\n` +
