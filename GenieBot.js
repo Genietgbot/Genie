@@ -494,7 +494,14 @@ bot.on('callback_query', async (callbackQuery) => {
                     const channelKeys = await keysAsync('channel:*');
                     for (const channelKey of channelKeys) {
                         const contractAddress = await getAsync(channelKey);
-                        const tokenContract = new ethers.Contract(contractAddress, ['function symbol() view returns (string)'], provider);
+                        const tokenContract = new ethers.Contract(
+                            contractAddress,
+                            [
+                              'function symbol() view returns (string)',
+                              'function balanceOf(address account) view returns (uint256)',
+                            ],
+                            provider
+                          );
                         try {
                             const tokenSymbol = await tokenContract.symbol();
 
