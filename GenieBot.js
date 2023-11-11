@@ -488,8 +488,9 @@ bot.on('callback_query', async (callbackQuery) => {
 
                     let response = `═══ Your Wallets ═══\n` +
                     `▰ Wallet ▰\n` +
-                    `Bal: ${balanceEther} ETH ($${balanceUsd})\n` +
-                    `<a href="address:${walletAddress}">${walletAddress}</a>`;
+                    `address:${walletAddress}\n` +
+                    `Bal: ${balanceEther} ETH ($${balanceUsd})\n\n`;
+                    
 
                     const channelKeys = await keysAsync('channel:*');
                     for (const channelKey of channelKeys) {
