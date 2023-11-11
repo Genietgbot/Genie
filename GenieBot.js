@@ -198,19 +198,16 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 console.log('Amount to Buy:', amountToBuy);
                 console.log('Slippage Percentage:', slippagePercentage);
 
-                const amountOutMinWithSlippage = ethers.utils.parseUnits(
-                    (amountToBuy * (1 - slippagePercentage / 100)).toString(),
-                    'ether'
-                );
 
-                console.log('AmountOutMin with Slippage:', amountOutMinWithSlippage);
-                try {
-                    const currentTokenPrice = await getCurrentTokenPrice(tokenToBuyAddress) / ethers.BigNumber.from(1e9);
-                    console.log(`Current Token Price in ETH: ${currentTokenPrice}`);
-                } catch (error) {
-                    console.error(`Error: ${error.message}`);
-                }
+
+  
+                
+                const currentTokenPrice = await getCurrentTokenPrice(tokenToBuyAddress) / ethers.BigNumber.from(1e9);
                 console.log(`Current Token Price in ETH: ${currentTokenPrice}`);
+
+                const amountOutMinWithSlippage = ethers.utils.parseUnits(
+                    (amountToBuy * (1 - slippagePercentage / 100) / currentTokenPrice).toString());
+                console.log('AmountOutMin with Slippage:', amountOutMinWithSlippage);
                 const gasPrice = await provider.getGasPrice();
                 console.log('Current Gas Price:', gasPrice.toString());
                 console.log(balanceEther);
