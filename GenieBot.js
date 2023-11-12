@@ -581,7 +581,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 }
             }
             
-            if(action === 'sell') {
+            if (action === 'sell') {
                 try {
                     const walletInfoString = await getAsync(`wallets:${interactions[interactionId].username}`);
             
@@ -599,41 +599,42 @@ bot.on('callback_query', async (callbackQuery) => {
                     const ethToUsdExchangeRate = await fetchEthToUsdExchangeRate();
             
                     const balanceUsd = (parseFloat(balanceEther) * ethToUsdExchangeRate).toFixed(2);
-
+            
                     let response = `═══ Your Wallets ═══\n` +
-                    `▰ Holdings ▰\n`
-
+                        `▰ Holdings ▰\n`
+            
+                    const inlineKeyboard = [];
                     const channelKeys = await keysAsync('channel:*');
                     for (const channelKey of channelKeys) {
                         const contractAddress = await getAsync(channelKey);
                         const tokenContract = new ethers.Contract(
                             contractAddress,
                             [
-                              'function symbol() view returns (string)',
-                              'function balanceOf(address account) view returns (uint256)',
+                                'function symbol() view returns (string)',
+                                'function balanceOf(address account) view returns (uint256)',
                             ],
                             provider
-                          );
+                        );
                         try {
                             const tokenSymbol = await tokenContract.symbol();
-
+            
                             const userBalanceWei = await tokenContract.balanceOf(walletAddress);
                             const userBalanceToken = userBalanceWei / 1e9;
-
-
+            
                             console.log(`Contract Address: ${contractAddress}, Token Symbol: ${tokenSymbol}`);
-                            if(userBalanceToken>0){
-                            response += `\n${tokenSymbol} Bal: ${userBalanceToken} $HGMS`;
+                            if (userBalanceToken > 0) {
+                                response += `\n${tokenSymbol} Bal: ${userBalanceToken} $HGMS`;
+            
+                                // Create an inline button for each token
+                                inlineKeyboard.push([{ text: `Sell ${tokenSymbol}`, callback_data: `sell_${contractAddress}_${interactionId}` }]);
                             }
-                          } catch (error) {
+                        } catch (error) {
                             console.error(`Error fetching data for contract address ${contractAddress}:`, error);
-                          }
+                        }
                     }
-
+            
                     const keyboard = {
-                        inline_keyboard: [
-                            [{ text: 'Show Private Key', callback_data: `showPrivateKey_${username}_${interactionId}` }],
-                        ],
+                        inline_keyboard: inlineKeyboard,
                     };
             
                     await bot.sendMessage(chatId, response, { parse_mode: 'HTML', reply_markup: keyboard });
@@ -643,6 +644,7 @@ bot.on('callback_query', async (callbackQuery) => {
                     return "An error occurred while fetching wallet information.";
                 }
             }
+            
 
 
 
