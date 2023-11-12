@@ -847,7 +847,7 @@ async function formatResultMessage(result) {
 
     console.log('Token Price in ETH:', tokenPriceInEth); 
 
-    const currentTokenPrice = tokenPriceInEth;
+    const currentTokenPrice = tokenPriceInEth / 1e9;
 
     const currentTokenPriceUSD = await fetchEthToUsdExchangeRate() * currentTokenPrice;
     const tokenABI = [' function totalSupply() external view returns (uint256)'];
