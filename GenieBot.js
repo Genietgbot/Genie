@@ -314,7 +314,6 @@ bot.on('callback_query', async (callbackQuery) => {
     const chatId = callbackQuery.message.chat.id;
     const callbackId = callbackQuery.id;
 
-    
     if (callbackThrottle[callbackId] && Date.now() - callbackThrottle[callbackId] < 5000) {
         return;
     }
@@ -582,6 +581,76 @@ bot.on('callback_query', async (callbackQuery) => {
                 }
             }
             
+            if(action === 'sell') {
+                try {
+                    const walletInfoString = await getAsync(`wallets:${interactions[interactionId].username}`);
+            
+                    if (!walletInfoString) {
+                        bot.sendMessage(chatId, "You have no wallet set up.");
+                        return "Wallet information not found for this user.";
+                    }
+            
+                    const walletInfo = JSON.parse(walletInfoString);
+                    const walletAddress = walletInfo.address;
+            
+                    const balanceWei = await provider.getBalance(walletAddress);
+                    const balanceEther = ethers.utils.formatEther(balanceWei);
+            
+                    const ethToUsdExchangeRate = await fetchEthToUsdExchangeRate();
+            
+                    const balanceUsd = (parseFloat(balanceEther) * ethToUsdExchangeRate).toFixed(2);
+
+                    let response = `═══ Your Wallets ═══\n` +
+                    `▰ Wallet ▰\n` +
+                    `Wallet: ${walletAddress}\n` +
+                    `Bal: ${balanceEther} ETH ($${balanceUsd})\n`;
+                    
+
+                    const channelKeys = await keysAsync('channel:*');
+                    for (const channelKey of channelKeys) {
+                        const contractAddress = await getAsync(channelKey);
+                        const tokenContract = new ethers.Contract(
+                            contractAddress,
+                            [
+                              'function symbol() view returns (string)',
+                              'function balanceOf(address account) view returns (uint256)',
+                            ],
+                            provider
+                          );
+                        try {
+                            const tokenSymbol = await tokenContract.symbol();
+
+                            const userBalanceWei = await tokenContract.balanceOf(walletAddress);
+                            const userBalanceToken = userBalanceWei / 1e9;
+
+
+                            console.log(`Contract Address: ${contractAddress}, Token Symbol: ${tokenSymbol}`);
+                            if(userBalanceToken>0){
+                            response += `\n${tokenSymbol} Bal: ${userBalanceToken} $HGMS`;
+                            }
+                          } catch (error) {
+                            console.error(`Error fetching data for contract address ${contractAddress}:`, error);
+                          }
+                    }
+
+
+            
+                    const keyboard = {
+                        inline_keyboard: [
+                            [{ text: 'Show Private Key', callback_data: `showPrivateKey_${username}_${interactionId}` }],
+                        ],
+                    };
+            
+                    await bot.sendMessage(chatId, response, { parse_mode: 'HTML', reply_markup: keyboard });
+            
+                } catch (error) {
+                    console.error('Error fetching wallet information:', error);
+                    return "An error occurred while fetching wallet information.";
+                }
+            }
+
+
+
             if (data.startsWith('set_gas_buffer_')) {
                 const gasBufferKeyboard = {
                     inline_keyboard: [
