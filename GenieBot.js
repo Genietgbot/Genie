@@ -839,7 +839,8 @@ async function formatResultMessage(result) {
     console.log("Token Address: ", token.address);
     const currentTokenPrice = await getCurrentTokenPrice(token.address) / ethers.BigNumber.from(1e9);
     console.log(`Current Token Price in ETH: ${currentTokenPrice}`);
-
+    const currentTokenPriceUSD = await fetchEthToUsdExchangeRate() * currentTokenPrice;
+    console.log(`Current Token Price in ETH: ${currentTokenPriceUSD}`);
     const tokenABI = [' function totalSupply() external view returns (uint256)'];
       
     const TokenContract = new ethers.Contract(token.address, tokenABI, provider);
