@@ -844,7 +844,7 @@ async function formatResultMessage(result) {
       
     const TokenContract = new ethers.Contract(token.address, tokenABI, provider);
     console.log("Calling totalSupply...");
-    const totalSupply = await TokenContract.totalSupply() / ethers.BigNumber.from(1e9);
+    const totalSupply = await TokenContract.totalSupply() / 1e9;
     console.log("Total Supply:", totalSupply.toString());
 
 
