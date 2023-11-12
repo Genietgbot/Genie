@@ -297,10 +297,9 @@ bot.onText(/^\/?(0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
   
     try {
       const result = await checkHoneypot(address);
-      
+
       const message = await formatResultMessage(result);
       bot.sendMessage(msg.from.id, message, { parse_mode: 'Markdown' });
-      
     } catch (error) {
       bot.sendMessage(msg.from.id, 'Error checking honeypot status.');
     }
@@ -507,7 +506,7 @@ bot.on('callback_query', async (callbackQuery) => {
 
                     let response = `═══ Your Wallets ═══\n` +
                     `▰ Wallet ▰\n` +
-                    `address:${walletAddress}\n` +
+                    `Wallet: ${walletAddress}\n` +
                     `Bal: ${balanceEther} ETH ($${balanceUsd})\n`;
                     
 
@@ -829,6 +828,7 @@ async function checkHoneypot(address) {
       throw error;
     }
 }
+
 async function formatResultMessage(result) {
     const token = result.token;
     const honeypotResult = result.honeypotResult;
@@ -843,11 +843,14 @@ async function formatResultMessage(result) {
         `Supply: ${totalSupply} ⬩ Decimals: ${token.decimals}\n` +
         `Marketcap: $${calculateMarketcap(currentTokenPriceUSD, totalSupply)}\n` +
         `Price: $${currentTokenPriceUSD}\n` +
-        `CA: [${token.address}](https://etherscan.io/address/${token.address})\n\n` +
-        `${honeypotResult.isHoneypot ? 'Seems like a honeypot' : 'Doesn\'t seem like a honeypot'} [🚫](https://honeypot.is/ethereum?address=${token.address}) ${honeypotResult.isHoneypot ? '❌' : '✅'}`;
+        `CA: [${token.address}](https://etherscan.io/address/${token.address})\n` +
+        `Buy Tax: ${token.buyTax}%\n` +
+        `Sell Tax: ${token.sellTax}%\n\n` +
+        `${honeypotResult.isHoneypot ? 'Seems like a honeypot' : 'Doesn\'t seem like a honeypot'} [🍯](https://honeypot.is/ethereum?address=${token.address}) ${honeypotResult.isHoneypot ? '❌' : '✅'}`;
 
     return formattedMessage;
 }
+
 
 
 
