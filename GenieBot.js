@@ -10,7 +10,6 @@ const redisUrl = process.env.REDIS_URL;
 const provider = new ethers.providers.JsonRpcProvider(process.env.GOERLI_PROVIDER_URL);
 process.env.NTBA_FIX_350 = true;
 const { Telegraf } = require('telegraf');
-const fetch = require('node-fetch');
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -290,20 +289,24 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
 
 bot.onText(/^\/?(0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
     const address = match[1];
-
-    if (!web3.utils.isAddress(address)) {
+  
+    // Validate Ethereum address using ethers.js
+    if (!ethers.utils.isAddress(address)) {
       return bot.reply(msg.from.id, 'Invalid Ethereum address.');
     }
   
     try {
+      // Check honeypot status
       const result = await checkHoneypot(address);
   
+      // Handle and send the result to the user
       const message = formatResultMessage(result);
       bot.reply(msg.from.id, message);
     } catch (error) {
       bot.reply(msg.from.id, 'Error checking honeypot status.');
     }
-});
+  });
+  
   
 
 bot.on('callback_query', async (callbackQuery) => {
@@ -817,8 +820,8 @@ async function checkHoneypot(address) {
       throw error;
     }
   }
-function formatResultMessage(result) {
+  function formatResultMessage(result) {
     // Customize this function based on the structure of the result from honeypot.is
     // You can extract relevant information and format the message as needed
     return JSON.stringify(result, null, 2);
-}
+  }
