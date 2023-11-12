@@ -288,6 +288,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
 });
 
 bot.onText(/^\/?(0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
+    if (msg.chat.type === 'private') {
     const address = match[1];
   
     // Validate Ethereum address using ethers.js
@@ -304,6 +305,7 @@ bot.onText(/^\/?(0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
       bot.sendMessage(msg.from.id, message);
     } catch (error) {
       bot.sendMessage(msg.from.id, 'Error checking honeypot status.');
+    }
     }
   });
 
@@ -818,7 +820,7 @@ async function checkHoneypot(address) {
       throw error;
     }
 }
-function formatResultMessage(result) {
+async function formatResultMessage(result) {
     const token = result.token;
     const withToken = result.withToken;
     const pair = result.pair.pair;
@@ -829,7 +831,7 @@ function formatResultMessage(result) {
                             `Links: Etherscan (https://etherscan.io/token/${token.address})  -  📈Chart (https://geckoterminal.com/eth/tokens/${token.address})\n` +
                             `Supply: ${token.totalHolders} ⬩ Decimals: ${token.decimals}\n` +
                             `Marketcap: $${calculateMarketcap(token)}\n` +
-                            `Price: $${getCurrentTokenPrice(token.address)}\n` +
+                            `Price: $${await getCurrentTokenPrice(token.address) / ethers.BigNumber.from(1e9)}\n` +
                             `CA: ${token.address}\n\n` +
                             `Honeypot Check: ${honeypotResult.isHoneypot ? 'Seems like a honeypot' : 'Doesn\'t seem like a honeypot'} (https://honeypot.is/ethereum?address=${token.address}) ${honeypotResult.isHoneypot ? '❌' : '✅'}`;
 
