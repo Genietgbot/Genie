@@ -783,18 +783,15 @@ async function fetchEthToUsdExchangeRate() {
         throw error;
     }
 }
-async function getCurrentTokenPrice(tokenAddress, pairAddress = null) {
+async function getCurrentTokenPrice(tokenAddress) {
     try {
         console.log("tokenAddress", tokenAddress);
         const wethAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
-
         const factoryAddress = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f';
         const factoryABI = ['function getPair(address tokenA, address tokenB) external view returns (address pair)'];
         const factoryContract = new ethers.Contract(factoryAddress, factoryABI, provider);
-        if(pairAddress == null){
         const pairAddress = await factoryContract.getPair(wethAddress, tokenAddress);
-        }
-
+        
         console.log('Pair Address:', pairAddress); 
 
         const pairABI = ['function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)'];
@@ -835,7 +832,21 @@ async function formatResultMessage(result) {
     const token = result.token;
     const honeypotResult = result.honeypotResult;
     console.log(result.pair.pair.address);
-    const currentTokenPrice = await getCurrentTokenPrice(token.address, result.pair.pair.address) / ethers.BigNumber.from(1e9);
+
+    const decimals = 18;
+    const reserve0 = result.reserves0;
+    const reserve1 = result.reserves0;
+
+    if (reserve0 === 0 || reserve1 === 0) {
+        throw new Error('Reserve values are zero, potential division by zero');
+    }
+
+    const tokenPriceInEth = (reserve1 / 10**decimals) / (reserve0 / 10**decimals);
+
+    console.log('Token Price in ETH:', tokenPriceInEth); 
+
+    const currentTokenPrice = tokenPriceInEth;
+
     const currentTokenPriceUSD = await fetchEthToUsdExchangeRate() * currentTokenPrice;
     const tokenABI = [' function totalSupply() external view returns (uint256)'];
     const TokenContract = new ethers.Contract(token.address, tokenABI, provider);
