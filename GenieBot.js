@@ -822,21 +822,13 @@ bot.on('callback_query', async (callbackQuery) => {
                 const sellAmount = parts[2];
                 const symbol = parts[3];
                 console.log(storedSymbol);
-                const entry = storedSymbol.find(item => item.username === username);
-                if (entry) {
-                console.log(entry.symbol);
-                console.log(entry.address);
-                } else {
-                console.log('Entry not found for the given username.');
-                }
-                console.log(entry);
-                let address = null;
-                if (entry) {
-                    address = entry.address;
-                    console.log(`Address for ${sellAmount} ${symbol} for user ${username}: ${address}`);
-                } else {
-                    console.log(`No entry found ${sellAmount} for ${symbol} for user ${username}`);
-                }
+                const entry = storedSymbol.username;
+                for (let user in entry){
+                    if(user.symbol === symbol){
+                        console.log (user.address);
+                    }
+                } 
+
             }
 
             if (data.startsWith('gas_buffer_')) {
