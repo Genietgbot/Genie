@@ -583,7 +583,7 @@ bot.on('callback_query', async (callbackQuery) => {
             
             if(action === 'sell') {
                 try {
-                    let storedSymbol = {};
+                    let storedSymbol = [];
                     const walletInfoString = await getAsync(`wallets:${interactions[interactionId].username}`);
             
                     if (!walletInfoString) {
@@ -624,7 +624,7 @@ bot.on('callback_query', async (callbackQuery) => {
                             console.log(`Contract Address: ${contractAddress}, Token Symbol: ${tokenSymbol}`);
                             if(userBalanceToken>0){
                             response += `\n${tokenSymbol} Bal: ${userBalanceToken} $HGMS`;
-                            storedSymbol += {tokenSymbol, userBalanceToken}; 
+                            storedSymbol.push({ symbol: tokenSymbol, address: contractAddress });
                             }
                           } catch (error) {
                             console.error(`Error fetching data for contract address ${contractAddress}:`, error);
