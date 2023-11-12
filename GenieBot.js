@@ -836,7 +836,8 @@ async function formatResultMessage(result) {
     const decimals = 18;
     const reserve0 = result.reserves0;
     const reserve1 = result.reserves0;
-
+    console.log(reserve0);
+    console.log(reserve1);
     if (reserve0 === 0 || reserve1 === 0) {
         throw new Error('Reserve values are zero, potential division by zero');
     }
