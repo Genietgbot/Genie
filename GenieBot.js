@@ -822,12 +822,17 @@ bot.on('callback_query', async (callbackQuery) => {
                 const sellAmount = parts[2];
                 const symbol = parts[3];
                 console.log(storedSymbol);
-                const entry = storedSymbol.username;
-                for (let user in entry){
-                    if(user.symbol === symbol){
-                        console.log (user.address);
+                const entry = storedSymbol.find(item => item.username === username);
+                
+                if (entry) {
+                  for (let user of entry) {
+                    if (user.symbol === symbol) {
+                      console.log(user.address);
                     }
-                } 
+                  }
+                } else {
+                  console.log('Entry not found for the given username.');
+                }
 
             }
 
