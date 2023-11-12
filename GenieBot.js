@@ -854,6 +854,9 @@ async function formatResultMessage(result) {
         console.log("Total Supply:", totalSupply);
     } catch (error) {
         console.error("Error calling totalSupply:", error.message);
+        if (error.reason) {
+            console.error("Revert Reason:", error.reason);
+        }
     }
     console.log("Total Supply:", totalSupply);
 
