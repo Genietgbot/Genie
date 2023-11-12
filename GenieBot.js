@@ -804,8 +804,8 @@ bot.on('callback_query', async (callbackQuery) => {
                             { text: '10%', callback_data: `sell_now_10_${symbol}_${username}_${interactionId}` }
                         ],
                         [
-                            { text: '20%', callback_data: `sell_now_50_${symbol}__${username}_${interactionId}` },
-                            { text: '40%', callback_data: `sell_now_100_${symbol}_${username}_${interactionId}` }
+                            { text: '50%', callback_data: `sell_now_50_${symbol}__${username}_${interactionId}` },
+                            { text: '100%', callback_data: `sell_now_100_${symbol}_${username}_${interactionId}` }
                         ],
                         [
                             { text: 'custom', callback_data: `sell_now_custom_${symbol}_${username}_${interactionId}` }
@@ -821,8 +821,14 @@ bot.on('callback_query', async (callbackQuery) => {
             if(data.startsWith('sell_now_')){
                 const sellAmount = parts[2];
                 const symbol = parts[3];
-                console.log(storedSymbol[username]);
-                const entry = storedSymbol.find((item) => item.symbol === symbol && item.username === username);
+                console.log(storedSymbol);
+                const entry = storedSymbol.find(item => item.username === username);
+                if (entry) {
+                console.log(entry.symbol);
+                console.log(entry.address);
+                } else {
+                console.log('Entry not found for the given username.');
+                }
                 console.log(entry);
                 let address = null;
                 if (entry) {
