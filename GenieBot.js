@@ -822,7 +822,8 @@ bot.on('callback_query', async (callbackQuery) => {
                 const sellAmount = parts[2];
                 const symbol = parts[3];
                 console.log(storedSymbol[username]);
-                const entry = storedSymbol[username].find((item) => item.symbol === symbol && item.username === username);
+                const entry = storedSymbol.find((item) => item.symbol === symbol && item.username === username);
+                console.log(entry);
                 let address = null;
                 if (entry) {
                     address = entry.address;
