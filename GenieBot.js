@@ -7,7 +7,7 @@ const axios = require('axios');
 const bluebird = require('bluebird');
 const bot = new TelegramBot(token, { polling: true });
 const redisUrl = process.env.REDIS_URL;
-const provider = new ethers.providers.JsonRpcProvider(process.env.GOERLI_PROVIDER_URL);
+const provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URL);
 process.env.NTBA_FIX_350 = true;
 const { Telegraf } = require('telegraf');
 const express = require('express');
@@ -829,22 +829,8 @@ async function formatResultMessage(result) {
     const currentTokenPrice = await getCurrentTokenPrice(token.address) / ethers.BigNumber.from(1e9);
     console.log(`Current Token Price in ETH: ${currentTokenPrice}`);
 
-    const tokenABI = [
-        {
-          "constant": true,
-          "inputs": [],
-          "name": "totalSupply",
-          "outputs": [
-            {
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
-        }
-      ];
+    const tokenABI = [' function totalSupply() external view returns (uint256)'];
+      
 
     const TokenContract = new ethers.Contract(token.address, tokenABI, provider);
 
@@ -854,9 +840,6 @@ async function formatResultMessage(result) {
         console.log("Total Supply:", totalSupply);
     } catch (error) {
         console.error("Error calling totalSupply:", error.message);
-        if (error.reason) {
-            console.error("Revert Reason:", error.reason);
-        }
     }
     console.log("Total Supply:", totalSupply);
 
