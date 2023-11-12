@@ -822,14 +822,12 @@ async function checkHoneypot(address) {
 }
 async function formatResultMessage(result) {
     const token = result.token;
-    const withToken = result.withToken;
-    const pair = result.pair.pair;
     const honeypotResult = result.honeypotResult;
 
     console.log("Start formatting message...");
-
+    console.log("Token Address: ", token.address);
     const currentTokenPrice = await getCurrentTokenPrice(token.address) / ethers.BigNumber.from(1e9);
-    console.log("Current Token Price:", currentTokenPrice);
+    console.log(`Current Token Price in ETH: ${currentTokenPrice}`);
 
     const tokenABI = [
         {
@@ -850,7 +848,12 @@ async function formatResultMessage(result) {
     const TokenContract = new ethers.Contract(token.address, tokenABI, provider);
 
     console.log("Calling totalSupply...");
-    const totalSupply = await TokenContract.totalSupply();
+    try {
+        const totalSupply = await TokenContract.totalSupply();
+        console.log("Total Supply:", totalSupply);
+    } catch (error) {
+        console.error("Error calling totalSupply:", error.message);
+    }
     console.log("Total Supply:", totalSupply);
 
     const formattedMessage = `🔬  ${token.name} (${token.symbol})  -  Chain: ${result.chain.currency}  🔬\n\n` +
@@ -865,7 +868,6 @@ async function formatResultMessage(result) {
     return formattedMessage;
 }
 
-// Add more console.log statements as needed for debugging
 
 function calculateMarketcap(currentTokenPrice, totalSupply) {
     const marketcap = totalSupply * currentTokenPrice;
