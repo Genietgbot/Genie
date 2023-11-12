@@ -795,7 +795,7 @@ bot.on('callback_query', async (callbackQuery) => {
             }
 
             if (data.startsWith('sell_symbol_')) {
-                const symbol = parts[3];
+                const symbol = parts[2];
                 
                 const sellNowKeyboard = {
                     inline_keyboard: [
@@ -820,6 +820,7 @@ bot.on('callback_query', async (callbackQuery) => {
 
             if(data.startsWith('sell_now_')){
                 const sellAmount = parts[2];
+                const symbol = parts[3];
                 const entry = storedSymbol.find((item) => item.symbol === symbol && item.username === username);
                 const address = null;
                 if (entry) {
