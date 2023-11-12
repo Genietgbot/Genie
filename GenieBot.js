@@ -301,7 +301,7 @@ bot.onText(/^\/?(0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
       const result = await checkHoneypot(address);
   
       // Handle and send the result to the user
-      const message = formatResultMessage(result);
+      const message = await formatResultMessage(result);
       bot.sendMessage(msg.from.id, message);
     } catch (error) {
       bot.sendMessage(msg.from.id, 'Error checking honeypot status.');
@@ -830,14 +830,14 @@ async function formatResultMessage(result) {
     const formattedMessage = `🔬  ${token.name} (${token.symbol})  -  Chain: ${result.chain.currency}  🔬\n\n` +
                             `Links: Etherscan (https://etherscan.io/token/${token.address})  -  📈Chart (https://geckoterminal.com/eth/tokens/${token.address})\n` +
                             `Supply: ${token.totalHolders} ⬩ Decimals: ${token.decimals}\n` +
-                            `Marketcap: $${calculateMarketcap(token)}\n` +
+                            `Marketcap: $${calculateMarketcap(token, currentTokenPrice)}\n` +
                             `Price: $${currentTokenPrice}\n` +
                             `CA: ${token.address}\n\n` +
                             `Honeypot Check: ${honeypotResult.isHoneypot ? 'Seems like a honeypot' : 'Doesn\'t seem like a honeypot'} (https://honeypot.is/ethereum?address=${token.address}) ${honeypotResult.isHoneypot ? '❌' : '✅'}`;
 
     return formattedMessage;
 }
-function calculateMarketcap(token) {
-    const marketcap = token.totalHolders * getCurrentTokenPrice(token.address);
+function calculateMarketcap(token, currentTokenPrice) {
+    const marketcap = token.totalHolders * currentTokenPrice;
     return marketcap.toFixed(2);
 }
