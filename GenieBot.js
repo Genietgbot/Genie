@@ -101,6 +101,9 @@ bot.onText(/\/start/i, async (msg) => {
                     { text: '💼 Wallet Information', callback_data: `info_${userID}` },
                     { text: '⚙️ Settings', callback_data: `settings_${userID}` }
                 ],
+                [
+                    { text: '📉 Sell', callback_data: `sell_${userID}` },
+                ],
             ]
         };
 
@@ -816,7 +819,6 @@ async function getCurrentTokenPrice(tokenAddress) {
         return error;
     }
 };
-
 async function checkHoneypot(address) {
     try {
       const response = await fetch(`https://api.honeypot.is/v2/IsHoneypot?address=${address}`);
@@ -827,13 +829,11 @@ async function checkHoneypot(address) {
       throw error;
     }
 }
-
 async function formatResultMessage(result) {
     const token = result.token;
     const honeypotResult = result.honeypotResult;
     console.log(result.pair.pair.address);
 
-    const decimals = 18;
     const reserve0 = result.pair.reserves0;
     const reserve1 = result.pair.reserves1;
 
@@ -866,7 +866,6 @@ async function formatResultMessage(result) {
 
     return formattedMessage;
 }
-
 function calculateMarketcap(currentTokenPrice, totalSupply) {
     const marketcap = totalSupply * currentTokenPrice;
     return marketcap.toFixed(2);
