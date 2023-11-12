@@ -821,7 +821,28 @@ async function checkHoneypot(address) {
     }
 }
 function formatResultMessage(result) {
-    // Customize this function based on the structure of the result from honeypot.is
-    // You can extract relevant information and format the message as needed
-    return JSON.stringify(result, null, 2);
+    const token = result.token;
+    const withToken = result.withToken;
+    const pair = result.pair.pair;
+    const honeypotResult = result.honeypotResult;
+
+    // Format information
+    const formattedMessage = `🔬  ${token.name} (${token.symbol})  -  Chain: ${result.chain.currency}  🔬\n\n` +
+                            `Links: Etherscan (https://etherscan.io/token/${token.address})  -  📈Chart (https://geckoterminal.com/eth/tokens/${token.address})\n` +
+                            `Supply: ${token.totalHolders} ⬩ Decimals: ${token.decimals}\n` +
+                            `Marketcap: $${calculateMarketcap(token)}\n` +
+                            `Price: $${calculatePrice(pair.reserves0, pair.reserves1, token.decimals, withToken.decimals)}\n` +
+                            `CA: ${token.address}\n\n` +
+                            `Honeypot Check: ${honeypotResult.isHoneypot ? 'Seems like a honeypot' : 'Doesn\'t seem like a honeypot'} (https://honeypot.is/ethereum?address=${token.address}) ${honeypotResult.isHoneypot ? '❌' : '✅'}`;
+
+    return formattedMessage;
+}
+function calculateMarketcap(token) {
+    // Assuming the marketcap is calculated based on total holders
+    const marketcap = token.totalHolders * calculatePrice(1, 1, token.decimals, token.decimals);
+    return marketcap.toFixed(2);
+}
+function calculatePrice(reserves0, reserves1, decimals0, decimals1) {
+    const price = (reserves1 / reserves0) * 10 ** (decimals0 - decimals1);
+    return price.toFixed(12);
 }
