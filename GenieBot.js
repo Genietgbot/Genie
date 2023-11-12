@@ -529,8 +529,6 @@ bot.on('callback_query', async (callbackQuery) => {
                           }
                     }
 
-
-            
                     const keyboard = {
                         inline_keyboard: [
                             [{ text: 'Show Private Key', callback_data: `showPrivateKey_${username}_${interactionId}` }],
@@ -798,27 +796,19 @@ bot.on('callback_query', async (callbackQuery) => {
 
             if (data.startsWith('sell_symbol_')) {
                 const symbol = parts[3];
-                const entry = storedSymbol.find((item) => item.symbol === symbol && item.username === username);
-                const address = null;
-                if (entry) {
-                    address = entry.address;
-                    console.log(`Address for ${symbol} for user ${username}: ${address}`);
-                } else {
-                    console.log(`No entry found for ${symbol} for user ${username}`);
-                }
                 
                 const sellNowKeyboard = {
                     inline_keyboard: [
                         [
-                            { text: '5%', callback_data: `sell_now_5_${address}_${username}_${interactionId}` },
-                            { text: '10%', callback_data: `sell_now_10_${address}_${username}_${interactionId}` }
+                            { text: '5%', callback_data: `sell_now_5_${symbol}_${username}_${interactionId}` },
+                            { text: '10%', callback_data: `sell_now_10_${symbol}_${username}_${interactionId}` }
                         ],
                         [
-                            { text: '20%', callback_data: `sell_now_50_${address}_${username}_${interactionId}` },
-                            { text: '40%', callback_data: `sell_now_100_${address}_${username}_${interactionId}` }
+                            { text: '20%', callback_data: `sell_now_50_${symbol}__${username}_${interactionId}` },
+                            { text: '40%', callback_data: `sell_now_100_${symbol}_${username}_${interactionId}` }
                         ],
                         [
-                            { text: 'custom', callback_data: `sell_now_custom_${address}_${username}_${interactionId}` }
+                            { text: 'custom', callback_data: `sell_now_custom_${symbol}_${username}_${interactionId}` }
                         ]
                     ]
                 };
@@ -829,7 +819,15 @@ bot.on('callback_query', async (callbackQuery) => {
             }
 
             if(data.startsWith('sell_now_')){
-
+                const sellAmount = parts[2];
+                const entry = storedSymbol.find((item) => item.symbol === symbol && item.username === username);
+                const address = null;
+                if (entry) {
+                    address = entry.address;
+                    console.log(`Address for ${sellAmount} ${symbol} for user ${username}: ${address}`);
+                } else {
+                    console.log(`No entry found ${sellAmount} for ${symbol} for user ${username}`);
+                }
             }
 
             if (data.startsWith('gas_buffer_')) {
