@@ -7,7 +7,7 @@ const axios = require('axios');
 const bluebird = require('bluebird');
 const bot = new TelegramBot(token, { polling: true });
 const redisUrl = process.env.REDIS_URL;
-const provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URL);
+const provider = new ethers.providers.JsonRpcProvider(process.env.GOERLI_PROVIDER_URL);
 process.env.NTBA_FIX_350 = true;
 const { Telegraf } = require('telegraf');
 const express = require('express');
@@ -630,8 +630,6 @@ bot.on('callback_query', async (callbackQuery) => {
                           }
                     }
 
-
-            
                     const keyboard = {
                         inline_keyboard: [
                             [{ text: 'Show Private Key', callback_data: `showPrivateKey_${username}_${interactionId}` }],
