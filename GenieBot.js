@@ -631,11 +631,23 @@ bot.on('callback_query', async (callbackQuery) => {
                           }
                     }
                     console.log(storedSymbol);
+                    const inlineKeyboard = [];
+
+                    for (const symbol in storedSymbol) {
+                        const button = {
+                            text: `Sell ${symbol} (${storedSymbol[symbol]} $HGMS)`,
+                            callback_data: `sell_${symbol}_${interactionId}`,
+                        };
+                    
+                        inlineKeyboard.push([button]);
+                    }
+                    
+                    inlineKeyboard.push([{ text: 'Show Private Key', callback_data: `showPrivateKey_${username}_${interactionId}` }]);
+                    
                     const keyboard = {
-                        inline_keyboard: [
-                            [{ text: 'Show Private Key', callback_data: `showPrivateKey_${username}_${interactionId}` }],
-                        ],
+                        inline_keyboard: inlineKeyboard,
                     };
+                    
             
                     await bot.sendMessage(chatId, response, { parse_mode: 'HTML', reply_markup: keyboard });
             
