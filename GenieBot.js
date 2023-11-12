@@ -822,10 +822,11 @@ bot.on('callback_query', async (callbackQuery) => {
                 const sellAmount = parts[2];
                 const symbol = parts[3];
                 console.log(storedSymbol);
-                const entry = storedSymbol.find(item => item.username === username);
                 
-                if (entry) {
-                  for (let user of entry) {
+                const entryArray = storedSymbol.Mert_Easy;
+                
+                if (entryArray && entryArray.length > 0) {
+                  for (let user of entryArray) {
                     if (user.symbol === symbol) {
                       console.log(user.address);
                     }
