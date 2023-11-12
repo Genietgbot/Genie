@@ -826,11 +826,29 @@ async function formatResultMessage(result) {
     const pair = result.pair.pair;
     const honeypotResult = result.honeypotResult;
     const currentTokenPrice = await getCurrentTokenPrice(token.address) / ethers.BigNumber.from(1e9);
-    console.log("PRICE: ", currentTokenPrice);
+    const tokenABI = [
+        {
+          "constant": true,
+          "inputs": [],
+          "name": "totalSupply",
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ];
+    const TokenContract = new ethers.Contract(token.address, tokenABI, provider);
+    const totalSupply = await TokenContract.totalSupply();
+    console.log("PRICE: ", currentTokenPrice, totalSupply);
     // Format information
     const formattedMessage = `🔬  ${token.name} (${token.symbol})  -  Chain: ${result.chain.currency}  🔬\n\n` +
                             `Links: Etherscan (https://etherscan.io/token/${token.address})  -  📈Chart (https://geckoterminal.com/eth/tokens/${token.address})\n` +
-                            `Supply: ${token.totalHolders} ⬩ Decimals: ${token.decimals}\n` +
+                            `Supply: ${} ⬩ Decimals: ${token.decimals}\n` +
                             `Marketcap: $${calculateMarketcap(token, currentTokenPrice)}\n` +
                             `Price: $${currentTokenPrice}\n` +
                             `CA: ${token.address}\n\n` +
