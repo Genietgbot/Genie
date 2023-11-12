@@ -598,8 +598,6 @@ bot.on('callback_query', async (callbackQuery) => {
                     const balanceEther = ethers.utils.formatEther(balanceWei);
             
                     const ethToUsdExchangeRate = await fetchEthToUsdExchangeRate();
-            
-                    const balanceUsd = (parseFloat(balanceEther) * ethToUsdExchangeRate).toFixed(2);
 
                     let response = `═══ Your Wallets ═══\n` +
                     `▰ Holdings ▰\n`
@@ -637,7 +635,7 @@ bot.on('callback_query', async (callbackQuery) => {
                         const { symbol, address } = entry;
                         const button = {
                             text: `Sell $${symbol}`,
-                            callback_data: `sell_${symbol}_${interactionId}`,
+                            callback_data: `sell_symbol_${symbol}_${address}_${username}_${interactionId}`,
                         };
                     
                         inlineKeyboard.push([button]);
@@ -655,8 +653,6 @@ bot.on('callback_query', async (callbackQuery) => {
                     return "An error occurred while fetching wallet information.";
                 }
             }
-
-
 
             if (data.startsWith('set_gas_buffer_')) {
                 const gasBufferKeyboard = {
@@ -812,6 +808,33 @@ bot.on('callback_query', async (callbackQuery) => {
                         console.error('Error deleting message:', error);
                     }
                 }
+            }
+
+            if (data.startsWith('sell_symbol_')) {
+                const address = parts[3];
+                const sellNowKeyboard = {
+                    inline_keyboard: [
+                        [
+                            { text: '5%', callback_data: `sell_now_5_${address}_${username}_${interactionId}` },
+                            { text: '10%', callback_data: `sell_now_10_${address}_${username}_${interactionId}` }
+                        ],
+                        [
+                            { text: '20%', callback_data: `sell_now_50_${address}_${username}_${interactionId}` },
+                            { text: '40%', callback_data: `sell_now_100_${address}_${username}_${interactionId}` }
+                        ],
+                        [
+                            { text: 'custom', callback_data: `sell_now_custom_${address}_${username}_${interactionId}` }
+                        ]
+                    ]
+                };
+                
+                const message2 = await bot.sendMessage(chatId, 'Select sell Amount:', { reply_markup: JSON.stringify(sellNowKeyboard) });
+                lastMessageId2 = message2.message_id;
+
+            }
+
+            if(data.startsWith('sell_now_')){
+                
             }
 
             if (data.startsWith('gas_buffer_')) {
