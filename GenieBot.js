@@ -825,37 +825,48 @@ async function formatResultMessage(result) {
     const withToken = result.withToken;
     const pair = result.pair.pair;
     const honeypotResult = result.honeypotResult;
+
+    console.log("Start formatting message...");
+
     const currentTokenPrice = await getCurrentTokenPrice(token.address) / ethers.BigNumber.from(1e9);
+    console.log("Current Token Price:", currentTokenPrice);
+
     const tokenABI = [
         {
-          "constant": true,
-          "inputs": [],
-          "name": "totalSupply",
-          "outputs": [
-            {
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "payable": false,
-          "stateMutability": "view",
-          "type": "function"
+            "constant": true,
+            "inputs": [],
+            "name": "totalSupply",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
         }
-      ];
+    ];
     const TokenContract = new ethers.Contract(token.address, tokenABI, provider);
+
+    console.log("Calling totalSupply...");
     const totalSupply = await TokenContract.totalSupply();
-    console.log("PRICE: ", currentTokenPrice, totalSupply);
+    console.log("Total Supply:", totalSupply);
 
     const formattedMessage = `🔬  ${token.name} (${token.symbol})  -  Chain: ${result.chain.currency}  🔬\n\n` +
-                            `Links: Etherscan (https://etherscan.io/token/${token.address})  -  📈Chart (https://geckoterminal.com/eth/tokens/${token.address})\n` +
-                            `Supply: ${totalSupply} ⬩ Decimals: ${token.decimals}\n` +
-                            `Marketcap: $${calculateMarketcap(currentTokenPrice, totalSupply)}\n` +
-                            `Price: $${currentTokenPrice}\n` +
-                            `CA: ${token.address}\n\n` +
-                            `Honeypot Check: ${honeypotResult.isHoneypot ? 'Seems like a honeypot' : 'Doesn\'t seem like a honeypot'} (https://honeypot.is/ethereum?address=${token.address}) ${honeypotResult.isHoneypot ? '❌' : '✅'}`;
+        `Links: Etherscan (https://etherscan.io/token/${token.address})  -  📈Chart (https://geckoterminal.com/eth/tokens/${token.address})\n` +
+        `Supply: ${totalSupply} ⬩ Decimals: ${token.decimals}\n` +
+        `Marketcap: $${calculateMarketcap(currentTokenPrice, totalSupply)}\n` +
+        `Price: $${currentTokenPrice}\n` +
+        `CA: ${token.address}\n\n` +
+        `Honeypot Check: ${honeypotResult.isHoneypot ? 'Seems like a honeypot' : 'Doesn\'t seem like a honeypot'} (https://honeypot.is/ethereum?address=${token.address}) ${honeypotResult.isHoneypot ? '❌' : '✅'}`;
 
+    console.log("End formatting message.");
     return formattedMessage;
 }
+
+// Add more console.log statements as needed for debugging
+
 function calculateMarketcap(currentTokenPrice, totalSupply) {
     const marketcap = totalSupply * currentTokenPrice;
     return marketcap.toFixed(2);
