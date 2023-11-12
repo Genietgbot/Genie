@@ -821,6 +821,7 @@ bot.on('callback_query', async (callbackQuery) => {
             if(data.startsWith('sell_now_')){
                 const sellAmount = parts[2];
                 const symbol = parts[3];
+                console.log(storedSymbol);
                 const entry = storedSymbol.find((item) => item.symbol === symbol && item.username === username);
                 const address = null;
                 if (entry) {
