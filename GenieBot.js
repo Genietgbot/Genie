@@ -831,20 +831,22 @@ async function formatResultMessage(result) {
 
     const tokenABI = [
         {
-			"inputs": [],
-			"name": "totalSupply",
-			"outputs": [
-				{
-					"internalType": "uint256",
-					"name": "",
-					"type": "uint256"
-				}
-			],
-			"stateMutability": "view",
-			"type": "function"
-		}
-    ];
-    
+          "constant": true,
+          "inputs": [],
+          "name": "totalSupply",
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ];
+      
+
     const TokenContract = new ethers.Contract(token.address, tokenABI, provider);
 
     console.log("Calling totalSupply...");
