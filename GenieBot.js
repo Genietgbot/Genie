@@ -788,28 +788,38 @@ async function fetchEthToUsdExchangeRate() {
 }
 const getCurrentTokenPrice = async (tokenAddress) => {
     try {
-        const wethAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'; 
+        const wethAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
 
-        // Get the pair address from the factory
         const factoryAddress = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f';
         const factoryABI = ['function getPair(address tokenA, address tokenB) external view returns (address pair)'];
         const factoryContract = new ethers.Contract(factoryAddress, factoryABI, provider);
         const pairAddress = await factoryContract.getPair(wethAddress, tokenAddress);
 
+        console.log('Pair Address:', pairAddress); // Log pair address for debugging
+
         const pairABI = ['function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)'];
         const pairContract = new ethers.Contract(pairAddress, pairABI, provider);
         const { reserve0, reserve1 } = await pairContract.getReserves();
 
-        const decimals = 18; // Assuming 18 decimal places for both token and Ether
+        console.log('Reserve0:', reserve0, 'Reserve1:', reserve1); // Log reserves for debugging
 
-        // Calculate the token price in terms of Ether with decimal adjustment
+        const decimals = 18;
+
+        if (reserve0 === 0 || reserve1 === 0) {
+            throw new Error('Reserve values are zero, potential division by zero');
+        }
+
         const tokenPriceInEth = (reserve1 / 10**decimals) / (reserve0 / 10**decimals);
+
+        console.log('Token Price in ETH:', tokenPriceInEth); // Log token price for debugging
 
         return tokenPriceInEth;
     } catch (error) {
+        console.error('Error:', error);
         return error;
     }
 };
+
 async function checkHoneypot(address) {
     try {
       const response = await fetch(`https://api.honeypot.is/v2/IsHoneypot?address=${address}`);
@@ -831,17 +841,11 @@ async function formatResultMessage(result) {
 
     const tokenABI = [' function totalSupply() external view returns (uint256)'];
       
-
     const TokenContract = new ethers.Contract(token.address, tokenABI, provider);
-
     console.log("Calling totalSupply...");
-    try {
-        const totalSupply = await TokenContract.totalSupply();
-        console.log("Total Supply:", totalSupply);
-    } catch (error) {
-        console.error("Error calling totalSupply:", error.message);
-    }
-    console.log("Total Supply:", totalSupply);
+    const totalSupply = await TokenContract.totalSupply();
+    console.log("Total Supply:", totalSupply.toString());
+
 
     const formattedMessage = `🔬  ${token.name} (${token.symbol})  -  Chain: ${result.chain.currency}  🔬\n\n` +
         `Links: Etherscan (https://etherscan.io/token/${token.address})  -  📈Chart (https://geckoterminal.com/eth/tokens/${token.address})\n` +
