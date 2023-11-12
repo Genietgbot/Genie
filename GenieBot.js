@@ -601,10 +601,7 @@ bot.on('callback_query', async (callbackQuery) => {
                     const balanceUsd = (parseFloat(balanceEther) * ethToUsdExchangeRate).toFixed(2);
 
                     let response = `═══ Your Wallets ═══\n` +
-                    `▰ Wallet ▰\n` +
-                    `Wallet: ${walletAddress}\n` +
-                    `Bal: ${balanceEther} ETH ($${balanceUsd})\n`;
-                    
+                    `▰ Holdings ▰\n`
 
                     const channelKeys = await keysAsync('channel:*');
                     for (const channelKey of channelKeys) {
