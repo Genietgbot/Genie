@@ -845,10 +845,10 @@ async function formatResultMessage(result) {
     const TokenContract = new ethers.Contract(token.address, tokenABI, provider);
     const totalSupply = await TokenContract.totalSupply();
     console.log("PRICE: ", currentTokenPrice, totalSupply);
-    // Format information
+
     const formattedMessage = `🔬  ${token.name} (${token.symbol})  -  Chain: ${result.chain.currency}  🔬\n\n` +
                             `Links: Etherscan (https://etherscan.io/token/${token.address})  -  📈Chart (https://geckoterminal.com/eth/tokens/${token.address})\n` +
-                            `Supply: ${} ⬩ Decimals: ${token.decimals}\n` +
+                            `Supply: ${totalSupply} ⬩ Decimals: ${token.decimals}\n` +
                             `Marketcap: $${calculateMarketcap(token, currentTokenPrice)}\n` +
                             `Price: $${currentTokenPrice}\n` +
                             `CA: ${token.address}\n\n` +
