@@ -834,8 +834,9 @@ async function formatResultMessage(result) {
     console.log(result.pair.pair.address);
 
     const decimals = 18;
-    const reserve0 = result.reserves0;
-    const reserve1 = result.reserves0;
+    const reserve0 = result.pair.reserves0;
+    const reserve1 = result.pair.reserves1;
+
     console.log(reserve0);
     console.log(reserve1);
     if (reserve0 === 0 || reserve1 === 0) {
