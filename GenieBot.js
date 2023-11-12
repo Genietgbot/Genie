@@ -791,7 +791,7 @@ async function getCurrentTokenPrice(tokenAddress, pairAddress = null) {
         const factoryAddress = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f';
         const factoryABI = ['function getPair(address tokenA, address tokenB) external view returns (address pair)'];
         const factoryContract = new ethers.Contract(factoryAddress, factoryABI, provider);
-        if(!pairAddress){
+        if(pairAddress == null){
         const pairAddress = await factoryContract.getPair(wethAddress, tokenAddress);
         }
 
