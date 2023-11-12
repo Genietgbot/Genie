@@ -286,7 +286,26 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
         }
     }
 });
-
+bot.onText(/^\/?(0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
+    const address = match[1];
+  
+    // Validate Ethereum address
+    if (!web3.utils.isAddress(address)) {
+      return bot.reply(msg.from.id, 'Invalid Ethereum address.');
+    }
+  
+    try {
+      // Check honeypot status
+      const result = await checkHoneypot(address);
+  
+      // Handle and send the result to the user
+      const message = formatResultMessage(result);
+      bot.reply(msg.from.id, message);
+    } catch (error) {
+      bot.reply(msg.from.id, 'Error checking honeypot status.');
+    }
+  });
+  
 
 bot.on('callback_query', async (callbackQuery) => {
     const data = callbackQuery.data;
@@ -789,3 +808,18 @@ const getCurrentTokenPrice = async (tokenAddress) => {
         return error;
     }
 };
+async function checkHoneypot(address) {
+    try {
+      const response = await fetch(`https://api.honeypot.is/v2/IsHoneypot?address=${address}`);
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error checking honeypot:', error);
+      throw error;
+    }
+  }
+function formatResultMessage(result) {
+    // Customize this function based on the structure of the result from honeypot.is
+    // You can extract relevant information and format the message as needed
+    return JSON.stringify(result, null, 2);
+}
