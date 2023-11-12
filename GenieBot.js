@@ -788,7 +788,7 @@ async function fetchEthToUsdExchangeRate() {
 }
 const getCurrentTokenPrice = async (tokenAddress) => {
     try {
-        const wethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6'; 
+        const wethAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'; 
 
         // Get the pair address from the factory
         const factoryAddress = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f';
@@ -844,6 +844,7 @@ async function formatResultMessage(result) {
 			"type": "function"
 		}
     ];
+    
     const TokenContract = new ethers.Contract(token.address, tokenABI, provider);
 
     console.log("Calling totalSupply...");
