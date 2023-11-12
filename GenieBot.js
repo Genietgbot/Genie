@@ -182,7 +182,6 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
             await bot.sendMessage(chatId, missingInfoMessage);
         } else {
             try {
-                
                 const privateKey = JSON.parse(walletInfo).privateKey;
                 const wallet = new ethers.Wallet(privateKey, provider);
                 
@@ -201,19 +200,10 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 console.log('Amount to Buy:', amountToBuy);
                 console.log('Slippage Percentage:', slippagePercentage);
 
-
                 const currentTokenPrice = await getCurrentTokenPrice(tokenToBuyAddress) / ethers.BigNumber.from(1e9);
                 console.log(`Current Token Price in ETH: ${currentTokenPrice}`);
 
                 const amountOutMinWithSlippage = Math.round((amountToBuy * (1 - slippagePercentage / 100) / currentTokenPrice) * 1e9);
-                console.log('AmountToBuy - Value:', amountToBuy);
-                console.log('AmountToBuy - Type:', typeof amountToBuy);
-                console.log('Slippage Percentage - Value:', slippagePercentage);
-                console.log('Slippage Percentage - Type:', typeof slippagePercentage);
-                console.log('Current Token Price in ETH - Value:', currentTokenPrice);
-                console.log('Current Token Price in ETH - Type:', typeof currentTokenPrice);
-                console.log('AmountOutMin with Slippage - Value:', amountOutMinWithSlippage);
-                console.log('AmountOutMin with Slippage - Type:', typeof amountOutMinWithSlippage);
 
                 const gasPrice = await provider.getGasPrice();
                 console.log('Current Gas Price:', gasPrice.toString());
@@ -593,11 +583,6 @@ bot.on('callback_query', async (callbackQuery) => {
             
                     const walletInfo = JSON.parse(walletInfoString);
                     const walletAddress = walletInfo.address;
-            
-                    const balanceWei = await provider.getBalance(walletAddress);
-                    const balanceEther = ethers.utils.formatEther(balanceWei);
-            
-                    const ethToUsdExchangeRate = await fetchEthToUsdExchangeRate();
 
                     let response = `═══ Your Wallets ═══\n` +
                     `▰ Holdings ▰\n`
@@ -635,7 +620,7 @@ bot.on('callback_query', async (callbackQuery) => {
                         const { symbol, address } = entry;
                         const button = {
                             text: `Sell $${symbol}`,
-                            callback_data: `sell_symbol_${symbol}_${address}_${username}_${interactionId}`,
+                            callback_data: `sell_symbol_${symbol}_${username}_${interactionId}`,
                         };
                     
                         inlineKeyboard.push([button]);
@@ -834,7 +819,7 @@ bot.on('callback_query', async (callbackQuery) => {
             }
 
             if(data.startsWith('sell_now_')){
-                
+
             }
 
             if (data.startsWith('gas_buffer_')) {
