@@ -603,39 +603,40 @@ bot.on('callback_query', async (callbackQuery) => {
                     let response = `═══ Your Wallets ═══\n` +
                         `▰ Holdings ▰\n`
             
-                    const inlineKeyboard = [];
-                    const channelKeys = await keysAsync('channel:*');
-                    for (const channelKey of channelKeys) {
-                        const contractAddress = await getAsync(channelKey);
-                        const tokenContract = new ethers.Contract(
-                            contractAddress,
-                            [
-                                'function symbol() view returns (string)',
-                                'function balanceOf(address account) view returns (uint256)',
-                            ],
-                            provider
-                        );
-                        try {
-                            const tokenSymbol = await tokenContract.symbol();
-            
-                            const userBalanceWei = await tokenContract.balanceOf(walletAddress);
-                            const userBalanceToken = userBalanceWei / 1e9;
-            
-                            console.log(`Contract Address: ${contractAddress}, Token Symbol: ${tokenSymbol}`);
-                            if (userBalanceToken > 0) {
-                                response += `\n${tokenSymbol} Bal: ${userBalanceToken} $HGMS`;
-            
-                                // Create an inline button for each token
-                                inlineKeyboard.push([{ text: `Sell ${tokenSymbol}`, callback_data: `sell_${contractAddress}_${interactionId}` }]);
+                        const inlineKeyboard = [];
+                        const channelKeys = await keysAsync('channel:*');
+                        for (const channelKey of channelKeys) {
+                            const contractAddress = await getAsync(channelKey);
+                            const tokenContract = new ethers.Contract(
+                                contractAddress,
+                                [
+                                    'function symbol() view returns (string)',
+                                    'function balanceOf(address account) view returns (uint256)',
+                                ],
+                                provider
+                            );
+                            try {
+                                const tokenSymbol = await tokenContract.symbol();
+                        
+                                const userBalanceWei = await tokenContract.balanceOf(walletAddress);
+                                const userBalanceToken = userBalanceWei / 1e9;
+                        
+                                console.log(`Contract Address: ${contractAddress}, Token Symbol: ${tokenSymbol}`);
+                                if (userBalanceToken > 0) {
+                                    response += `\n${tokenSymbol} Bal: ${userBalanceToken} $HGMS`;
+                        
+                                    // Use proper string formatting for callback_data
+                                    const callbackData = `sell_${contractAddress}_${interactionId}`;
+                                    inlineKeyboard.push([{ text: `Sell ${tokenSymbol}`, callback_data: callbackData }]);
+                                }
+                            } catch (error) {
+                                console.error(`Error fetching data for contract address ${contractAddress}:`, error);
                             }
-                        } catch (error) {
-                            console.error(`Error fetching data for contract address ${contractAddress}:`, error);
                         }
-                    }
-            
-                    const keyboard = {
-                        inline_keyboard: inlineKeyboard,
-                    };
+                        
+                        const keyboard = {
+                            inline_keyboard: inlineKeyboard,
+                        };
             
                     await bot.sendMessage(chatId, response, { parse_mode: 'HTML', reply_markup: keyboard });
             
