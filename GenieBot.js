@@ -823,7 +823,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 const symbol = parts[3];
                 console.log(storedSymbol);
                 console.log(username);
-                const entryArray = storedSymbol.username;
+                const entryArray = storedSymbol[username];
                 
                 if (entryArray && entryArray.length > 0) {
                   for (let user of entryArray) {
