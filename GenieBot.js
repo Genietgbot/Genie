@@ -846,7 +846,7 @@ async function formatResultMessage(result) {
         `Marketcap: $${calculateMarketcap(currentTokenPriceUSD, totalSupply)}\n` +
         `Price: $${currentTokenPriceUSD}\n` +
         `CA: [${token.address}](https://etherscan.io/address/${token.address})\n\n` +
-        `${honeypotResult.isHoneypot ? 'Seems like a honeypot' : 'Doesn\'t seem like a honeypot'} ([🚫](https://honeypot.is/ethereum?address=${token.address})) ${honeypotResult.isHoneypot ? '❌' : '✅'}`;
+        `${honeypotResult.isHoneypot ? 'Seems like a honeypot' : 'Doesn\'t seem like a honeypot'} [🚫](https://honeypot.is/ethereum?address=${token.address}) ${honeypotResult.isHoneypot ? '❌' : '✅'}`;
 
     return formattedMessage;
 }
