@@ -823,7 +823,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 const symbol = parts[3];
                 console.log(storedSymbol);
                 const entry = storedSymbol.find((item) => item.symbol === symbol && item.username === username);
-                const address = null;
+                let address = null;
                 if (entry) {
                     address = entry.address;
                     console.log(`Address for ${sellAmount} ${symbol} for user ${username}: ${address}`);
