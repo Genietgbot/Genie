@@ -839,13 +839,13 @@ async function formatResultMessage(result) {
 
     console.log(reserve0);
     console.log(reserve1);
-    
+
     if (reserve0 === 0 || reserve1 === 0) {
         throw new Error('Reserve values are zero, potential division by zero');
     }
 
-    const tokenPriceInEth = (reserve1 / 10**decimals) / (reserve0 / 10**decimals);
-    const currentTokenPrice = tokenPriceInEth / 1e9;
+    const tokenPriceInEth = (reserve1) / (reserve0);
+    const currentTokenPrice = tokenPriceInEth;
     console.log('Token Price in ETH:', currentTokenPrice); 
 
     const currentTokenPriceUSD = await fetchEthToUsdExchangeRate() * currentTokenPrice;
