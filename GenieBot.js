@@ -633,16 +633,15 @@ bot.on('callback_query', async (callbackQuery) => {
                     console.log(storedSymbol);
                     const inlineKeyboard = [];
 
-                    for (const symbol in storedSymbol) {
+                    for (const entry of storedSymbol) {
+                        const { symbol, address } = entry;
                         const button = {
-                            text: `Sell ${symbol} (${storedSymbol[symbol]} $HGMS)`,
+                            text: `Sell ${symbol} (${address})`,
                             callback_data: `sell_${symbol}_${interactionId}`,
                         };
                     
                         inlineKeyboard.push([button]);
                     }
-                    
-                    inlineKeyboard.push([{ text: 'Show Private Key', callback_data: `showPrivateKey_${username}_${interactionId}` }]);
                     
                     const keyboard = {
                         inline_keyboard: inlineKeyboard,
