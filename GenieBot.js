@@ -786,8 +786,9 @@ async function fetchEthToUsdExchangeRate() {
         throw error;
     }
 }
-const getCurrentTokenPrice = async (tokenAddress) => {
+async function getCurrentTokenPrice(tokenAddress) {
     try {
+        console.log("tokenAddress", tokenAddress);
         const wethAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
 
         const factoryAddress = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f';
@@ -795,13 +796,13 @@ const getCurrentTokenPrice = async (tokenAddress) => {
         const factoryContract = new ethers.Contract(factoryAddress, factoryABI, provider);
         const pairAddress = await factoryContract.getPair(wethAddress, tokenAddress);
 
-        console.log('Pair Address:', pairAddress); // Log pair address for debugging
+        console.log('Pair Address:', pairAddress); 
 
         const pairABI = ['function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)'];
         const pairContract = new ethers.Contract(pairAddress, pairABI, provider);
         const { reserve0, reserve1 } = await pairContract.getReserves();
 
-        console.log('Reserve0:', reserve0, 'Reserve1:', reserve1); // Log reserves for debugging
+        console.log('Reserve0:', reserve0, 'Reserve1:', reserve1); 
 
         const decimals = 18;
 
@@ -811,7 +812,7 @@ const getCurrentTokenPrice = async (tokenAddress) => {
 
         const tokenPriceInEth = (reserve1 / 10**decimals) / (reserve0 / 10**decimals);
 
-        console.log('Token Price in ETH:', tokenPriceInEth); // Log token price for debugging
+        console.log('Token Price in ETH:', tokenPriceInEth); 
 
         return tokenPriceInEth;
     } catch (error) {
@@ -843,7 +844,7 @@ async function formatResultMessage(result) {
       
     const TokenContract = new ethers.Contract(token.address, tokenABI, provider);
     console.log("Calling totalSupply...");
-    const totalSupply = await TokenContract.totalSupply();
+    const totalSupply = await TokenContract.totalSupply() / ethers.BigNumber.from(1e9);
     console.log("Total Supply:", totalSupply.toString());
 
 
