@@ -291,18 +291,16 @@ bot.onText(/^\/?(0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
     if (msg.chat.type === 'private') {
     const address = match[1];
   
-    // Validate Ethereum address using ethers.js
     if (!ethers.utils.isAddress(address)) {
       return bot.sendMessage(msg.from.id, 'Invalid Ethereum address.');
     }
   
     try {
-      // Check honeypot status
       const result = await checkHoneypot(address);
-  
-      // Handle and send the result to the user
+      
       const message = await formatResultMessage(result);
-      bot.sendMessage(msg.from.id, message);
+      bot.sendMessage(msg.from.id, message, { parse_mode: 'Markdown' });
+      
     } catch (error) {
       bot.sendMessage(msg.from.id, 'Error checking honeypot status.');
     }
