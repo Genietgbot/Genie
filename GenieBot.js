@@ -834,32 +834,23 @@ async function checkHoneypot(address) {
 async function formatResultMessage(result) {
     const token = result.token;
     const honeypotResult = result.honeypotResult;
-
-    console.log("Start formatting message...");
-    console.log("Token Address: ", token.address);
     const currentTokenPrice = await getCurrentTokenPrice(token.address) / ethers.BigNumber.from(1e9);
-    console.log(`Current Token Price in ETH: ${currentTokenPrice}`);
     const currentTokenPriceUSD = await fetchEthToUsdExchangeRate() * currentTokenPrice;
-    console.log(`Current Token Price in ETH: ${currentTokenPriceUSD}`);
     const tokenABI = [' function totalSupply() external view returns (uint256)'];
-      
     const TokenContract = new ethers.Contract(token.address, tokenABI, provider);
-    console.log("Calling totalSupply...");
     const totalSupply = await TokenContract.totalSupply() / 1e9;
-    console.log("Total Supply:", totalSupply.toString());
 
-
-    const formattedMessage = `🔬  ${token.name} (${token.symbol})  -  Chain: ${result.chain.currency}  🔬\n\n` +
-        `Links: Etherscan (https://etherscan.io/token/${token.address})  -  📈Chart (https://geckoterminal.com/eth/tokens/${token.address})\n` +
+    const formattedMessage = `🔬  [${token.name} (${token.symbol})](https://etherscan.io/token/${token.address})  -  Chain: ${result.chain.currency}  🔬\n\n` +
+        `Links: [Etherscan](https://etherscan.io/token/${token.address})  -  [📈Chart](https://geckoterminal.com/eth/tokens/${token.address})\n` +
         `Supply: ${totalSupply} ⬩ Decimals: ${token.decimals}\n` +
         `Marketcap: $${calculateMarketcap(currentTokenPriceUSD, totalSupply)}\n` +
         `Price: $${currentTokenPriceUSD}\n` +
-        `CA: ${token.address}\n\n` +
-        `Honeypot Check: ${honeypotResult.isHoneypot ? 'Seems like a honeypot' : 'Doesn\'t seem like a honeypot'} (https://honeypot.is/ethereum?address=${token.address}) ${honeypotResult.isHoneypot ? '❌' : '✅'}`;
+        `CA: [${token.address}](https://etherscan.io/address/${token.address})\n\n` +
+        `${honeypotResult.isHoneypot ? 'Seems like a honeypot' : 'Doesn\'t seem like a honeypot'} ([🚫](https://honeypot.is/ethereum?address=${token.address})) ${honeypotResult.isHoneypot ? '❌' : '✅'}`;
 
-    console.log("End formatting message.");
     return formattedMessage;
 }
+
 
 
 function calculateMarketcap(currentTokenPrice, totalSupply) {
