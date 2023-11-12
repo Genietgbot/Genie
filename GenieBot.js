@@ -9,7 +9,8 @@ const bot = new TelegramBot(token, { polling: true });
 const redisUrl = process.env.REDIS_URL;
 const provider = new ethers.providers.JsonRpcProvider(process.env.GOERLI_PROVIDER_URL);
 process.env.NTBA_FIX_350 = true;
-const sharp = require('sharp');
+const { Telegraf } = require('telegraf');
+const fetch = require('node-fetch');
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -286,25 +287,23 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
         }
     }
 });
+
 bot.onText(/^\/?(0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
     const address = match[1];
-  
-    // Validate Ethereum address
+
     if (!web3.utils.isAddress(address)) {
       return bot.reply(msg.from.id, 'Invalid Ethereum address.');
     }
   
     try {
-      // Check honeypot status
       const result = await checkHoneypot(address);
   
-      // Handle and send the result to the user
       const message = formatResultMessage(result);
       bot.reply(msg.from.id, message);
     } catch (error) {
       bot.reply(msg.from.id, 'Error checking honeypot status.');
     }
-  });
+});
   
 
 bot.on('callback_query', async (callbackQuery) => {
