@@ -102,7 +102,7 @@ bot.onText(/\/start/i, async (msg) => {
                     { text: '⚙️ Settings', callback_data: `settings_${userID}` }
                 ],
                 [
-                    { text: '📉 Sell', callback_data: `sell_${userID}` },
+                    { text: '📉 Sell', callback_data: `asell_${userID}` },
                 ],
             ]
         };
@@ -569,7 +569,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 }
             }
             
-            if(action === 'sell') {
+            if(action === 'asell') {
                 try {
                     storedSymbol[username] = [];
                     const walletInfoString = await getAsync(`wallets:${interactions[interactionId].username}`);
@@ -823,7 +823,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 const symbol = parts[3];
                 console.log(storedSymbol);
                 
-                const entryArray = storedSymbol.Mert_Easy;
+                const entryArray = storedSymbol.username;
                 
                 if (entryArray && entryArray.length > 0) {
                   for (let user of entryArray) {
