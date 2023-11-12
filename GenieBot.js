@@ -636,7 +636,7 @@ bot.on('callback_query', async (callbackQuery) => {
                     for (const entry of storedSymbol) {
                         const { symbol, address } = entry;
                         const button = {
-                            text: `Sell ${symbol} (${address})`,
+                            text: `Sell $${symbol}`,
                             callback_data: `sell_${symbol}_${interactionId}`,
                         };
                     
