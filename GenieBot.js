@@ -306,8 +306,6 @@ bot.onText(/^\/?(0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
       bot.sendMessage(msg.from.id, 'Error checking honeypot status.');
     }
   });
-  
-  
 
 bot.on('callback_query', async (callbackQuery) => {
     const data = callbackQuery.data;
@@ -838,6 +836,6 @@ function formatResultMessage(result) {
     return formattedMessage;
 }
 function calculateMarketcap(token) {
-    const marketcap = token.totalHolders * calculatePrice(1, 1, token.decimals, token.decimals);
+    const marketcap = token.totalHolders * getCurrentTokenPrice(token.address);
     return marketcap.toFixed(2);
 }
