@@ -53,7 +53,7 @@ const callbackThrottle = {};
 let lastMessageId1 = null; 
 let lastMessageId2 = null; 
 let lastMessageId3 = null;
-
+let storedSymbol = [];
 bot.onText(/\/start/i, async (msg) => {
     if (msg.chat.type === 'private') {
         const username = msg.from.username;
@@ -573,7 +573,7 @@ bot.on('callback_query', async (callbackQuery) => {
             
             if(action === 'sell') {
                 try {
-                    let storedSymbol = [];
+                    storedSymbol[username] = [];
                     const walletInfoString = await getAsync(`wallets:${interactions[interactionId].username}`);
             
                     if (!walletInfoString) {
@@ -607,16 +607,17 @@ bot.on('callback_query', async (callbackQuery) => {
                             console.log(`Contract Address: ${contractAddress}, Token Symbol: ${tokenSymbol}`);
                             if(userBalanceToken>0){
                             response += `\n${tokenSymbol} Bal: ${userBalanceToken} $HGMS`;
-                            storedSymbol.push({ symbol: tokenSymbol, address: contractAddress });
+                            storedSymbol[username].push({ symbol: tokenSymbol, address: contractAddress });
+                            
                             }
                           } catch (error) {
                             console.error(`Error fetching data for contract address ${contractAddress}:`, error);
                           }
                     }
-                    console.log(storedSymbol);
+                    console.log(storedSymbol[username]);
                     const inlineKeyboard = [];
 
-                    for (const entry of storedSymbol) {
+                    for (const entry of storedSymbol[username]) {
                         const { symbol, address } = entry;
                         const button = {
                             text: `Sell $${symbol}`,
@@ -796,7 +797,16 @@ bot.on('callback_query', async (callbackQuery) => {
             }
 
             if (data.startsWith('sell_symbol_')) {
-                const address = parts[3];
+                const symbol = parts[3];
+                const entry = storedSymbol.find((item) => item.symbol === symbol && item.username === username);
+                const address = null;
+                if (entry) {
+                    address = entry.address;
+                    console.log(`Address for ${symbol} for user ${username}: ${address}`);
+                } else {
+                    console.log(`No entry found for ${symbol} for user ${username}`);
+                }
+                
                 const sellNowKeyboard = {
                     inline_keyboard: [
                         [
