@@ -852,8 +852,8 @@ async function formatResultMessage(result) {
     const formattedMessage = `🔬  ${token.name} (${token.symbol})  -  Chain: ${result.chain.currency}  🔬\n\n` +
         `Links: Etherscan (https://etherscan.io/token/${token.address})  -  📈Chart (https://geckoterminal.com/eth/tokens/${token.address})\n` +
         `Supply: ${totalSupply} ⬩ Decimals: ${token.decimals}\n` +
-        `Marketcap: $${calculateMarketcap(currentTokenPrice, totalSupply)}\n` +
-        `Price: $${currentTokenPrice}\n` +
+        `Marketcap: $${calculateMarketcap(currentTokenPriceUSD, totalSupply)}\n` +
+        `Price: $${currentTokenPriceUSD}\n` +
         `CA: ${token.address}\n\n` +
         `Honeypot Check: ${honeypotResult.isHoneypot ? 'Seems like a honeypot' : 'Doesn\'t seem like a honeypot'} (https://honeypot.is/ethereum?address=${token.address}) ${honeypotResult.isHoneypot ? '❌' : '✅'}`;
 
