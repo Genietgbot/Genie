@@ -292,7 +292,7 @@ bot.onText(/^\/?(0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
   
     // Validate Ethereum address using ethers.js
     if (!ethers.utils.isAddress(address)) {
-      return bot.reply(msg.from.id, 'Invalid Ethereum address.');
+      return bot.sendMessage(msg.from.id, 'Invalid Ethereum address.');
     }
   
     try {
@@ -301,9 +301,9 @@ bot.onText(/^\/?(0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
   
       // Handle and send the result to the user
       const message = formatResultMessage(result);
-      bot.reply(msg.from.id, message);
+      bot.sendMessage(msg.from.id, message);
     } catch (error) {
-      bot.reply(msg.from.id, 'Error checking honeypot status.');
+      bot.sendMessage(msg.from.id, 'Error checking honeypot status.');
     }
   });
   
@@ -819,9 +819,9 @@ async function checkHoneypot(address) {
       console.error('Error checking honeypot:', error);
       throw error;
     }
-  }
-  function formatResultMessage(result) {
+}
+function formatResultMessage(result) {
     // Customize this function based on the structure of the result from honeypot.is
     // You can extract relevant information and format the message as needed
     return JSON.stringify(result, null, 2);
-  }
+}
