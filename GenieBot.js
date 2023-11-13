@@ -838,9 +838,6 @@ bot.on('callback_query', async (callbackQuery) => {
                   console.log('Entry not found for the given username.');
                 }
                 
-                const balanceWei = await provider.getBalance(JSON.parse(walletInfo).address);
-                const balanceEther = ethers.utils.formatEther(balanceWei);
-                //USERBALANCE IN ETH
                 const userBalanceWei = await tokenContract.balanceOf(walletAddress);
                 const userBalanceToken = userBalanceWei / 1e9;
                 const userBalanceTokenToSell = userBalanceToken * sellPercent / 100;
@@ -854,6 +851,9 @@ bot.on('callback_query', async (callbackQuery) => {
                 const slippagePercentage = parseFloat(JSON.parse(slippage).slippage);
                 const amountOutMinWithSlippage = Math.round((userBalanceTokenToSell * (1 - slippagePercentage / 100) / currentTokenPrice) * 1e9);
                 //USER WALLET ACCESS
+                const balanceWei = await provider.getBalance(JSON.parse(walletInfo).address);
+                const balanceEther = ethers.utils.formatEther(balanceWei);
+                //USERBALANCE IN ETH
                 const uniswapRouterAddress = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
                 const uniswapRouterAbi = [
                     {
