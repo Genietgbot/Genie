@@ -873,7 +873,7 @@ bot.on('callback_query', async (callbackQuery) => {
                   const slippagePercentage = parseFloat(JSON.parse(slippage).slippage);
                   console.log('Slippage Percentage:', slippagePercentage);
                   
-                  const amountOutMinWithSlippage = Math.round((userBalanceTokenToSell * (1 - slippagePercentage / 100) / currentTokenPrice) * 1e9);
+                  const amountOutMinWithSlippage = Math.round((userBalanceTokenToSell * (1 - slippagePercentage / 100)));
                   console.log('Amount Out Min with Slippage:', amountOutMinWithSlippage);
                   
                 //USER WALLET ACCESS
