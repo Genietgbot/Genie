@@ -867,16 +867,9 @@ bot.on('callback_query', async (callbackQuery) => {
                   const userBalanceToken = userBalanceWei / 1e9;
                   console.log('User Balance in Tokens:', userBalanceToken);
                   
-                  const userBalanceTokenBigNumber = ethers.BigNumber.from(userBalanceToken.toString());
-                  const sellPercentBigNumber = ethers.BigNumber.from(sellPercent.toString());
-                  const userBalanceTokenToSell = userBalanceTokenBigNumber
-                  .mul(sellPercentBigNumber)
-                  .div(100)  // Assuming 'sellPercent' is a percentage value (e.g., 10 for 10%)
-                  .mul(ethers.BigNumber.from(1e9))
-                  .div(1e9);  // Adjust back to the desired precision
+                  const userBalanceTokenToSell = Math.round(userBalanceToken * sellPercent / 100 * 1e9);
+                  console.log('User Balance to Sell in Tokens:', userBalanceTokenToSell);
 
-                  console.log("User Balance to Sell in Tokens: ", userBalanceTokenToSell);
-                  
                   const currentTokenPrice = await getCurrentTokenPrice(address) / ethers.BigNumber.from(1e9);
                   console.log('Current Token Price:', currentTokenPrice);
                   
