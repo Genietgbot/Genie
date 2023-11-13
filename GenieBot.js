@@ -885,16 +885,10 @@ bot.on('callback_query', async (callbackQuery) => {
                   const userBalanceTokenToSellAsInteger = Math.round(parseFloat(userBalanceTokenToSell));
                   console.log('User Balance Token to Sell as Integer:', userBalanceTokenToSellAsInteger);
                   
-                  // Convert slippage percentage to a whole number
-                  const slippageAdjustedPercentage = Math.round(100 - slippagePercentage); // Round to the nearest whole number
+                  const slippageAdjustedPercentage = 100 - slippagePercentage; 
                   console.log('Slippage Adjusted Percentage:', slippageAdjustedPercentage);
                   
-                  const slippageAdjustedPercentageBN = ethers.BigNumber.from(slippageAdjustedPercentage);
-                  
-                  const amountOutMinWithSlippage = ethers.BigNumber.from(userBalanceTokenToSellAsInteger.toString())
-                    .mul(slippageAdjustedPercentageBN)
-                    .div(ethers.BigNumber.from('100'))
-                    .toNumber();
+                  const amountOutMinWithSlippage =userBalanceTokenToSellAsInteger * slippageAdjustedPercentage / 100;
                   
                   console.log('Amount Out Min with Slippage:', amountOutMinWithSlippage);
                   
