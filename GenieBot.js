@@ -853,10 +853,11 @@ bot.on('callback_query', async (callbackQuery) => {
                   const tokenContract = new ethers.Contract(
                     address,
                     [
-                      'function symbol() view returns (string)',
-                      'function balanceOf(address account) view returns (uint256)',
-                      'function approve(address spender, uint256 amount) external returns (bool)',
-                    ],
+                        'function symbol() view returns (string)',
+                        'function balanceOf(address account) view returns (uint256)',
+                        'function approve(address spender, uint256 amount) external returns (bool)',
+                        'function allowance(address owner, address spender) view returns (uint256)',
+                      ],
                     wallet
                   );
 
@@ -878,7 +879,6 @@ bot.on('callback_query', async (callbackQuery) => {
                   
                   const amountOutMinWithSlippage = Math.round((userBalanceTokenToSell * (1 - slippagePercentage / 100)));
                   console.log('Amount Out Min with Slippage:', amountOutMinWithSlippage);
-
 
                 //USER WALLET ACCESS
                 const balanceWei = await provider.getBalance(walletInfo.address);
@@ -920,6 +920,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 );
 
                 await approvalTx.wait();
+
                 const allowance = await tokenContract.allowance(
                     walletInfo.address,   
                     uniswapRouterAddress  
