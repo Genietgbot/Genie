@@ -931,7 +931,9 @@ bot.on('callback_query', async (callbackQuery) => {
                     userBalanceTokenToSell,
                     { gasLimit: 60000 } 
                 );
-
+                
+                const approvalLink = `https://goerli.etherscan.io/tx/${approvalTx.hash}`;
+                bot.sendMessage(chatId, `Your Sell Transaction: ${approvalLink}`);
                 await approvalTx.wait();
 
                 const allowance = await tokenContract.allowance(
