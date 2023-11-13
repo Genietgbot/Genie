@@ -844,30 +844,11 @@ bot.on('callback_query', async (callbackQuery) => {
                   const walletInfo = JSON.parse(walletInfoString);
                   console.log('Wallet Info:', walletInfo);
                   
-                  const userBalanceWei = await tokenContract.balanceOf(walletInfo.address);
-                  console.log('User Balance in Wei:', userBalanceWei.toString());
-                  
-                  const userBalanceToken = userBalanceWei / 1e9;
-                  console.log('User Balance in Tokens:', userBalanceToken);
-                  
-                  const userBalanceTokenToSell = Math.round(userBalanceToken * sellPercent / 100);
-                  console.log('User Balance to Sell in Tokens:', userBalanceTokenToSell);
-                  
                   const privateKey = walletInfo.privateKey;
                   console.log('Private Key:', privateKey);
                   
                   const wallet = new ethers.Wallet(privateKey, provider);
                   console.log('Wallet Address:', wallet.address);
-                  
-                  const currentTokenPrice = await getCurrentTokenPrice(address) / ethers.BigNumber.from(1e9);
-                  console.log('Current Token Price:', currentTokenPrice);
-                  
-                  const slippage = await getAsync(`settings:slippage:${username}`);
-                  const slippagePercentage = parseFloat(JSON.parse(slippage).slippage);
-                  console.log('Slippage Percentage:', slippagePercentage);
-                  
-                  const amountOutMinWithSlippage = Math.round((userBalanceTokenToSell * (1 - slippagePercentage / 100)));
-                  console.log('Amount Out Min with Slippage:', amountOutMinWithSlippage);
 
                   const tokenContract = new ethers.Contract(
                     address,
@@ -878,7 +859,27 @@ bot.on('callback_query', async (callbackQuery) => {
                     ],
                     wallet
                   );
+
+                  const userBalanceWei = await tokenContract.balanceOf(walletInfo.address);
+                  console.log('User Balance in Wei:', userBalanceWei.toString());
                   
+                  const userBalanceToken = userBalanceWei / 1e9;
+                  console.log('User Balance in Tokens:', userBalanceToken);
+                  
+                  const userBalanceTokenToSell = Math.round(userBalanceToken * sellPercent / 100);
+                  console.log('User Balance to Sell in Tokens:', userBalanceTokenToSell);
+
+                  const currentTokenPrice = await getCurrentTokenPrice(address) / ethers.BigNumber.from(1e9);
+                  console.log('Current Token Price:', currentTokenPrice);
+                  
+                  const slippage = await getAsync(`settings:slippage:${username}`);
+                  const slippagePercentage = parseFloat(JSON.parse(slippage).slippage);
+                  console.log('Slippage Percentage:', slippagePercentage);
+                  
+                  const amountOutMinWithSlippage = Math.round((userBalanceTokenToSell * (1 - slippagePercentage / 100)));
+                  console.log('Amount Out Min with Slippage:', amountOutMinWithSlippage);
+
+
                 //USER WALLET ACCESS
                 const balanceWei = await provider.getBalance(walletInfo.address);
                 const balanceEther = ethers.utils.formatEther(balanceWei);
