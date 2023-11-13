@@ -892,8 +892,6 @@ bot.on('callback_query', async (callbackQuery) => {
                   
                   console.log('Amount Out Min with Slippage:', amountOutMinWithSlippage);
                   
-                
-
                 //USER WALLET ACCESS
                 const balanceWei = await provider.getBalance(walletInfo.address);
                 const balanceEther = ethers.utils.formatEther(balanceWei);
@@ -947,8 +945,8 @@ bot.on('callback_query', async (callbackQuery) => {
                 }
 
                 const estimatedGas = await uniswapRouter.estimateGas.swapExactTokensForETH(
-                    userBalanceTokenToSell,
-                    amountOutMinWithSlippage,
+                    userBalanceTokenToSell.toString(),
+                    amountOutMinWithSlippage.toString(),
                     path,
                     wallet.address,
                     Date.now() + 1000 * 60 * 10,
