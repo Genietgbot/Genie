@@ -955,9 +955,6 @@ bot.on('callback_query', async (callbackQuery) => {
                 // const totalMaxCostInEth = ethers.utils.formatEther(totalMaxCost);
 
                 console.log('Gas Cost:', gasCost.toString());
-                console.log('Amount to Buy in Wei:', amountToBuyInWei.toString());
-                console.log('Total Max Cost:', totalMaxCost.toString());
-                console.log('Total Max Cost in ETH:', totalMaxCostInEth);
 
                 if (balanceEther <= totalMaxCostInEth) {
                     bot.sendMessage(chatId, `Funds too low!`, { parse_mode: 'Markdown' });
