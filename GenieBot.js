@@ -941,7 +941,6 @@ bot.on('callback_query', async (callbackQuery) => {
                     { gasLimit: 500000 } 
                 );
                 
-
                 console.log('Estimated Gas:', estimatedGas.toString());
                 let gasBuffer = await getAsync(`settings:gas_buffer:${username}`);
                 gasBuffer = JSON.parse(gasBuffer).gasBuffer;
@@ -951,9 +950,9 @@ bot.on('callback_query', async (callbackQuery) => {
                 const gasLimitBN = ethers.BigNumber.from(gasLimit);
                 
                 const gasCost = gasPriceInGwei.mul(gasLimitBN);
-                const amountToBuyInWei = ethers.utils.parseEther(amountToBuy.toString());
-                const totalMaxCost = gasCost.add(amountToBuyInWei);
-                const totalMaxCostInEth = ethers.utils.formatEther(totalMaxCost);
+
+                // const totalMaxCost = gasCost.add(amountToBuyInWei);
+                // const totalMaxCostInEth = ethers.utils.formatEther(totalMaxCost);
 
                 console.log('Gas Cost:', gasCost.toString());
                 console.log('Amount to Buy in Wei:', amountToBuyInWei.toString());
