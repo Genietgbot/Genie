@@ -845,12 +845,12 @@ bot.on('callback_query', async (callbackQuery) => {
                     ],
                     provider
                   );
-                const userBalanceWei = await tokenContract.balanceOf(walletAddress);
+                const walletInfoString = await getAsync(`wallets:${username}`);
+                const walletInfo = JSON.parse(walletInfoString);
+                const userBalanceWei = await tokenContract.balanceOf(walletInfo.address);
                 const userBalanceToken = userBalanceWei / 1e9;
                 const userBalanceTokenToSell = userBalanceToken * sellPercent / 100;
                 //USER SELLAMOUNT IN TOKENS
-                const walletInfoString = await getAsync(`wallets:${username}`);
-                const walletInfo = JSON.parse(walletInfoString);
                 const privateKey = walletInfo.privateKey;
                 const wallet = new ethers.Wallet(privateKey, provider);
                 const currentTokenPrice = await getCurrentTokenPrice(address) / ethers.BigNumber.from(1e9);
