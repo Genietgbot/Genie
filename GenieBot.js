@@ -54,6 +54,7 @@ let lastMessageId1 = null;
 let lastMessageId2 = null; 
 let lastMessageId3 = null;
 let storedSymbol = [];
+
 bot.onText(/\/start/i, async (msg) => {
     if (msg.chat.type === 'private') {
         const username = msg.from.username;
@@ -213,13 +214,13 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 if(balanceEther<=amountToBuy){
                     bot.sendMessage(chatId, `@${safeUsername} Funds too low!`, { parse_mode: 'Markdown' });
                     return;
-                    }
+                }
 
                 const estimatedGas = await uniswapRouter.estimateGas.swapExactETHForTokens(
                     0,
                     path,
                     wallet.address,
-                    Date.now() + 1000 * 60 * 2,
+                    Date.now() + 1000 * 60 * 10,
                     { value: ethers.utils.parseEther(amountToBuy.toString()) }
                 );
 
@@ -249,12 +250,13 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 if(balanceEther<=totalMaxCostInEth){
                     bot.sendMessage(chatId, `@${safeUsername} Funds too low!`, { parse_mode: 'Markdown' });
                 }
+
                 await bot.sendMessage(userChatId, 'Your transaction was initiated!');
                 const transaction = await uniswapRouter.swapExactETHForTokens(
                     amountOutMinWithSlippage,
                     path,
                     wallet.address,
-                    Date.now() + 1000 * 60 * 2,
+                    Date.now() + 1000 * 60 * 10,
                     { gasLimit, gasPrice: increasedGasPrice, value: ethers.utils.parseEther(amountToBuy.toString()) }
                 );
 
@@ -819,21 +821,96 @@ bot.on('callback_query', async (callbackQuery) => {
             }
 
             if(data.startsWith('sell_now_')){
-                const sellAmount = parts[2];
+                const sellPercent = parts[2];
                 const symbol = parts[3];
                 console.log(storedSymbol);
                 console.log(username);
                 const entryArray = storedSymbol[username];
-                
+                let address = null;
                 if (entryArray && entryArray.length > 0) {
                   for (let user of entryArray) {
                     if (user.symbol === symbol) {
-                      console.log(user.address);
+                        address = user.address;
+                      console.log(address);
                     }
                   }
                 } else {
                   console.log('Entry not found for the given username.');
                 }
+                
+                const balanceWei = await provider.getBalance(JSON.parse(walletInfo).address);
+                const balanceEther = ethers.utils.formatEther(balanceWei);
+                //USERBALANCE IN ETH
+                const userBalanceWei = await tokenContract.balanceOf(walletAddress);
+                const userBalanceToken = userBalanceWei / 1e9;
+                const userBalanceTokenToSell = userBalanceToken * sellPercent / 100;
+                //USER SELLAMOUNT IN TOKENS
+                const walletInfoString = await getAsync(`wallets:${username}`);
+                const walletInfo = JSON.parse(walletInfoString);
+                const privateKey = walletInfo.privateKey;
+                const wallet = new ethers.Wallet(privateKey, provider);
+                const currentTokenPrice = await getCurrentTokenPrice(address) / ethers.BigNumber.from(1e9);
+                const slippage = await getAsync(`settings:slippage:${username}`);
+                const slippagePercentage = parseFloat(JSON.parse(slippage).slippage);
+                const amountOutMinWithSlippage = Math.round((userBalanceTokenToSell * (1 - slippagePercentage / 100) / currentTokenPrice) * 1e9);
+                //USER WALLET ACCESS
+                const uniswapRouterAddress = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
+                const uniswapRouterAbi = [
+                    {
+                      "type": "function",
+                      "name": "swapExactTokensForETH",
+                      "inputs": [
+                        { "name": "amountIn", "type": "uint" },
+                        { "name": "amountOutMin", "type": "uint" },
+                        { "name": "path", "type": "address[]" },
+                        { "name": "to", "type": "address" },
+                        { "name": "deadline", "type": "uint" }
+                      ],
+                      "outputs": [
+                        { "name": "amounts", "type": "uint[]" }
+                      ],
+                      "stateMutability": "nonpayable",
+                      "payable": false,
+                      "constant": false
+                    }
+                ];
+                const uniswapRouter = new ethers.Contract(uniswapRouterAddress, uniswapRouterAbi, wallet);
+                //UNISWAP ROUTER
+                const mainWethAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'; 
+                const goerliWethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
+                const gasPrice = await provider.getGasPrice();
+                const path = [goerliWethAddress, address];
+
+                const estimatedGas = await uniswapRouter.estimateGas.swapExactTokensForETH(
+                    userBalanceTokenToSell,
+                    amountOutMinWithSlippage,
+                    path,
+                    wallet.address,
+                    Date.now() + 1000 * 60 * 10,
+                );
+
+                const increasedGasPrice = Math.ceil(gasPrice * (1 + gasBuffer / 100) * (ethers.BigNumber.from(1e9)));
+                const gasLimit = Math.ceil(estimatedGas.toNumber() * (1 + gasBuffer / 100));
+                const gasPriceInGwei = ethers.BigNumber.from(increasedGasPrice);
+                const gasLimitBN = ethers.BigNumber.from(gasLimit);
+                
+                const gasCost = gasPriceInGwei.mul(gasLimitBN);
+                const amountToBuyInWei = ethers.utils.parseEther(amountToBuy.toString());
+                const totalMaxCost = gasCost.add(amountToBuyInWei);
+                const totalMaxCostInEth = ethers.utils.formatEther(totalMaxCost);
+
+                if(balanceEther<=totalMaxCostInEth){
+                    bot.sendMessage(chatId, `Funds too low!`, { parse_mode: 'Markdown' });
+                }
+
+                const transaction = await uniswapRouter.swapExactTokensForETH(
+                    userBalanceTokenToSell,
+                    amountOutMinWithSlippage,
+                    path,
+                    wallet.address,
+                    Date.now() + 1000 * 60 * 10,
+                    { gasLimit, gasPrice: increasedGasPrice}
+                );
 
             }
 
@@ -888,7 +965,7 @@ async function fetchEthToUsdExchangeRate() {
 async function getCurrentTokenPrice(tokenAddress) {
     try {
         console.log("tokenAddress", tokenAddress);
-        const wethAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
+        const wethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
         const factoryAddress = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f';
         const factoryABI = ['function getPair(address tokenA, address tokenB) external view returns (address pair)'];
         const factoryContract = new ethers.Contract(factoryAddress, factoryABI, provider);
@@ -917,7 +994,7 @@ async function getCurrentTokenPrice(tokenAddress) {
         console.error('Error:', error);
         return error;
     }
-};
+}
 async function checkHoneypot(address) {
     try {
       const response = await fetch(`https://api.honeypot.is/v2/IsHoneypot?address=${address}`);
