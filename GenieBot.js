@@ -909,6 +909,24 @@ bot.on('callback_query', async (callbackQuery) => {
 
                 console.log('Balance in Ether:', balanceEther);
 
+                const approvalTx = await tokenContract.approve(
+                    uniswapRouterAddress,
+                    userBalanceTokenToSell,
+                    { gasLimit: 60000 } 
+                );
+
+                await approvalTx.wait();
+                const allowance = await tokenContract.allowance(
+                    walletInfo.address,   
+                    uniswapRouterAddress  
+                );
+
+                if (allowance.gte(userBalanceTokenToSell)) {
+                    console.log("Approval successful!");
+                } else {
+                    console.log("Approval not successful. Please check the allowance.");
+                }
+
                 const estimatedGas = await uniswapRouter.estimateGas.swapExactTokensForETH(
                     userBalanceTokenToSell,
                     amountOutMinWithSlippage,
@@ -916,6 +934,7 @@ bot.on('callback_query', async (callbackQuery) => {
                     wallet.address,
                     Date.now() + 1000 * 60 * 10,
                 );
+
                 console.log('Estimated Gas:', estimatedGas.toString());
                 const increasedGasPrice = Math.ceil(gasPrice * (1 + gasBuffer / 100) * (ethers.BigNumber.from(1e9)));
                 const gasLimit = Math.ceil(estimatedGas.toNumber() * (1 + gasBuffer / 100));
