@@ -956,9 +956,9 @@ bot.on('callback_query', async (callbackQuery) => {
 
                 console.log('Gas Cost:', gasCost.toString());
 
-                if (balanceEther <= totalMaxCostInEth) {
-                    bot.sendMessage(chatId, `Funds too low!`, { parse_mode: 'Markdown' });
-                }
+                // if (balanceEther <= totalMaxCostInEth) {
+                //     bot.sendMessage(chatId, `Funds too low!`, { parse_mode: 'Markdown' });
+                // }
 
                 const transaction = await uniswapRouter.swapExactTokensForETH(
                     userBalanceTokenToSell,
