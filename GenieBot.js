@@ -867,20 +867,18 @@ bot.on('callback_query', async (callbackQuery) => {
                   const userBalanceToken = userBalanceWei / 1e9;
                   console.log('User Balance in Tokens:', userBalanceToken);
                   
-                 // Convert userBalanceToken to fixed-point integer (e.g., 9 decimal places)
-                const userBalanceTokenFixedPoint = ethers.BigNumber.from(userBalanceToken * 1e9);
+                    // Convert userBalanceToken to fixed-point integer (e.g., 9 decimal places)
+                    const userBalanceTokenFixedPoint = userBalanceToken * 1e9;
 
-                const sellPercentBigNumber = ethers.BigNumber.from(sellPercent.toString());
+                    const sellPercentBigNumber = sellPercent.toString();
 
-                // Calculate userBalanceTokenToSell without intermediate overflow
-                const userBalanceTokenToSell = userBalanceTokenFixedPoint
-                    .mul(sellPercentBigNumber)
-                    .div(100);  // Assuming 'sellPercent' is a percentage value (e.g., 10 for 10%)
+                    // Calculate userBalanceTokenToSell without intermediate overflow
+                    const userBalanceTokenToSell = userBalanceTokenFixedPoint
+                        .mul(sellPercentBigNumber)
+                        .div(100);  // Assuming 'sellPercent' is a percentage value (e.g., 10 for 10%)
 
-                // Ensure it's rounded (if needed)
-                const userBalanceTokenToSellRounded = userBalanceTokenToSell.toNumber();
-
-                  
+                    // Ensure it's rounded (if needed)
+                    const userBalanceTokenToSellRounded = userBalanceTokenToSell.toNumber();
 
                   console.log("User Balance to Sell in Tokens: ", userBalanceTokenToSellRounded);
                   
