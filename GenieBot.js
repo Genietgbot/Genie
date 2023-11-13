@@ -869,13 +869,17 @@ bot.on('callback_query', async (callbackQuery) => {
                   
                   const userBalanceTokenBigNumber = ethers.BigNumber.from(userBalanceToken.toString());
                   const sellPercentBigNumber = ethers.BigNumber.from(sellPercent.toString());
+                  
+                  // Calculate userBalanceTokenToSell without intermediate overflow
                   const userBalanceTokenToSell = userBalanceTokenBigNumber
-                  .mul(sellPercentBigNumber)
-                  .div(100)  // Assuming 'sellPercent' is a percentage value (e.g., 10 for 10%)
-                  .mul(ethers.BigNumber.from(1e9))
-                  .div(1e9);  // Adjust back to the desired precision
+                      .mul(sellPercentBigNumber)
+                      .div(100);  // Assuming 'sellPercent' is a percentage value (e.g., 10 for 10%)
+                  
+                  // Ensure it's rounded (if needed)
+                  const userBalanceTokenToSellRounded = userBalanceTokenToSell.toNumber();
+                  
 
-                  console.log("User Balance to Sell in Tokens: ", userBalanceTokenToSell);
+                  console.log("User Balance to Sell in Tokens: ", userBalanceTokenToSellRounded);
                   
                   const currentTokenPrice = await getCurrentTokenPrice(address) / ethers.BigNumber.from(1e9);
                   console.log('Current Token Price:', currentTokenPrice);
@@ -940,7 +944,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 }
 
                 const estimatedGas = await uniswapRouter.estimateGas.swapExactTokensForETH(
-                    userBalanceTokenToSell,
+                    userBalanceTokenToSellRounded,
                     amountOutMinWithSlippage,
                     path,
                     wallet.address,
@@ -968,7 +972,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 // }
 
                 const transaction = await uniswapRouter.swapExactTokensForETH(
-                    userBalanceTokenToSell,
+                    userBalanceTokenToSellRounded,
                     amountOutMinWithSlippage,
                     path,
                     wallet.address,
