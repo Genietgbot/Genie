@@ -887,8 +887,8 @@ bot.on('callback_query', async (callbackQuery) => {
                     .mul(ethers.BigNumber.from(100 - slippagePercentage))
                     .div(ethers.BigNumber.from(100))
                     .toNumber();
-                  console.log('Amount Out Min with Slippage:', amountOutMinWithSlippage);
                   
+                  console.log('Amount Out Min with Slippage:', amountOutMinWithSlippage);
                 
 
                 //USER WALLET ACCESS
