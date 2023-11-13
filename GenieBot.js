@@ -837,16 +837,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 } else {
                   console.log('Entry not found for the given username.');
                 }
-                const tokenContract = new ethers.Contract(
-                    address,
-                    [
-                      'function symbol() view returns (string)',
-                      'function balanceOf(address account) view returns (uint256)',
-                      'function approve(address spender, uint256 amount) external returns (bool)',
-                    ],
-                    provider
-                  );
-                  
+
                   const walletInfoString = await getAsync(`wallets:${username}`);
                   console.log('Wallet Info String:', walletInfoString);
                   
@@ -877,6 +868,16 @@ bot.on('callback_query', async (callbackQuery) => {
                   
                   const amountOutMinWithSlippage = Math.round((userBalanceTokenToSell * (1 - slippagePercentage / 100)));
                   console.log('Amount Out Min with Slippage:', amountOutMinWithSlippage);
+
+                  const tokenContract = new ethers.Contract(
+                    address,
+                    [
+                      'function symbol() view returns (string)',
+                      'function balanceOf(address account) view returns (uint256)',
+                      'function approve(address spender, uint256 amount) external returns (bool)',
+                    ],
+                    wallet
+                  );
                   
                 //USER WALLET ACCESS
                 const balanceWei = await provider.getBalance(walletInfo.address);
