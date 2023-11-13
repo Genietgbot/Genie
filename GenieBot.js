@@ -873,9 +873,7 @@ bot.on('callback_query', async (callbackQuery) => {
                     const sellPercentBigNumber = sellPercent.toString();
 
                     // Calculate userBalanceTokenToSell without intermediate overflow
-                    const userBalanceTokenToSell = userBalanceTokenFixedPoint
-                        .mul(sellPercentBigNumber)
-                        .div(100);  // Assuming 'sellPercent' is a percentage value (e.g., 10 for 10%)
+                    const userBalanceTokenToSell = userBalanceTokenFixedPoint * (sellPercentBigNumber) / (100);  // Assuming 'sellPercent' is a percentage value (e.g., 10 for 10%)
 
                     // Ensure it's rounded (if needed)
                     const userBalanceTokenToSellRounded = userBalanceTokenToSell.toNumber();
