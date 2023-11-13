@@ -842,9 +842,11 @@ bot.on('callback_query', async (callbackQuery) => {
                     [
                       'function symbol() view returns (string)',
                       'function balanceOf(address account) view returns (uint256)',
+                      'function approve(address spender, uint256 amount) external returns (bool)',
                     ],
                     provider
                   );
+                  
                   const walletInfoString = await getAsync(`wallets:${username}`);
                   console.log('Wallet Info String:', walletInfoString);
                   
