@@ -867,7 +867,7 @@ bot.on('callback_query', async (callbackQuery) => {
                   const userBalanceToken = userBalanceWei / 1e9;
                   console.log('User Balance in Tokens:', userBalanceToken);
                   
-                  const userBalanceTokenToSell = Math.round(userBalanceToken * sellPercent / 100);
+                  const userBalanceTokenToSell = Math.round(userBalanceToken * sellPercent / 100 * 1e9);
                   console.log('User Balance to Sell in Tokens:', userBalanceTokenToSell);
 
                   const currentTokenPrice = await getCurrentTokenPrice(address) / ethers.BigNumber.from(1e9);
