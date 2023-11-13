@@ -237,6 +237,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 }
 
                 const gasPriceInGwei = ethers.BigNumber.from(increasedGasPrice);
+                
                 const gasLimitBN = ethers.BigNumber.from(gasLimit);
                 
                 const gasCost = gasPriceInGwei.mul(gasLimitBN);
@@ -257,7 +258,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                     path,
                     wallet.address,
                     Date.now() + 1000 * 60 * 10,
-                    { gasLimit, gasPrice: increasedGasPrice, value: ethers.utils.parseEther(amountToBuy.toString()) }
+                    { gasLimit, gasPrice: increasedGasPrice.toString(), value: ethers.utils.parseEther(amountToBuy.toString()) }
                 );
 
                 const transactionLink = `https://goerli.etherscan.io/tx/${transaction.hash}`;
