@@ -933,8 +933,8 @@ bot.on('callback_query', async (callbackQuery) => {
                 }
 
                 const estimatedGas = await uniswapRouter.estimateGas.swapExactTokensForETH(
-                    userBalanceTokenToSell,
-                    amountOutMinWithSlippage,
+                    0,
+                    0,
                     path,
                     wallet.address,
                     Date.now() + 1000 * 60 * 10,
