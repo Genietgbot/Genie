@@ -882,11 +882,13 @@ bot.on('callback_query', async (callbackQuery) => {
                   const slippagePercentage = parseFloat(JSON.parse(slippage).slippage);
                   console.log('Slippage Percentage:', slippagePercentage);
                   
-                  const amountOutMinWithSlippage = parseInt(userBalanceTokenToSell, 10)  // or parseFloat if you need decimals
-                  .mul(ethers.BigNumber.from(100 - slippagePercentage))
-                  .div(ethers.BigNumber.from(100))
-                  .toNumber();
-                console.log('Amount Out Min with Slippage:', amountOutMinWithSlippage);
+                  const userBalanceTokenToSellAsInteger = Math.round(parseFloat(userBalanceTokenToSell));
+                  const amountOutMinWithSlippage = ethers.BigNumber.from(userBalanceTokenToSellAsInteger)
+                    .mul(ethers.BigNumber.from(100 - slippagePercentage))
+                    .div(ethers.BigNumber.from(100))
+                    .toNumber();
+                  console.log('Amount Out Min with Slippage:', amountOutMinWithSlippage);
+                  
                 
 
                 //USER WALLET ACCESS
