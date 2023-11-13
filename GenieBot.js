@@ -877,7 +877,7 @@ bot.on('callback_query', async (callbackQuery) => {
                   console.log('Amount Out Min with Slippage:', amountOutMinWithSlippage);
                   
                 //USER WALLET ACCESS
-                const balanceWei = await provider.getBalance(JSON.parse(walletInfo).address);
+                const balanceWei = await provider.getBalance(walletInfo.address);
                 const balanceEther = ethers.utils.formatEther(balanceWei);
                 //USERBALANCE IN ETH
                 const uniswapRouterAddress = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
