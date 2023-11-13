@@ -837,7 +837,14 @@ bot.on('callback_query', async (callbackQuery) => {
                 } else {
                   console.log('Entry not found for the given username.');
                 }
-                
+                const tokenContract = new ethers.Contract(
+                    address,
+                    [
+                      'function symbol() view returns (string)',
+                      'function balanceOf(address account) view returns (uint256)',
+                    ],
+                    provider
+                  );
                 const userBalanceWei = await tokenContract.balanceOf(walletAddress);
                 const userBalanceToken = userBalanceWei / 1e9;
                 const userBalanceTokenToSell = userBalanceToken * sellPercent / 100;
