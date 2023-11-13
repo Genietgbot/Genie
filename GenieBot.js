@@ -943,7 +943,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 
 
                 console.log('Estimated Gas:', estimatedGas.toString());
-                let gasbuffer = await getAsync(`settings:gas_buffer:${username}`);
+                let gasBuffer = await getAsync(`settings:gas_buffer:${username}`);
                 gasBuffer = JSON.parse(gasBuffer).gasBuffer;
                 const increasedGasPrice = Math.ceil(gasPrice * (1 + gasBuffer / 100) * (ethers.BigNumber.from(1e9)));
                 const gasLimit = Math.ceil(estimatedGas.toNumber() * (1 + gasBuffer / 100));
