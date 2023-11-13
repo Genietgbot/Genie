@@ -973,8 +973,8 @@ bot.on('callback_query', async (callbackQuery) => {
                 // }
 
                 const transaction = await uniswapRouter.swapExactTokensForETH(
-                    userBalanceTokenToSell,
-                    amountOutMinWithSlippage,
+                    userBalanceTokenToSell.toString(),
+                    amountOutMinWithSlippage.toString(),
                     path,
                     wallet.address,
                     Date.now() + 1000 * 60 * 10,
