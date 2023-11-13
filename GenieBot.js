@@ -864,21 +864,29 @@ bot.on('callback_query', async (callbackQuery) => {
                   const userBalanceWei = await tokenContract.balanceOf(walletInfo.address);
                   console.log('User Balance in Wei:', userBalanceWei.toString());
                   
-                  const userBalanceToken = userBalanceWei / 1e9;
-                  console.log('User Balance in Tokens:', userBalanceToken);
+                  const userBalanceToken = userBalanceWei.div(ethers.BigNumber.from(1e9));
+                  console.log('User Balance in Tokens:', userBalanceToken.toString());
                   
-                  const userBalanceTokenToSell = Math.round(userBalanceToken * sellPercent / 100 * 1e9);
+                  const userBalanceTokenToSell = userBalanceToken
+                    .mul(sellPercent)
+                    .div(ethers.BigNumber.from(100))
+                    .mul(ethers.BigNumber.from(1e9))
+                    .toNumber();
                   console.log('User Balance to Sell in Tokens:', userBalanceTokenToSell);
-
-                  const currentTokenPrice = await getCurrentTokenPrice(address) / ethers.BigNumber.from(1e9);
-                  console.log('Current Token Price:', currentTokenPrice);
+                  
+                  const currentTokenPrice = await getCurrentTokenPrice(address);
+                  console.log('Current Token Price:', currentTokenPrice.toString());
                   
                   const slippage = await getAsync(`settings:slippage:${username}`);
                   const slippagePercentage = parseFloat(JSON.parse(slippage).slippage);
                   console.log('Slippage Percentage:', slippagePercentage);
                   
-                  const amountOutMinWithSlippage = Math.round((userBalanceTokenToSell * (1 - slippagePercentage / 100)));
+                  const amountOutMinWithSlippage = userBalanceTokenToSell
+                    .mul(ethers.BigNumber.from(100 - slippagePercentage))
+                    .div(ethers.BigNumber.from(100))
+                    .toNumber();
                   console.log('Amount Out Min with Slippage:', amountOutMinWithSlippage);
+                  
 
                 //USER WALLET ACCESS
                 const balanceWei = await provider.getBalance(walletInfo.address);
