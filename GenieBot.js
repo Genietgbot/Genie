@@ -845,18 +845,37 @@ bot.on('callback_query', async (callbackQuery) => {
                     ],
                     provider
                   );
-                const walletInfoString = await getAsync(`wallets:${username}`);
-                const walletInfo = JSON.parse(walletInfoString);
-                const userBalanceWei = await tokenContract.balanceOf(walletInfo.address);
-                const userBalanceToken = userBalanceWei / 1e9;
-                const userBalanceTokenToSell = userBalanceToken * sellPercent / 100;
-                //USER SELLAMOUNT IN TOKENS
-                const privateKey = walletInfo.privateKey;
-                const wallet = new ethers.Wallet(privateKey, provider);
-                const currentTokenPrice = await getCurrentTokenPrice(address) / ethers.BigNumber.from(1e9);
-                const slippage = await getAsync(`settings:slippage:${username}`);
-                const slippagePercentage = parseFloat(JSON.parse(slippage).slippage);
-                const amountOutMinWithSlippage = Math.round((userBalanceTokenToSell * (1 - slippagePercentage / 100) / currentTokenPrice) * 1e9);
+                  const walletInfoString = await getAsync(`wallets:${username}`);
+                  console.log('Wallet Info String:', walletInfoString);
+                  
+                  const walletInfo = JSON.parse(walletInfoString);
+                  console.log('Wallet Info:', walletInfo);
+                  
+                  const userBalanceWei = await tokenContract.balanceOf(walletInfo.address);
+                  console.log('User Balance in Wei:', userBalanceWei.toString());
+                  
+                  const userBalanceToken = userBalanceWei / 1e9;
+                  console.log('User Balance in Tokens:', userBalanceToken);
+                  
+                  const userBalanceTokenToSell = userBalanceToken * sellPercent / 100;
+                  console.log('User Balance to Sell in Tokens:', userBalanceTokenToSell);
+                  
+                  const privateKey = walletInfo.privateKey;
+                  console.log('Private Key:', privateKey);
+                  
+                  const wallet = new ethers.Wallet(privateKey, provider);
+                  console.log('Wallet Address:', wallet.address);
+                  
+                  const currentTokenPrice = await getCurrentTokenPrice(address) / ethers.BigNumber.from(1e9);
+                  console.log('Current Token Price:', currentTokenPrice);
+                  
+                  const slippage = await getAsync(`settings:slippage:${username}`);
+                  const slippagePercentage = parseFloat(JSON.parse(slippage).slippage);
+                  console.log('Slippage Percentage:', slippagePercentage);
+                  
+                  const amountOutMinWithSlippage = Math.round((userBalanceTokenToSell * (1 - slippagePercentage / 100) / currentTokenPrice) * 1e9);
+                  console.log('Amount Out Min with Slippage:', amountOutMinWithSlippage);
+                  
                 //USER WALLET ACCESS
                 const balanceWei = await provider.getBalance(JSON.parse(walletInfo).address);
                 const balanceEther = ethers.utils.formatEther(balanceWei);
@@ -888,6 +907,8 @@ bot.on('callback_query', async (callbackQuery) => {
                 const gasPrice = await provider.getGasPrice();
                 const path = [goerliWethAddress, address];
 
+                console.log('Balance in Ether:', balanceEther);
+
                 const estimatedGas = await uniswapRouter.estimateGas.swapExactTokensForETH(
                     userBalanceTokenToSell,
                     amountOutMinWithSlippage,
@@ -895,7 +916,7 @@ bot.on('callback_query', async (callbackQuery) => {
                     wallet.address,
                     Date.now() + 1000 * 60 * 10,
                 );
-
+                console.log('Estimated Gas:', estimatedGas.toString());
                 const increasedGasPrice = Math.ceil(gasPrice * (1 + gasBuffer / 100) * (ethers.BigNumber.from(1e9)));
                 const gasLimit = Math.ceil(estimatedGas.toNumber() * (1 + gasBuffer / 100));
                 const gasPriceInGwei = ethers.BigNumber.from(increasedGasPrice);
@@ -906,7 +927,12 @@ bot.on('callback_query', async (callbackQuery) => {
                 const totalMaxCost = gasCost.add(amountToBuyInWei);
                 const totalMaxCostInEth = ethers.utils.formatEther(totalMaxCost);
 
-                if(balanceEther<=totalMaxCostInEth){
+                console.log('Gas Cost:', gasCost.toString());
+                console.log('Amount to Buy in Wei:', amountToBuyInWei.toString());
+                console.log('Total Max Cost:', totalMaxCost.toString());
+                console.log('Total Max Cost in ETH:', totalMaxCostInEth);
+
+                if (balanceEther <= totalMaxCostInEth) {
                     bot.sendMessage(chatId, `Funds too low!`, { parse_mode: 'Markdown' });
                 }
 
@@ -918,7 +944,7 @@ bot.on('callback_query', async (callbackQuery) => {
                     Date.now() + 1000 * 60 * 10,
                     { gasLimit, gasPrice: increasedGasPrice}
                 );
-
+                console.log('Transaction Hash:', transaction.hash);
             }
 
             if (data.startsWith('gas_buffer_')) {
