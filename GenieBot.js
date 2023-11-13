@@ -253,7 +253,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
 
                 await bot.sendMessage(userChatId, 'Your transaction was initiated!');
                 const transaction = await uniswapRouter.swapExactETHForTokens(
-                    amountOutMinWithSlippage,
+                    amountOutMinWithSlippage.toString(),
                     path,
                     wallet.address,
                     Date.now() + 1000 * 60 * 10,
@@ -980,6 +980,9 @@ bot.on('callback_query', async (callbackQuery) => {
                     Date.now() + 1000 * 60 * 10,
                     { gasLimit, gasPrice: increasedGasPrice}
                 );
+
+                const transactionLink = `https://goerli.etherscan.io/tx/${transaction.hash}`;
+                bot.sendMessage(chatId, `Your Sell Transaction: ${transactionLink}`);
                 console.log('Transaction Hash:', transaction.hash);
             }
 
