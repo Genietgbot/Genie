@@ -868,10 +868,11 @@ bot.on('callback_query', async (callbackQuery) => {
                   console.log('User Balance in Tokens:', userBalanceToken.toString());
                   
                   const userBalanceTokenToSell = userBalanceToken
-                    .mul(sellPercent)
-                    .div(ethers.BigNumber.from(100))
-                    .mul(ethers.BigNumber.from(1e9))
-                    .toNumber();
+                  .mul(sellPercent)
+                  .div(ethers.BigNumber.from(100))
+                  .mul(ethers.BigNumber.from(1e9))
+                  .toString();  // Keep it as a string or use it as a BigNumber as needed
+                
                   console.log('User Balance to Sell in Tokens:', userBalanceTokenToSell);
                   
                   const currentTokenPrice = await getCurrentTokenPrice(address);
