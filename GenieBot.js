@@ -888,10 +888,11 @@ bot.on('callback_query', async (callbackQuery) => {
                   const slippageAdjustedPercentage = 100 - slippagePercentage;
                   console.log('Slippage Adjusted Percentage:', slippageAdjustedPercentage);
                   
-                  const amountOutMinWithSlippage = ethers.BigNumber.from(userBalanceTokenToSellAsInteger)
-                    .mul(ethers.BigNumber.from(slippageAdjustedPercentage))
-                    .div(ethers.BigNumber.from(100))
-                    .toNumber();
+                  const amountOutMinWithSlippage = ethers.BigNumber.from(userBalanceTokenToSellAsInteger.toString())
+                  .mul(ethers.BigNumber.from(slippageAdjustedPercentage.toString()))
+                  .div(ethers.BigNumber.from('100'))
+                  .toNumber();
+                
                   
                   console.log('Amount Out Min with Slippage:', amountOutMinWithSlippage);
                   
