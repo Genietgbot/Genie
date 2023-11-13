@@ -933,12 +933,14 @@ bot.on('callback_query', async (callbackQuery) => {
                 }
 
                 const estimatedGas = await uniswapRouter.estimateGas.swapExactTokensForETH(
-                    0,
-                    0,
+                    userBalanceTokenToSell,
+                    amountOutMinWithSlippage,
                     path,
                     wallet.address,
                     Date.now() + 1000 * 60 * 10,
+                    { gasLimit: 500000 } 
                 );
+                
 
                 console.log('Estimated Gas:', estimatedGas.toString());
                 const increasedGasPrice = Math.ceil(gasPrice * (1 + gasBuffer / 100) * (ethers.BigNumber.from(1e9)));
