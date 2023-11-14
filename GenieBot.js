@@ -294,13 +294,13 @@ bot.onText(/^\/?(0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
     try {
       const result = await checkHoneypot(address);
 
-      const message = await formatResultMessage(result);
+    //   const message = await formatResultMessage(result);
       bot.sendMessage(msg.from.id, message, { parse_mode: 'Markdown' });
     } catch (error) {
       bot.sendMessage(msg.from.id, 'Error checking honeypot status.');
     }
     }
-  });
+});
 
 bot.on('callback_query', async (callbackQuery) => {
     const data = callbackQuery.data;
@@ -1051,39 +1051,6 @@ async function fetchEthToUsdExchangeRate() {
         throw error;
     }
 }
-async function getCurrentTokenPrice(tokenAddress) {
-    try {
-        console.log("tokenAddress", tokenAddress);
-        const wethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
-        const factoryAddress = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f';
-        const factoryABI = ['function getPair(address tokenA, address tokenB) external view returns (address pair)'];
-        const factoryContract = new ethers.Contract(factoryAddress, factoryABI, provider);
-        const pairAddress = await factoryContract.getPair(wethAddress, tokenAddress);
-
-        console.log('Pair Address:', pairAddress);
-
-        const pairABI = ['function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)'];
-        const pairContract = new ethers.Contract(pairAddress, pairABI, provider);
-        const { reserve0, reserve1 } = await pairContract.getReserves();
-
-        console.log('Reserve0:', reserve0, 'Reserve1:', reserve1);
-
-        const decimals = 18;
-
-        if (reserve0 === 0 || reserve1 === 0) {
-            throw new Error('Reserve values are zero, potential division by zero');
-        }
-
-        const tokenPriceInEth = (reserve1 / 10**decimals) / (reserve0 / 10**decimals);
-
-        console.log('Token Price in ETH:', tokenPriceInEth);
-
-        return tokenPriceInEth;
-    } catch (error) {
-        console.error('Error:', error);
-        return error;
-    }
-}
 async function checkHoneypot(address) {
     try {
       const response = await fetch(`https://api.honeypot.is/v2/IsHoneypot?address=${address}`);
@@ -1130,10 +1097,6 @@ async function formatResultMessage(result) {
         `${honeypotResult.isHoneypot ? 'Seems like a honeypot' : 'Doesn\'t seem like a honeypot'} [🍯](https://honeypot.is/ethereum?address=${token.address}) ${honeypotResult.isHoneypot ? '❌' : '✅'}`;
 
     return formattedMessage;
-}
-function calculateMarketcap(currentTokenPrice, totalSupply) {
-    const marketcap = totalSupply * currentTokenPrice;
-    return marketcap.toFixed(2);
 }
 async function getEthGainedFromTransaction(txHash) {
     try {
