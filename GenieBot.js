@@ -1,5 +1,4 @@
 require('dotenv').config();
-import * as UniswapV2Router from "IUniswapV2Router02.json";
 const { ethers, Wallet, utils } = require('ethers');
 const TelegramBot = require('node-telegram-bot-api');
 const token = process.env.BOT_TOKEN;
@@ -13,8 +12,6 @@ process.env.NTBA_FIX_350 = true;
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
@@ -189,7 +186,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 const wallet = new ethers.Wallet(privateKey, provider);
 
                 const uniswapRouterAddress = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
-                const uniswapRouterAbi = ['function swapExactETHForTokensSupportingFeeOnTransferTokens(uint256 amountOutMin, address[] calldata path, address to, uint256 deadline) external payable returns (uint256[] memory amounts)'];
+                const uniswapRouterAbi = ['function swapExactETHForTokensSupportingFeeOnTransferTokens(uint256 amountOutMin, address[] calldata path, address to, uint256 deadline) external payable returns (uint256[] memory amounts)', 'function getAmountsOut(uint amountIn, address[] memory path) internal view returns (uint[] memory amounts)', 'function getAmountsIn(address factory, uint amountOut, address[] memory path) internal view returns (uint[] memory amounts)'];
                 const uniswapRouter = new ethers.Contract(uniswapRouterAddress, uniswapRouterAbi, wallet);
 
                 const tokenToBuyAddress = contractAddress;
@@ -203,7 +200,9 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 console.log('Amount to Buy:', amountToBuy);
                 console.log('Slippage Percentage:', slippagePercentage);
 
-                const currentTokenPrice = await getCurrentTokenPrice(tokenToBuyAddress) / ethers.BigNumber.from(1e9);
+                // const currentTokenPrice = await getCurrentTokenPrice(tokenToBuyAddress) / ethers.BigNumber.from(1e9);
+                const amountIn = ethers.utils.parseEther('1');
+                const currentTokenPrice = await uniswapRouter.getAmountsOut(amountIn, path); 
                 console.log(`Current Token Price in ETH: ${currentTokenPrice}`);
 
                 const amountOutMinWithSlippage = Math.round((amountToBuy * (1 - slippagePercentage / 100) / currentTokenPrice) * 1e9);
