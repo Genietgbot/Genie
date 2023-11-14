@@ -922,6 +922,8 @@ bot.on('callback_query', async (callbackQuery) => {
                 const goerliWethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
                 const gasPrice = await provider.getGasPrice();
                 const path = [address, goerliWethAddress];
+                let gasBuffer = await getAsync(`settings:gas_buffer:${username}`);
+                gasBuffer = JSON.parse(gasBuffer).gasBuffer;
 
                 console.log('Balance in Ether:', balanceEther);
 
@@ -940,10 +942,11 @@ bot.on('callback_query', async (callbackQuery) => {
                         userBalanceTokenToSell,
                     );
                     console.log("estimatedGasApprove: ", estimatedGasApprove);
+                    const increasedEstimatedGasApprove = estimatedGas.toNumber() * (1 + gasBuffer / 100);
                     const approvalTx = await tokenContract.approve(
                         uniswapRouterAddress,
                         userBalanceTokenToSell,
-                        { gasLimit: estimatedGasApprove }
+                        { gasLimit: increasedEstimatedGasApprove }
                     );
 
                 const approvalLink = `https://goerli.etherscan.io/tx/${approvalTx.hash}`;
@@ -972,8 +975,6 @@ bot.on('callback_query', async (callbackQuery) => {
                 );
 
                 console.log('Estimated Gas:', estimatedGas.toString());
-                let gasBuffer = await getAsync(`settings:gas_buffer:${username}`);
-                gasBuffer = JSON.parse(gasBuffer).gasBuffer;
                 const increasedGasPrice = Math.ceil(gasPrice * (1 + gasBuffer / 100) * (ethers.BigNumber.from(1e9)));
                 const gasLimit = Math.ceil(estimatedGas.toNumber() * (1 + gasBuffer / 100));
                 const gasPriceInGwei = ethers.BigNumber.from(increasedGasPrice);
