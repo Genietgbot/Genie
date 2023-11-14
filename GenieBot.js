@@ -969,14 +969,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 
                 const gasCost = gasPriceInGwei.mul(gasLimitBN);
 
-                // const totalMaxCost = gasCost.add(amountToBuyInWei);
-                // const totalMaxCostInEth = ethers.utils.formatEther(totalMaxCost);
-
                 console.log('Gas Cost:', gasCost.toString());
-
-                // if (balanceEther <= totalMaxCostInEth) {
-                //     bot.sendMessage(chatId, `Funds too low!`, { parse_mode: 'Markdown' });
-                // }
 
                 const transaction = await uniswapRouter.swapExactTokensForETH(
                     userBalanceTokenToSell.toString(),
