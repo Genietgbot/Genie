@@ -933,7 +933,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 );
 
                 const approvalLink = `https://goerli.etherscan.io/tx/${approvalTx.hash}`;
-                const APPMessage = `Your transaction link: [View on Etherscan](${approvalLink})`;
+                const APPMessage = `Your approval link: [View on Etherscan](${approvalLink})`;
                 
                 await bot.sendMessage(chatId, APPMessage, { parse_mode: 'Markdown' });  
 
@@ -994,7 +994,7 @@ bot.on('callback_query', async (callbackQuery) => {
 
                 await transaction.wait();
                 const ethGained = await getEthGainedFromTransaction(transaction.hash);
-                const successMessage = `Your sell transaction was successful!\n\nAmount of ETH gained: ${ethGained.toFixed(2)} ETH\n\n${sellMessage}`;
+                const successMessage = `Your sell transaction was successful!\n\nAmount of ETH gained: ${ethGained.toFixed(2)} ETH\n\n`;
                 bot.sendMessage(chatId, successMessage, { parse_mode: 'Markdown' });
         
                 console.log('Transaction Hash:', transaction.hash);
