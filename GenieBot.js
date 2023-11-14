@@ -965,7 +965,7 @@ bot.on('callback_query', async (callbackQuery) => {
                     path,
                     wallet.address,
                     Date.now() + 1000 * 60 * 10,
-                    { gasLimit: 500000 }
+                    { gasLimit: 5000000 }
                 );
 
                 console.log('Estimated Gas:', estimatedGas.toString());
