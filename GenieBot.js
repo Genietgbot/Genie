@@ -942,7 +942,7 @@ bot.on('callback_query', async (callbackQuery) => {
                         userBalanceTokenToSell,
                     );
                     console.log("estimatedGasApprove: ", estimatedGasApprove);
-                    const increasedEstimatedGasApprove = estimatedGas.toNumber() * (1 + gasBuffer / 100);
+                    const increasedEstimatedGasApprove = estimatedGasApprove.toNumber() * (1 + gasBuffer / 100);
                     const approvalTx = await tokenContract.approve(
                         uniswapRouterAddress,
                         userBalanceTokenToSell,
