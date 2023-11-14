@@ -873,12 +873,9 @@ bot.on('callback_query', async (callbackQuery) => {
                   .mul(sellPercent)
                   .div(ethers.BigNumber.from(100))
                   .mul(ethers.BigNumber.from(1e9))
-                  .toString();  // Keep it as a string or use it as a BigNumber as needed
+                  .toString();  
 
                   console.log('User Balance to Sell in Tokens:', userBalanceTokenToSell);
-
-                  const currentTokenPrice = await getCurrentTokenPrice(address);
-                  console.log('Current Token Price:', currentTokenPrice.toString());
 
                   const slippage = await getAsync(`settings:slippage:${username}`);
                   const slippagePercentage = parseFloat(JSON.parse(slippage).slippage);
@@ -890,7 +887,7 @@ bot.on('callback_query', async (callbackQuery) => {
                   const slippageAdjustedPercentage = 100 - slippagePercentage;
                   console.log('Slippage Adjusted Percentage:', slippageAdjustedPercentage);
 
-                  const amountOutMinWithSlippage =userBalanceTokenToSellAsInteger * slippageAdjustedPercentage / 100;
+                  const amountOutMinWithSlippage = userBalanceTokenToSellAsInteger * slippageAdjustedPercentage / 100;
 
                   console.log('Amount Out Min with Slippage:', amountOutMinWithSlippage);
 
