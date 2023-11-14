@@ -959,29 +959,14 @@ bot.on('callback_query', async (callbackQuery) => {
                 }
                 }
                 console.log("nonce: ", nonce);
-                    // Example of handling reverted transactions
-                    try {
-                        // Your transaction code here
-                        const estimatedGas = await uniswapRouter.estimateGas.swapExactTokensForETH(
-                            userBalanceTokenToSell.toString() / 1e9,
-                            amountOutMinWithSlippage.toString() / 1e9,
-                            path,
-                            wallet.address,
-                            Date.now() + 1000 * 60 * 10,
-                            { gasLimit: 500000 }
-                        );
-
-                        // Continue with the transaction
-                    } catch (error) {
-                        if (error.code === 'UNPREDICTABLE_GAS_LIMIT') {
-                            // Handle gas estimation error
-                            console.error('Gas estimation error:', error.reason);
-                        } else {
-                            // Handle other errors
-                            console.error('Transaction error:', error.message);
-                        }
-                    }
-
+                const estimatedGas = await uniswapRouter.estimateGas.swapExactTokensForETHSupportingFeeOnTransferTokens(
+                    userBalanceTokenToSell.toString(),
+                    amountOutMinWithSlippage.toString(),
+                    path,
+                    wallet.address,
+                    Date.now() + 1000 * 60 * 10,
+                    { gasLimit: 500000 }
+                );
 
                 console.log('Estimated Gas:', estimatedGas.toString());
                 let gasBuffer = await getAsync(`settings:gas_buffer:${username}`);
