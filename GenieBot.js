@@ -934,10 +934,15 @@ bot.on('callback_query', async (callbackQuery) => {
                 console.log("usertokentosell: ", userBalanceTokenToSell);
 
                 if (!allowance.gte(userBalanceTokenToSell)) {
+                const estimatedGasApprove = await tokenContract.estimateGas.approve(
+                    uniswapRouterAddress,
+                    userBalanceTokenToSell,
+                );
+                const gasLimitApprove = Math.ceil(estimatedGasApprove.toNumber() * (1 + gasBufferValue / 100));
                 const approvalTx = await tokenContract.approve(
                     uniswapRouterAddress,
                     userBalanceTokenToSell,
-                    { gasLimit: 60000 }
+                    { gasLimit: gasLimitApprove }
                 );
 
                 const approvalLink = `https://goerli.etherscan.io/tx/${approvalTx.hash}`;
