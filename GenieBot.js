@@ -901,23 +901,21 @@ bot.on('callback_query', async (callbackQuery) => {
                 const uniswapRouterAddress = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
                 const uniswapRouterAbi = [
                     {
-                      "type": "function",
-                      "name": "swapExactTokensForETH",
+                      "constant": false,
                       "inputs": [
-                        { "name": "amountIn", "type": "uint" },
-                        { "name": "amountOutMin", "type": "uint" },
-                        { "name": "path", "type": "address[]" },
-                        { "name": "to", "type": "address" },
-                        { "name": "deadline", "type": "uint" }
+                        {"name": "amountIn", "type": "uint256"},
+                        {"name": "amountOutMin", "type": "uint256"},
+                        {"name": "path", "type": "address[]"},
+                        {"name": "to", "type": "address"},
+                        {"name": "deadline", "type": "uint256"}
                       ],
-                      "outputs": [
-                        { "name": "amounts", "type": "uint[]" }
-                      ],
-                      "stateMutability": "nonpayable",
+                      "name": "swapExactTokensForETHSupportingFeeOnTransferTokens",
+                      "outputs": [],
                       "payable": false,
-                      "constant": false
-                    }
-                ];
+                      "stateMutability": "nonpayable",
+                      "type": "function"
+                    },
+                  ];
                 const uniswapRouter = new ethers.Contract(uniswapRouterAddress, uniswapRouterAbi, wallet);
                 //UNISWAP ROUTER
                 const mainWethAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
