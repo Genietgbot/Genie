@@ -898,7 +898,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 const balanceWei = await provider.getBalance(walletInfo.address);
                 const balanceEther = ethers.utils.formatEther(balanceWei);
                 //USERBALANCE IN ETH
-                const uniswapRouterAddress = '0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD';
+                const uniswapRouterAddress = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
                 const uniswapRouterAbi = [
                     {
                       "constant": false,
