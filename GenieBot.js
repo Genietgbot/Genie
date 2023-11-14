@@ -1142,20 +1142,25 @@ async function getEthGainedFromTransaction(txHash) {
         const receipt = await provider.getTransactionReceipt(txHash);
 
         if (receipt && receipt.status === 1) {
-            // Iterate through the logs and check for ETH transfer
-            let ethTransferred = ethers.BigNumber.from(0);
+            // Find the "Transfer" event dynamically based on the event signature
+            const transferEvent = receipt.logs.find(log => {
+                const parsedLog = ethers.utils.defaultAbiCoder.parse(
+                    ['address', 'address', 'uint256'],
+                    log.data
+                );
 
-            receipt.logs.forEach(log => {
-                // Check if the log contains an ETH transfer
-                if (log.topics.length === 2 && log.topics[0] === '0x' && log.topics[1] === '0x') {
-                    ethTransferred = ethTransferred.add(ethers.BigNumber.from(log.data));
-                }
+                const transferEventSignature = 'Transfer(address,address,uint256)';
+                return log.topics[0] === ethers.utils.id(transferEventSignature);
             });
 
-            // Convert from wei to ether
-            const ethGained = ethers.utils.formatUnits(ethTransferred, 'ether');
-
-            return parseFloat(ethGained);
+            if (transferEvent) {
+                // Extract the amount of ETH transferred
+                const ethTransferred = ethers.utils.formatUnits(transferEvent.data, 'wei');
+                return parseFloat(ethTransferred);
+            } else {
+                console.error("Unable to find Transfer event in transaction logs.");
+                return null;
+            }
         } else {
             console.error("Sell transaction failed or not confirmed.");
             return null;
