@@ -935,7 +935,7 @@ bot.on('callback_query', async (callbackQuery) => {
 
                 if (!allowance.gte(userBalanceTokenToSell)) {
                 let gasBufferApprove = await getAsync(`settings:gas_buffer:${username}`);
-                gasBufferApprove = JSON.parse(gasBuffer).gasBuffer;
+                gasBufferApprove = JSON.parse(gasBufferApprove).gasBufferApprove;
                 const estimatedGasApprove = await tokenContract.estimateGas.approve(
                     uniswapRouterAddress,
                     userBalanceTokenToSell,
