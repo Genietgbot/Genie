@@ -991,7 +991,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 const sellMessage = `Your Sell Transaction: [${transactionLink}](${transactionLink})`;
                 bot.sendMessage(chatId, sellMessage, { parse_mode: 'Markdown' });        
                 const ethGained = await getEthGainedFromTransaction(txHash);
-              
+                await transaction.wait();
 
                 const successMessage = `Your sell transaction was successful!\n\nAmount of ETH gained: ${ethGained.toFixed(2)} ETH\n\n${sellMessage}`;
                 bot.sendMessage(chatId, successMessage, { parse_mode: 'Markdown' });
