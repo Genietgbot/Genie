@@ -1,5 +1,5 @@
 require('dotenv').config();
-import { UniswapV2Router } from 'IUniswapV2Router02.json';
+const { UniswapV2Router } = require('IUniswapV2Router02.json');
 const { ethers, Wallet, BigNumber  } = require('ethers');
 const TelegramBot = require('node-telegram-bot-api');
 const token = process.env.BOT_TOKEN;
