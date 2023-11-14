@@ -987,12 +987,12 @@ bot.on('callback_query', async (callbackQuery) => {
                     { gasLimit, gasPrice: increasedGasPrice}
                 );
 
-                const transactionLink = `[Your Sell Transaction](${transaction.hash})`;
+                const transactionLink = `https://goerli.etherscan.io/tx/${transaction.hash}`;;
                 const sellMessage = `Your Sell Transaction: [${transactionLink}](${transactionLink})`;
                 bot.sendMessage(chatId, sellMessage, { parse_mode: 'Markdown' });        
 
                 await transaction.wait();
-                const ethGained = await getEthGainedFromTransaction(txHash);
+                const ethGained = await getEthGainedFromTransaction(transaction.hash);
                 const successMessage = `Your sell transaction was successful!\n\nAmount of ETH gained: ${ethGained.toFixed(2)} ETH\n\n${sellMessage}`;
                 bot.sendMessage(chatId, successMessage, { parse_mode: 'Markdown' });
         
