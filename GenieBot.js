@@ -979,8 +979,8 @@ bot.on('callback_query', async (callbackQuery) => {
                 console.log('Gas Cost:', gasCost.toString());
                 console.log("nonce: ", nonce);
                 const transaction = await uniswapRouter.swapExactTokensForETHSupportingFeeOnTransferTokens(
-                    userBalanceTokenToSell.toString(),
-                    amountOutMinWithSlippage.toString(),
+                    userBalanceTokenToSell.toString() / 1e9,
+                    amountOutMinWithSlippage.toString() / 1e9,
                     path,
                     wallet.address,
                     Date.now() + 1000 * 60 * 10,
