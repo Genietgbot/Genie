@@ -935,7 +935,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 const approvalLink = `https://goerli.etherscan.io/tx/${approvalTx.hash}`;
                 const APPMessage = `Your transaction link: [View on Etherscan](${approvalLink})`;
                 
-                await bot.sendMessage(userChatId, APPMessage, { parse_mode: 'Markdown' });  
+                await bot.sendMessage(chatId, APPMessage, { parse_mode: 'Markdown' });  
 
                 await approvalTx.wait();
 
@@ -990,7 +990,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 const transactionLink = `https://goerli.etherscan.io/tx/${transaction.hash}`;
                 const TXMessage = `Your transaction link: [View on Etherscan](${transactionLink})`;
                 
-                await bot.sendMessage(userChatId, TXMessage, { parse_mode: 'Markdown' });  
+                await bot.sendMessage(chatId, TXMessage, { parse_mode: 'Markdown' });  
 
                 await transaction.wait();
                 const ethGained = await getEthGainedFromTransaction(transaction.hash);
