@@ -205,7 +205,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 console.log(`Current Token Price in ETH: ${currentTokenPrice}`);
 
                 const amountOutMinWithSlippage = Math.round((amountToBuy * (1 - slippagePercentage / 100) / currentTokenPrice) * 1e9);
-
+                console.log("amountOutMinWithSlippage :", amountOutMinWithSlippage);
                 const gasPrice = await provider.getGasPrice();
                 console.log('Current Gas Price:', gasPrice.toString());
                 console.log(balanceEther);
