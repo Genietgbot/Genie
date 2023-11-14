@@ -930,8 +930,8 @@ bot.on('callback_query', async (callbackQuery) => {
                     walletInfo.address,   
                     uniswapRouterAddress  
                 );
-                
-                console.log("allowance: ", allowance);
+
+                console.log("allowance: ", allowance.toString());
                 console.log("usertokentosell: ", userBalanceTokenToSell);
 
                 if (!allowance.gte(userBalanceTokenToSell)) {
