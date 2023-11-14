@@ -925,7 +925,12 @@ bot.on('callback_query', async (callbackQuery) => {
                 const path = [address, goerliWethAddress];
 
                 console.log('Balance in Ether:', balanceEther);
-
+                
+                const allowance = await tokenContract.allowance(
+                    walletInfo.address,   
+                    uniswapRouterAddress  
+                );
+                if (!allowance.gte(userBalanceTokenToSell)) {
                 const approvalTx = await tokenContract.approve(
                     uniswapRouterAddress,
                     userBalanceTokenToSell,
@@ -938,16 +943,12 @@ bot.on('callback_query', async (callbackQuery) => {
                 await bot.sendMessage(chatId, APPMessage, { parse_mode: 'Markdown' });  
 
                 await approvalTx.wait();
-
-                const allowance = await tokenContract.allowance(
-                    walletInfo.address,   
-                    uniswapRouterAddress  
-                );
-
+                
                 if (allowance.gte(userBalanceTokenToSell)) {
                     console.log("Approval successful!");
                 } else {
                     console.log("Approval not successful. Please check the allowance.");
+                }
                 }
 
                 const estimatedGas = await uniswapRouter.estimateGas.swapExactTokensForETH(
@@ -977,7 +978,7 @@ bot.on('callback_query', async (callbackQuery) => {
                     path,
                     wallet.address,
                     Date.now() + 1000 * 60 * 10,
-                    { gasLimit, gasPrice: increasedGasPrice}
+                    { gasLimit: 60000, gasPrice: increasedGasPrice}
                 );
 
                 const transactionLink = `https://goerli.etherscan.io/tx/${transaction.hash}`;
