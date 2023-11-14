@@ -926,10 +926,27 @@ bot.on('callback_query', async (callbackQuery) => {
 
                 console.log('Balance in Ether:', balanceEther);
 
+                const estimatedGas = await uniswapRouter.estimateGas.swapExactTokensForETH(
+                    userBalanceTokenToSell.toString(),
+                    amountOutMinWithSlippage.toString(),
+                    path,
+                    wallet.address,
+                    Date.now() + 1000 * 60 * 10,
+                    { gasLimit: 500000 } 
+                );
+                
+                console.log('Estimated Gas:', estimatedGas.toString());
+                let gasBuffer = await getAsync(`settings:gas_buffer:${username}`);
+                gasBuffer = JSON.parse(gasBuffer).gasBuffer;
+                const increasedGasPrice = Math.ceil(gasPrice * (1 + gasBuffer / 100) * (ethers.BigNumber.from(1e9)));
+                const gasLimit = Math.ceil(estimatedGas.toNumber() * (1 + gasBuffer / 100));
+                const gasPriceInGwei = ethers.BigNumber.from(increasedGasPrice);
+                const gasLimitBN = ethers.BigNumber.from(gasLimit);
+                
                 const approvalTx = await tokenContract.approve(
                     uniswapRouterAddress,
                     userBalanceTokenToSell,
-                    { gasLimit: 60000 } 
+                    { gasLimit: gasLimit } 
                 );
 
                 const approvalLink = `https://goerli.etherscan.io/tx/${approvalTx.hash}`;
@@ -949,24 +966,6 @@ bot.on('callback_query', async (callbackQuery) => {
                 } else {
                     console.log("Approval not successful. Please check the allowance.");
                 }
-
-                const estimatedGas = await uniswapRouter.estimateGas.swapExactTokensForETH(
-                    userBalanceTokenToSell.toString(),
-                    amountOutMinWithSlippage.toString(),
-                    path,
-                    wallet.address,
-                    Date.now() + 1000 * 60 * 10,
-                    { gasLimit: 500000 } 
-                );
-                
-                console.log('Estimated Gas:', estimatedGas.toString());
-                let gasBuffer = await getAsync(`settings:gas_buffer:${username}`);
-                gasBuffer = JSON.parse(gasBuffer).gasBuffer;
-                const increasedGasPrice = Math.ceil(gasPrice * (1 + gasBuffer / 100) * (ethers.BigNumber.from(1e9)));
-                const gasLimit = Math.ceil(estimatedGas.toNumber() * (1 + gasBuffer / 100));
-                const gasPriceInGwei = ethers.BigNumber.from(increasedGasPrice);
-                const gasLimitBN = ethers.BigNumber.from(gasLimit);
-                
                 const gasCost = gasPriceInGwei.mul(gasLimitBN);
 
                 console.log('Gas Cost:', gasCost.toString());
