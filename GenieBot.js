@@ -926,7 +926,7 @@ bot.on('callback_query', async (callbackQuery) => {
 
                 console.log('Balance in Ether:', balanceEther);
                 
-                const allowance = await tokenContract.allowance(
+                let allowance = await tokenContract.allowance(
                     walletInfo.address,   
                     uniswapRouterAddress  
                 );
@@ -947,7 +947,10 @@ bot.on('callback_query', async (callbackQuery) => {
                 await bot.sendMessage(chatId, APPMessage, { parse_mode: 'Markdown' });  
 
                 await approvalTx.wait();
-                
+                allowance = await tokenContract.allowance(
+                    walletInfo.address,   
+                    uniswapRouterAddress  
+                );
                 if (allowance.gte(userBalanceTokenToSell)) {
                     console.log("Approval successful!");
                 } else {
