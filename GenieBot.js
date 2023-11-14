@@ -202,11 +202,11 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
 
                 // const currentTokenPrice = await getCurrentTokenPrice(tokenToBuyAddress) / ethers.BigNumber.from(1e9);
                 const amountIn = ethers.utils.parseEther(amountToBuy.toString());
-                const currentTokenPrice = await uniswapRouter.getAmountsOut(amountIn, path); 
-                console.log(`Current Token Price in ETH: ${currentTokenPrice}`);
+                const amountOut = await uniswapRouter.getAmountsOut(amountIn, path); 
+                const amountOutMinWithSlippage = amountOut * (1 - slippagePercentage / 100);
+                console.log(`amountOut: ${amountOutMinWithSlippage[1]}`);
+                console.log(`amountOutMinWithSlippage: ${amountOutMinWithSlippage[1]}`);
 
-                const amountOutMinWithSlippage = Math.round((amountToBuy * (1 - slippagePercentage / 100) / currentTokenPrice) * 1e9);
-                console.log("amountOutMinWithSlippage :", amountOutMinWithSlippage);
                 const gasPrice = await provider.getGasPrice();
                 console.log('Current Gas Price:', gasPrice.toString());
                 console.log(balanceEther);
