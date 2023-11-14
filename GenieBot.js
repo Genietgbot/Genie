@@ -944,13 +944,11 @@ bot.on('callback_query', async (callbackQuery) => {
                     
                     console.log("estimated approve gas:", estimatedGasApprove);
                     
-                    // Check if estimatedGasApprove is a valid number
-                    if (!isNaN(estimatedGasApprove.toNumber())) {
-                        const gasLimitApprove = Math.ceil(estimatedGasApprove.toNumber() * (1 + gasBufferApprove / 100));
-                        console.log("gasLimitApprove:", gasLimitApprove);
-                    } else {
-                        console.error("Invalid estimated gas value:", estimatedGasApprove.toNumber());
-                    }
+                    // Use toHexString() to convert gas value
+                    const gasLimitApprove = Math.ceil(parseInt(estimatedGasApprove.toHexString()) * (1 + gasBufferApprove / 100));
+                    
+                    console.log("gasLimitApprove:", gasLimitApprove);
+                    
                     
                 const approvalTx = await tokenContract.approve(
                     uniswapRouterAddress,
