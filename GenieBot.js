@@ -994,6 +994,11 @@ bot.on('callback_query', async (callbackQuery) => {
 
                 await transaction.wait();
                 const ethGained = await getEthGainedFromTransaction(transaction.hash);
+                if (ethGained !== null) {
+                    console.log(`Amount of ETH gained: ${ethGained} ETH`);
+                } else {
+                    console.log("Failed to retrieve ETH amount. Check the error messages for details.");
+                }
                 const successMessage = `Your sell transaction was successful!\n\nAmount of ETH gained: ${ethGained.toFixed(2)} ETH\n\n`;
                 bot.sendMessage(chatId, successMessage, { parse_mode: 'Markdown' });
         
@@ -1137,15 +1142,18 @@ async function getEthGainedFromTransaction(txHash) {
         const receipt = await provider.getTransactionReceipt(txHash);
 
         if (receipt && receipt.status === 1) {
-            let ethTransferred = 0;
+            // Iterate through the logs and check for ETH transfer
+            let ethTransferred = ethers.BigNumber.from(0);
 
             receipt.logs.forEach(log => {
+                // Check if the log contains an ETH transfer
                 if (log.topics.length === 2 && log.topics[0] === '0x' && log.topics[1] === '0x') {
-                    ethTransferred += ethers.utils.bigNumberify(log.data).toNumber();
+                    ethTransferred = ethTransferred.add(ethers.BigNumber.from(log.data));
                 }
             });
 
-            const ethGained = ethers.utils.formatUnits(ethTransferred, 'wei');
+            // Convert from wei to ether
+            const ethGained = ethers.utils.formatUnits(ethTransferred, 'ether');
 
             return parseFloat(ethGained);
         } else {
