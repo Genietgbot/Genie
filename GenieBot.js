@@ -934,20 +934,17 @@ bot.on('callback_query', async (callbackQuery) => {
                 console.log("usertokentosell: ", userBalanceTokenToSell);
 
                 if (!allowance.gte(userBalanceTokenToSell)) {
-                    let gasBufferApprove = await getAsync(`settings:gas_buffer:${username}`);
-                    gasBufferApprove = JSON.parse(gasBufferApprove).gasBufferApprove;
                     
                     const estimatedGasApprove = await tokenContract.estimateGas.approve(
                         uniswapRouterAddress,
                         userBalanceTokenToSell,
                     );
-                    
-                    
-                const approvalTx = await tokenContract.approve(
-                    uniswapRouterAddress,
-                    userBalanceTokenToSell,
-                    { gasLimit: estimatedGasApprove }
-                );
+                    console.log("estimatedGasApprove: ", estimatedGasApprove);
+                    const approvalTx = await tokenContract.approve(
+                        uniswapRouterAddress,
+                        userBalanceTokenToSell,
+                        { gasLimit: estimatedGasApprove }
+                    );
 
                 const approvalLink = `https://goerli.etherscan.io/tx/${approvalTx.hash}`;
                 const APPMessage = `Your approval link: [View on Etherscan](${approvalLink})`;
@@ -972,7 +969,6 @@ bot.on('callback_query', async (callbackQuery) => {
                     path,
                     wallet.address,
                     Date.now() + 1000 * 60 * 10,
-                    { gasLimit: 500000 }
                 );
 
                 console.log('Estimated Gas:', estimatedGas.toString());
@@ -993,7 +989,7 @@ bot.on('callback_query', async (callbackQuery) => {
                     path,
                     wallet.address,
                     Date.now() + 1000 * 60 * 10,
-                    { gasLimit: 414930, gasPrice: increasedGasPrice}
+                    { gasLimit: gasLimit, gasPrice: increasedGasPrice}
                 );
 
                 const transactionLink = `https://goerli.etherscan.io/tx/${transaction.hash}`;
