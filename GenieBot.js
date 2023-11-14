@@ -294,7 +294,7 @@ bot.onText(/^\/?(0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
     try {
       const result = await checkHoneypot(address);
 
-    //   const message = await formatResultMessage(result);
+      const message = await formatResultMessage(result);
       bot.sendMessage(msg.from.id, message, { parse_mode: 'Markdown' });
     } catch (error) {
       bot.sendMessage(msg.from.id, 'Error checking honeypot status.');
