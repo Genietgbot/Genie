@@ -986,13 +986,8 @@ bot.on('callback_query', async (callbackQuery) => {
                 await bot.sendMessage(chatId, TXMessage, { parse_mode: 'Markdown' });  
 
                 await transaction.wait();
-                const ethGained = await getEthGainedFromTransaction(transaction.hash);
-                if (ethGained !== null) {
-                    console.log(`Amount of ETH gained: ${ethGained} ETH`);
-                } else {
-                    console.log("Failed to retrieve ETH amount. Check the error messages for details.");
-                }
-                const successMessage = `Your sell transaction was successful!\n\nAmount of ETH gained: ${ethGained.toFixed(2)} ETH\n\n`;
+
+                const successMessage = `Your sell transaction was successful!`;
                 bot.sendMessage(chatId, successMessage, { parse_mode: 'Markdown' });
         
                 console.log('Transaction Hash:', transaction.hash);
