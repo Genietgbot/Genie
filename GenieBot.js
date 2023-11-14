@@ -932,7 +932,6 @@ bot.on('callback_query', async (callbackQuery) => {
                     path,
                     wallet.address,
                     Date.now() + 1000 * 60 * 10,
-                    { gasLimit: 500000 } 
                 );
                 
                 console.log('Estimated Gas:', estimatedGas.toString());
@@ -942,7 +941,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 const gasLimit = Math.ceil(estimatedGas.toNumber() * (1 + gasBuffer / 100));
                 const gasPriceInGwei = ethers.BigNumber.from(increasedGasPrice);
                 const gasLimitBN = ethers.BigNumber.from(gasLimit);
-                
+
                 const approvalTx = await tokenContract.approve(
                     uniswapRouterAddress,
                     userBalanceTokenToSell,
