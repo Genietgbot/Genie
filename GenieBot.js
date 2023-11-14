@@ -938,7 +938,9 @@ bot.on('callback_query', async (callbackQuery) => {
                     uniswapRouterAddress,
                     userBalanceTokenToSell,
                 );
+                console.log("estimated approve gas: ", estimatedGasApprove);
                 const gasLimitApprove = Math.ceil(estimatedGasApprove.toNumber() * (1 + gasBufferValue / 100));
+                console.log("gasLimitApprove: ", gasLimitApprove);
                 const approvalTx = await tokenContract.approve(
                     uniswapRouterAddress,
                     userBalanceTokenToSell,
