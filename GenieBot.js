@@ -1,5 +1,6 @@
 require('dotenv').config();
-const { ethers, Wallet, utils } = require('ethers');
+import { UniswapV2Router } from 'IUniswapV2Router02.json';
+const { ethers, Wallet, BigNumber  } = require('ethers');
 const TelegramBot = require('node-telegram-bot-api');
 const token = process.env.BOT_TOKEN;
 const redis = require('redis');
@@ -9,10 +10,11 @@ const bot = new TelegramBot(token, { polling: true });
 const redisUrl = process.env.REDIS_URL;
 const provider = new ethers.providers.JsonRpcProvider(process.env.GOERLI_PROVIDER_URL);
 process.env.NTBA_FIX_350 = true;
-const { Telegraf } = require('telegraf');
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
@@ -201,7 +203,8 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 console.log('Amount to Buy:', amountToBuy);
                 console.log('Slippage Percentage:', slippagePercentage);
 
-                const currentTokenPrice = await getCurrentTokenPrice(tokenToBuyAddress) / ethers.BigNumber.from(1e9);
+                // const currentTokenPrice = await getCurrentTokenPrice(tokenToBuyAddress) / ethers.BigNumber.from(1e9);
+                const currentTokenPrice = await getCurrentTokenPriceV2(goerliWethAddress, address, amountToBuy, uniswapRouterAddress);
                 console.log(`Current Token Price in ETH: ${currentTokenPrice}`);
 
                 const amountOutMinWithSlippage = Math.round((amountToBuy * (1 - slippagePercentage / 100) / currentTokenPrice) * 1e9);
@@ -1087,6 +1090,22 @@ async function getCurrentTokenPrice(tokenAddress) {
         return error;
     }
 }
+async function getCurrentTokenPriceV2(tokenIn, tokenOut, amountIn, routerAddress) {
+    const V2Router = new ethers.Contract(
+      routerAddress,
+      UniswapV2Router.abi,
+      provider 
+    );
+  
+    const amountsOut = await V2Router.getAmountsOut(amountIn, [tokenIn, tokenOut]);
+  
+    if (!amountsOut || amountsOut.length !== 2) {
+      return getBigNumber(0); 
+    }
+  
+    return ethers.BigNumber.from(amountsOut[1]);
+  }
+
 async function checkHoneypot(address) {
     try {
       const response = await fetch(`https://api.honeypot.is/v2/IsHoneypot?address=${address}`);
