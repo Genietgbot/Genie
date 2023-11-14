@@ -934,12 +934,14 @@ bot.on('callback_query', async (callbackQuery) => {
                 console.log("usertokentosell: ", userBalanceTokenToSell);
 
                 if (!allowance.gte(userBalanceTokenToSell)) {
+                let gasBufferApprove = await getAsync(`settings:gas_buffer:${username}`);
+                gasBufferApprove = JSON.parse(gasBuffer).gasBuffer;
                 const estimatedGasApprove = await tokenContract.estimateGas.approve(
                     uniswapRouterAddress,
                     userBalanceTokenToSell,
                 );
                 console.log("estimated approve gas: ", estimatedGasApprove);
-                const gasLimitApprove = Math.ceil(estimatedGasApprove.toNumber() * (1 + gasBufferValue / 100));
+                const gasLimitApprove = Math.ceil(estimatedGasApprove.toNumber() * (1 + gasBufferApprove / 100));
                 console.log("gasLimitApprove: ", gasLimitApprove);
                 const approvalTx = await tokenContract.approve(
                     uniswapRouterAddress,
