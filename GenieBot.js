@@ -18,7 +18,7 @@ app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-const client = redis.createClient({ 
+const client = redis.createClient({
     url: redisUrl,
     retry_strategy: function(options) {
         if (options.error && options.error.code === 'ECONNREFUSED') {
@@ -50,8 +50,8 @@ const keysAsync = bluebird.promisify(client.keys).bind(client);
 
 let interactions = {};
 const callbackThrottle = {};
-let lastMessageId1 = null; 
-let lastMessageId2 = null; 
+let lastMessageId1 = null;
+let lastMessageId2 = null;
 let lastMessageId3 = null;
 let storedSymbol = [];
 
@@ -72,10 +72,10 @@ bot.onText(/\/start/i, async (msg) => {
         if (walletAddress) {
             const walletInfo = JSON.parse(walletAddress);
             walletAddress = walletInfo.address;
-        } 
+        }
         setAsync(`chatID:${username}`, chatId);
         const safeUsername = username.replace(/_/g, '\\_');
-        
+
         let response = `🧞‍♂️ Welcome to the Genie Wish Granter Bot, @${safeUsername}! 🧞‍♂️\n\n`;
 
         if (walletAddress) {
@@ -84,7 +84,7 @@ bot.onText(/\/start/i, async (msg) => {
         } else {
             response += "❗️ *Warning:* Your wallet is not set up yet. Please set it up for seamless transactions.\n\n";
         }
-        
+
 
         const userID = `${chatId}_${Date.now()}`;
 
@@ -185,13 +185,13 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
             try {
                 const privateKey = JSON.parse(walletInfo).privateKey;
                 const wallet = new ethers.Wallet(privateKey, provider);
-                
+
                 const uniswapRouterAddress = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
                 const uniswapRouterAbi = ['function swapExactETHForTokens(uint256 amountOutMin, address[] calldata path, address to, uint256 deadline) external payable returns (uint256[] memory amounts)'];
                 const uniswapRouter = new ethers.Contract(uniswapRouterAddress, uniswapRouterAbi, wallet);
-            
+
                 const tokenToBuyAddress = contractAddress;
-                const mainWethAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'; 
+                const mainWethAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
                 const goerliWethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
                 const path = [goerliWethAddress, tokenToBuyAddress];
                 const slippagePercentage = parseFloat(JSON.parse(slippage).slippage);
@@ -237,9 +237,9 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 }
 
                 const gasPriceInGwei = ethers.BigNumber.from(increasedGasPrice);
-                
+
                 const gasLimitBN = ethers.BigNumber.from(gasLimit);
-                
+
                 const gasCost = gasPriceInGwei.mul(gasLimitBN);
                 console.log('Gas Cost:', gasCost.toString());
 
@@ -247,7 +247,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 const totalMaxCost = gasCost.add(amountToBuyInWei);
                 const totalMaxCostInEth = ethers.utils.formatEther(totalMaxCost);
                 console.log('Total Max Cost:', totalMaxCostInEth);
-                
+
                 if(balanceEther<=totalMaxCostInEth){
                     bot.sendMessage(chatId, `@${safeUsername} Funds too low!`, { parse_mode: 'Markdown' });
                 }
@@ -263,7 +263,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
 
                 const transactionLink = `https://goerli.etherscan.io/tx/${transaction.hash}`;
                 const message = `Your transaction link: [View on Etherscan](${transactionLink})`;
-                
+
                 await bot.sendMessage(userChatId, message, { parse_mode: 'Markdown' });
                 await transaction.wait();
                 await bot.sendMessage(userChatId, 'Your transaction was successful!');
@@ -278,7 +278,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 }
 
             }
-            
+
         }
     }
 });
@@ -286,11 +286,11 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
 bot.onText(/^\/?(0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
     if (msg.chat.type === 'private') {
     const address = match[1];
-  
+
     if (!ethers.utils.isAddress(address)) {
       return bot.sendMessage(msg.from.id, 'Invalid Ethereum address.');
     }
-  
+
     try {
       const result = await checkHoneypot(address);
 
@@ -313,25 +313,25 @@ bot.on('callback_query', async (callbackQuery) => {
     try {
         const parts = data.split('_');
 
-        let interactionId = parts.slice(parts.length-2).join('_'); 
+        let interactionId = parts.slice(parts.length-2).join('_');
         let interaction = interactions[interactionId];
         let username = interaction.username;
         console.log(username);
         console.log(data);
 
         const action = parts[0];
-        
+
             if (!interaction) {
                 console.log(`Transaction ${username} not found.`);
                 return;
             }
-            
+
             if (action === 'create') {
                 const existingWallet = await getAsync(`wallets:${username}`);
                 let sentConfirmationMessage = '';
                 if (existingWallet){
                 const confirmationMessage = `Are you sure you want to create a new wallet? Your old wallet will be permanently lost.`;
-            
+
                 const confirmationKeyboard = {
                     keyboard: [
                         [{ text: 'Yes, I confirm' }],
@@ -340,21 +340,21 @@ bot.on('callback_query', async (callbackQuery) => {
                     one_time_keyboard: true,
                     resize_keyboard: true,
                 };
-            
+
                  sentConfirmationMessage = await bot.sendMessage(chatId, confirmationMessage, { reply_markup: JSON.stringify(confirmationKeyboard) });
-                
+
                 bot.once('text', async (msg) => {
                     const userResponse = msg.text;
-            
+
                     if (userResponse === 'Yes, I confirm') {
                         const wallet = new ethers.Wallet.createRandom();
                         const address = wallet.address;
                         const privateKey = wallet.privateKey;
-            
+
                         const response = `🆕 *New Wallet Created* 🆕\n\n` +
                             `💼 *Address:* ${address}\n\n` +
                             `🔑 *Private Key:* ${privateKey}`;
-            
+
                         await setAsync(`wallets:${username}`, JSON.stringify({ address, privateKey }));
                         await bot.sendMessage(chatId, response, { parse_mode: 'Markdown' });
                     } else if (userResponse === 'No, cancel') {
@@ -368,21 +368,21 @@ bot.on('callback_query', async (callbackQuery) => {
                     const wallet = new ethers.Wallet.createRandom();
                     const address = wallet.address;
                     const privateKey = wallet.privateKey;
-        
+
                     const response = `🆕 *New Wallet Created* 🆕\n\n` +
                         `💼 *Address:* ${address}\n\n` +
                         `🔑 *Private Key:* ${privateKey}`;
-        
+
                     await setAsync(`wallets:${username}`, JSON.stringify({ address, privateKey }));
                     await bot.sendMessage(chatId, response, { parse_mode: 'Markdown' });
                 }
             }
-            
+
             if (action === 'import') {
                 const existingWallet = await getAsync(`wallets:${username}`);
                 if (existingWallet){
                 const confirmationMessage = `Are you sure you want to import a wallet? Your current wallet will be permanently replaced.`;
-            
+
                 const confirmationKeyboard = {
                     keyboard: [
                         [{ text: 'Yes, I confirm' }],
@@ -391,28 +391,28 @@ bot.on('callback_query', async (callbackQuery) => {
                     one_time_keyboard: true,
                     resize_keyboard: true,
                 };
-            
+
                 const sentConfirmationMessage = await bot.sendMessage(chatId, confirmationMessage, { reply_markup: JSON.stringify(confirmationKeyboard) });
 
                 bot.once('text', async (confirmationMsg) => {
                     const userConfirmation = confirmationMsg.text;
-            
+
                     if (userConfirmation === 'Yes, I confirm') {
                         const importMessage = `Please enter your private key to import your wallet.`;
-            
+
                         const sendMessageOptions = {
                             reply_markup: {
                                 force_reply: true,
                             },
                         };
-            
+
                         const sentMessage = await bot.sendMessage(chatId, importMessage, sendMessageOptions);
-            
+
                         bot.onReplyToMessage(chatId, sentMessage.message_id, async (msg) => {
                             const userResponse = msg.text;
-                        
+
                             console.log('Received user response:', userResponse);
-                        
+
                             try {
                                 const userEnteredPrivateKey = Uint8Array.from(Buffer.from(userResponse, 'hex'));
 
@@ -422,7 +422,7 @@ bot.on('callback_query', async (callbackQuery) => {
                                         address: wallet.address,
                                         privateKey: wallet.privateKey
                                     };
-                        
+
                                     await setAsync(`wallets:${username}`, JSON.stringify(walletInfo));
                                     await bot.sendMessage(chatId, `Your wallet has been imported successfully.`);
                                 } else {
@@ -433,18 +433,18 @@ bot.on('callback_query', async (callbackQuery) => {
                                 await bot.sendMessage(chatId, `Error importing wallet. Please check the provided private key.`);
                             }
                         });
-                        
+
                     } else if (userConfirmation === 'No, cancel') {
                         await bot.sendMessage(chatId, 'Wallet import canceled.');
                     }
-            
+
                     if(sentConfirmationMessage!= null){
                     await bot.deleteMessage(chatId, sentConfirmationMessage.message_id);
                     }
                 });
                 } else{
                     const importMessage = `Please enter your private key to import your wallet.`;
-                    
+
                         const sendMessageOptions = {
                             reply_markup: {
                                 force_reply: true,
@@ -453,19 +453,19 @@ bot.on('callback_query', async (callbackQuery) => {
                         const sentMessage = await bot.sendMessage(chatId, importMessage, sendMessageOptions);
                         bot.onReplyToMessage(chatId, sentMessage.message_id, async (msg) => {
                             const userResponse = msg.text;
-                        
+
                             console.log('Received user response:', userResponse);
-                        
+
                             try {
                                 const userEnteredPrivateKey = Uint8Array.from(Buffer.from(userResponse, 'hex'));
-                        
+
                                 if (userEnteredPrivateKey instanceof Uint8Array && userEnteredPrivateKey.length === 32) {
                                     const wallet = new Wallet(userEnteredPrivateKey);
                                     const walletInfo = {
                                         address: wallet.address,
                                         privateKey: wallet.privateKey
                                     };
-                        
+
                                     await setAsync(`wallets:${username}`, JSON.stringify(walletInfo));
                                     await bot.sendMessage(chatId, `Your wallet has been imported successfully.`);
                                 } else {
@@ -479,31 +479,31 @@ bot.on('callback_query', async (callbackQuery) => {
                         });
                 }
             }
-            
+
             if (action === 'info') {
                 try {
                     const walletInfoString = await getAsync(`wallets:${interactions[interactionId].username}`);
-            
+
                     if (!walletInfoString) {
                         bot.sendMessage(chatId, "You have no wallet set up.");
                         return "Wallet information not found for this user.";
                     }
-            
+
                     const walletInfo = JSON.parse(walletInfoString);
                     const walletAddress = walletInfo.address;
-            
+
                     const balanceWei = await provider.getBalance(walletAddress);
                     const balanceEther = ethers.utils.formatEther(balanceWei);
-            
+
                     const ethToUsdExchangeRate = await fetchEthToUsdExchangeRate();
-            
+
                     const balanceUsd = (parseFloat(balanceEther) * ethToUsdExchangeRate).toFixed(2);
 
                     let response = `═══ Your Wallets ═══\n` +
                     `▰ Wallet ▰\n` +
                     `Wallet: ${walletAddress}\n` +
                     `Bal: ${balanceEther} ETH ($${balanceUsd})\n`;
-                    
+
 
                     const channelKeys = await keysAsync('channel:*');
                     for (const channelKey of channelKeys) {
@@ -537,15 +537,15 @@ bot.on('callback_query', async (callbackQuery) => {
                             [{ text: 'Show Private Key', callback_data: `showPrivateKey_${username}_${interactionId}` }],
                         ],
                     };
-            
+
                     await bot.sendMessage(chatId, response, { parse_mode: 'HTML', reply_markup: keyboard });
-            
+
                 } catch (error) {
                     console.error('Error fetching wallet information:', error);
                     return "An error occurred while fetching wallet information.";
                 }
             }
-            
+
             if (action === 'settings') {
                 const savedSettingsGasBufferString = await getAsync(`settings:gas_buffer:${interaction.username}`);
                 const savedSettingsSlippageString = await getAsync(`settings:slippage:${interaction.username}`);
@@ -553,17 +553,17 @@ bot.on('callback_query', async (callbackQuery) => {
                 try {
                     const savedGasBufferSettings = savedSettingsGasBufferString ? JSON.parse(savedSettingsGasBufferString) : null;
                     const savedSlippageSettings = savedSettingsSlippageString ? JSON.parse(savedSettingsSlippageString) : null;
-                    
+
                     const settingsKeyboard = {
                         inline_keyboard: [
                             [{ text: 'Set Gas Buffer', callback_data: `set_gas_buffer_${username}_${interactionId}` }],
                             [{ text: 'Set Slippage', callback_data: `set_slippage_${username}_${interactionId}` }],
                         ]
                     };
-                    
+
                     const gasBuffer = savedGasBufferSettings ? savedGasBufferSettings.gasBuffer + '%' : 'Not set';
                     const slippage = savedSlippageSettings ? savedSlippageSettings.slippage + '%' : 'Not set';
-                    
+
                     const message = `Your current settings:\n\nGas Buffer: ${gasBuffer}\nSlippage: ${slippage}`;
                     const message1 = await bot.sendMessage(chatId, message, { reply_markup: JSON.stringify(settingsKeyboard) });
                     lastMessageId1 = message1.message_id;                } catch (error) {
@@ -571,17 +571,17 @@ bot.on('callback_query', async (callbackQuery) => {
                     await bot.sendMessage(chatId, "An error occurred while retrieving your settings. Please try again later.");
                 }
             }
-            
+
             if(action === 'asell') {
                 try {
                     storedSymbol[username] = [];
                     const walletInfoString = await getAsync(`wallets:${interactions[interactionId].username}`);
-            
+
                     if (!walletInfoString) {
                         bot.sendMessage(chatId, "You have no wallet set up.");
                         return "Wallet information not found for this user.";
                     }
-            
+
                     const walletInfo = JSON.parse(walletInfoString);
                     const walletAddress = walletInfo.address;
 
@@ -609,7 +609,7 @@ bot.on('callback_query', async (callbackQuery) => {
                             if(userBalanceToken>0){
                             response += `\n${tokenSymbol} Bal: ${userBalanceToken} $HGMS`;
                             storedSymbol[username].push({ symbol: tokenSymbol, address: contractAddress });
-                            
+
                             }
                           } catch (error) {
                             console.error(`Error fetching data for contract address ${contractAddress}:`, error);
@@ -624,17 +624,17 @@ bot.on('callback_query', async (callbackQuery) => {
                             text: `Sell $${symbol}`,
                             callback_data: `sell_symbol_${symbol}_${username}_${interactionId}`,
                         };
-                    
+
                         inlineKeyboard.push([button]);
                     }
-                    
+
                     const keyboard = {
                         inline_keyboard: inlineKeyboard,
                     };
-                    
-            
+
+
                     await bot.sendMessage(chatId, response, { parse_mode: 'HTML', reply_markup: keyboard });
-            
+
                 } catch (error) {
                     console.error('Error fetching wallet information:', error);
                     return "An error occurred while fetching wallet information.";
@@ -657,7 +657,7 @@ bot.on('callback_query', async (callbackQuery) => {
                         ]
                     ]
                 };
-                
+
                 const message2 = await bot.sendMessage(chatId, 'Select your Gas Buffer:', { reply_markup: JSON.stringify(gasBufferKeyboard) });
                 lastMessageId2 = message2.message_id;
             } else if (data.startsWith('set_slippage_')) {
@@ -676,30 +676,30 @@ bot.on('callback_query', async (callbackQuery) => {
                         ]
                     ]
                 };
-                
+
                 const message2 = await bot.sendMessage(chatId, 'Select your Slippage:', { reply_markup: JSON.stringify(slippageKeyboard) });
                 lastMessageId2 = message2.message_id;
             }
 
             if (data.startsWith('custom_slippage_')) {
                 const importMessage = `Please Enter your slippage (1-100).`;
-            
+
                 const sendMessageOptions = {
                     reply_markup: {
                         force_reply: true,
                     },
                 };
-            
+
                 const sentMessage = await bot.sendMessage(chatId, importMessage, sendMessageOptions);
-            
+
                 bot.onReplyToMessage(chatId, sentMessage.message_id, async (msg) => {
                     const userResponse = msg.text;
-            
+
                     console.log('Received user response:', userResponse);
-            
+
                     try {
                         const slippage = parseFloat(userResponse);
-            
+
                         if (!isNaN(slippage) && slippage >= 1 && slippage <= 100) {
                             console.log('Slippage value:', slippage);
                             await setAsync(`settings:slippage:${username}`, JSON.stringify({ slippage }));
@@ -722,23 +722,23 @@ bot.on('callback_query', async (callbackQuery) => {
 
             if (data.startsWith('custom_gas_')) {
                 const importMessage = `Please Enter your Gas Buffer (1-100).`;
-            
+
                 const sendMessageOptions = {
                     reply_markup: {
                         force_reply: true,
                     },
                 };
-            
+
                 const sentMessage = await bot.sendMessage(chatId, importMessage, sendMessageOptions);
-            
+
                 bot.onReplyToMessage(chatId, sentMessage.message_id, async (msg) => {
                     const userResponse = msg.text;
-            
+
                     console.log('Received user response:', userResponse);
-            
+
                     try {
                         const gasBuffer = parseFloat(userResponse);
-            
+
                         if (!isNaN(gasBuffer) && gasBuffer >= 1 && gasBuffer <= 100) {
                             console.log('Gas Buffer value:', gasBuffer);
                             await setAsync(`settings:gas_buffer:${username}`, JSON.stringify({ gasBuffer }));
@@ -762,15 +762,15 @@ bot.on('callback_query', async (callbackQuery) => {
             if (data.startsWith('showPrivateKey_')) {
                 try {
                     const walletInfoString = await getAsync(`wallets:${username}`);
-            
+
                     if (!walletInfoString) {
                         bot.sendMessage(chatId, "No wallet information found.");
                         return;
                     }
-            
+
                     const walletInfo = JSON.parse(walletInfoString);
                     const privateKey = walletInfo.privateKey;
-            
+
                     const replyMessage = await bot.sendMessage(chatId, `Private Key: ${privateKey}`, {
                         reply_markup: {
                             inline_keyboard: [
@@ -799,7 +799,7 @@ bot.on('callback_query', async (callbackQuery) => {
 
             if (data.startsWith('sell_symbol_')) {
                 const symbol = parts[2];
-                
+
                 const sellNowKeyboard = {
                     inline_keyboard: [
                         [
@@ -815,7 +815,7 @@ bot.on('callback_query', async (callbackQuery) => {
                         ]
                     ]
                 };
-                
+
                 const message2 = await bot.sendMessage(chatId, 'Select sell Amount:', { reply_markup: JSON.stringify(sellNowKeyboard) });
                 lastMessageId2 = message2.message_id;
 
@@ -841,13 +841,13 @@ bot.on('callback_query', async (callbackQuery) => {
 
                   const walletInfoString = await getAsync(`wallets:${username}`);
                   console.log('Wallet Info String:', walletInfoString);
-                  
+
                   const walletInfo = JSON.parse(walletInfoString);
                   console.log('Wallet Info:', walletInfo);
-                  
+
                   const privateKey = walletInfo.privateKey;
                   console.log('Private Key:', privateKey);
-                  
+
                   const wallet = new ethers.Wallet(privateKey, provider);
                   console.log('Wallet Address:', wallet.address);
 
@@ -864,35 +864,35 @@ bot.on('callback_query', async (callbackQuery) => {
 
                   const userBalanceWei = await tokenContract.balanceOf(walletInfo.address);
                   console.log('User Balance in Wei:', userBalanceWei.toString());
-                  
+
                   const userBalanceToken = userBalanceWei.div(ethers.BigNumber.from(1e9));
                   console.log('User Balance in Tokens:', userBalanceToken.toString());
-                  
+
                   const userBalanceTokenToSell = userBalanceToken
                   .mul(sellPercent)
                   .div(ethers.BigNumber.from(100))
-                  .mul(ethers.BigNumber.from(1e9))
+                //   .mul(ethers.BigNumber.from(1e9))
                   .toString();  // Keep it as a string or use it as a BigNumber as needed
-                
+
                   console.log('User Balance to Sell in Tokens:', userBalanceTokenToSell);
-                  
+
                   const currentTokenPrice = await getCurrentTokenPrice(address);
                   console.log('Current Token Price:', currentTokenPrice.toString());
-                  
+
                   const slippage = await getAsync(`settings:slippage:${username}`);
                   const slippagePercentage = parseFloat(JSON.parse(slippage).slippage);
                   console.log('Slippage Percentage:', slippagePercentage);
-                  
+
                   const userBalanceTokenToSellAsInteger = Math.round(parseFloat(userBalanceTokenToSell));
                   console.log('User Balance Token to Sell as Integer:', userBalanceTokenToSellAsInteger);
-                  
-                  const slippageAdjustedPercentage = 100 - slippagePercentage; 
+
+                  const slippageAdjustedPercentage = 100 - slippagePercentage;
                   console.log('Slippage Adjusted Percentage:', slippageAdjustedPercentage);
-                  
+
                   const amountOutMinWithSlippage =userBalanceTokenToSellAsInteger * slippageAdjustedPercentage / 100;
-                  
+
                   console.log('Amount Out Min with Slippage:', amountOutMinWithSlippage);
-                  
+
                 //USER WALLET ACCESS
                 const balanceWei = await provider.getBalance(walletInfo.address);
                 const balanceEther = ethers.utils.formatEther(balanceWei);
@@ -919,16 +919,16 @@ bot.on('callback_query', async (callbackQuery) => {
                 ];
                 const uniswapRouter = new ethers.Contract(uniswapRouterAddress, uniswapRouterAbi, wallet);
                 //UNISWAP ROUTER
-                const mainWethAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'; 
+                const mainWethAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
                 const goerliWethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
                 const gasPrice = await provider.getGasPrice();
                 const path = [address, goerliWethAddress];
 
                 console.log('Balance in Ether:', balanceEther);
-                
+
                 let allowance = await tokenContract.allowance(
-                    walletInfo.address,   
-                    uniswapRouterAddress  
+                    walletInfo.address,
+                    uniswapRouterAddress
                 );
 
                 console.log("allowance: ", allowance.toString());
@@ -938,18 +938,18 @@ bot.on('callback_query', async (callbackQuery) => {
                 const approvalTx = await tokenContract.approve(
                     uniswapRouterAddress,
                     userBalanceTokenToSell,
-                    { gasLimit: 60000 } 
+                    { gasLimit: 60000 }
                 );
 
                 const approvalLink = `https://goerli.etherscan.io/tx/${approvalTx.hash}`;
                 const APPMessage = `Your approval link: [View on Etherscan](${approvalLink})`;
-                
-                await bot.sendMessage(chatId, APPMessage, { parse_mode: 'Markdown' });  
+
+                await bot.sendMessage(chatId, APPMessage, { parse_mode: 'Markdown' });
 
                 await approvalTx.wait();
                 allowance = await tokenContract.allowance(
-                    walletInfo.address,   
-                    uniswapRouterAddress  
+                    walletInfo.address,
+                    uniswapRouterAddress
                 );
                 if (allowance.gte(userBalanceTokenToSell)) {
                     console.log("Approval successful!");
@@ -964,9 +964,9 @@ bot.on('callback_query', async (callbackQuery) => {
                     path,
                     wallet.address,
                     Date.now() + 1000 * 60 * 10,
-                    { gasLimit: 500000 } 
+                    { gasLimit: 500000 }
                 );
-                
+
                 console.log('Estimated Gas:', estimatedGas.toString());
                 let gasBuffer = await getAsync(`settings:gas_buffer:${username}`);
                 gasBuffer = JSON.parse(gasBuffer).gasBuffer;
@@ -974,7 +974,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 const gasLimit = Math.ceil(estimatedGas.toNumber() * (1 + gasBuffer / 100));
                 const gasPriceInGwei = ethers.BigNumber.from(increasedGasPrice);
                 const gasLimitBN = ethers.BigNumber.from(gasLimit);
-                
+
                 const gasCost = gasPriceInGwei.mul(gasLimitBN);
 
                 console.log('Gas Cost:', gasCost.toString());
@@ -990,14 +990,14 @@ bot.on('callback_query', async (callbackQuery) => {
 
                 const transactionLink = `https://goerli.etherscan.io/tx/${transaction.hash}`;
                 const TXMessage = `Your transaction link: [View on Etherscan](${transactionLink})`;
-                
-                await bot.sendMessage(chatId, TXMessage, { parse_mode: 'Markdown' });  
+
+                await bot.sendMessage(chatId, TXMessage, { parse_mode: 'Markdown' });
 
                 await transaction.wait();
 
                 const successMessage = `Your sell transaction was successful!`;
                 bot.sendMessage(chatId, successMessage, { parse_mode: 'Markdown' });
-        
+
                 console.log('Transaction Hash:', transaction.hash);
             }
 
@@ -1011,7 +1011,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 if (lastMessageId2!= null) {
                     await bot.deleteMessage(chatId, lastMessageId2);
                 }
-        
+
             } else if (data.startsWith('slippage_')) {
                 const slippage = parseInt(parts[1]);
                 await setAsync(`settings:slippage:${username}`, JSON.stringify({ slippage }));
@@ -1024,7 +1024,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 if (lastMessageId2!= null) {
                     await bot.deleteMessage(chatId, lastMessageId2);
                 }
-        
+
             }
 
         } catch (error) {
@@ -1057,14 +1057,14 @@ async function getCurrentTokenPrice(tokenAddress) {
         const factoryABI = ['function getPair(address tokenA, address tokenB) external view returns (address pair)'];
         const factoryContract = new ethers.Contract(factoryAddress, factoryABI, provider);
         const pairAddress = await factoryContract.getPair(wethAddress, tokenAddress);
-        
-        console.log('Pair Address:', pairAddress); 
+
+        console.log('Pair Address:', pairAddress);
 
         const pairABI = ['function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)'];
         const pairContract = new ethers.Contract(pairAddress, pairABI, provider);
         const { reserve0, reserve1 } = await pairContract.getReserves();
 
-        console.log('Reserve0:', reserve0, 'Reserve1:', reserve1); 
+        console.log('Reserve0:', reserve0, 'Reserve1:', reserve1);
 
         const decimals = 18;
 
@@ -1074,7 +1074,7 @@ async function getCurrentTokenPrice(tokenAddress) {
 
         const tokenPriceInEth = (reserve1 / 10**decimals) / (reserve0 / 10**decimals);
 
-        console.log('Token Price in ETH:', tokenPriceInEth); 
+        console.log('Token Price in ETH:', tokenPriceInEth);
 
         return tokenPriceInEth;
     } catch (error) {
@@ -1109,7 +1109,7 @@ async function formatResultMessage(result) {
 
     const tokenPriceInEth = (reserve1) / (reserve0);
     const currentTokenPrice = tokenPriceInEth;
-    console.log('Token Price in ETH:', currentTokenPrice); 
+    console.log('Token Price in ETH:', currentTokenPrice);
 
     const currentTokenPriceUSD = await fetchEthToUsdExchangeRate() * currentTokenPrice;
     const tokenABI = [' function totalSupply() external view returns (uint256)'];
