@@ -871,7 +871,7 @@ bot.on('callback_query', async (callbackQuery) => {
                   const userBalanceTokenToSell = userBalanceToken
                   .mul(sellPercent)
                   .div(ethers.BigNumber.from(100))
-                //   .mul(ethers.BigNumber.from(1e9))
+                  .mul(ethers.BigNumber.from(1e9))
                   .toString();  // Keep it as a string or use it as a BigNumber as needed
 
                   console.log('User Balance to Sell in Tokens:', userBalanceTokenToSell);
@@ -958,9 +958,11 @@ bot.on('callback_query', async (callbackQuery) => {
                 }
                 }
 
+
+
                 const estimatedGas = await uniswapRouter.estimateGas.swapExactTokensForETH(
-                    userBalanceTokenToSell.toString(),
-                    amountOutMinWithSlippage.toString(),
+                    userBalanceTokenToSell.toString() / 1e9,
+                    amountOutMinWithSlippage.toString() / 1e9,
                     path,
                     wallet.address,
                     Date.now() + 1000 * 60 * 10,
