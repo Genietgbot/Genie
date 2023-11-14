@@ -932,7 +932,7 @@ bot.on('callback_query', async (callbackQuery) => {
                     { gasLimit: 60000 } 
                 );
 
-                const approvalLink = `https://goerli.etherscan.io/tx/${transaction.hash}`;
+                const approvalLink = `https://goerli.etherscan.io/tx/${approvalTx.hash}`;
                 const APPMessage = `Your transaction link: [View on Etherscan](${approvalLink})`;
                 
                 await bot.sendMessage(userChatId, APPMessage, { parse_mode: 'Markdown' });  
