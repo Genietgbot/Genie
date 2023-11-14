@@ -984,7 +984,7 @@ bot.on('callback_query', async (callbackQuery) => {
                     path,
                     wallet.address,
                     Date.now() + 1000 * 60 * 10,
-                    { gasLimit: 60000, gasPrice: increasedGasPrice}
+                    { gasLimit: 414930, gasPrice: increasedGasPrice}
                 );
 
                 const transactionLink = `https://goerli.etherscan.io/tx/${transaction.hash}`;
