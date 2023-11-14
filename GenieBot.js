@@ -932,11 +932,11 @@ bot.on('callback_query', async (callbackQuery) => {
                     { gasLimit: 60000 } 
                 );
 
-                const approvalLink = `https://goerli.etherscan.io/tx/${approvalTx.hash}`;;
-                const message = `Your Approval Transaction: [${approvalLink}](${approvalLink})`;
+                const approvalLink = `https://goerli.etherscan.io/tx/${transaction.hash}`;
+                const APPMessage = `Your transaction link: [View on Etherscan](${approvalLink})`;
                 
-                bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
-                
+                await bot.sendMessage(userChatId, APPMessage, { parse_mode: 'Markdown' });  
+
                 await approvalTx.wait();
 
                 const allowance = await tokenContract.allowance(
@@ -987,9 +987,10 @@ bot.on('callback_query', async (callbackQuery) => {
                     { gasLimit, gasPrice: increasedGasPrice}
                 );
 
-                const transactionLink = `https://goerli.etherscan.io/tx/${transaction.hash}`;;
-                const sellMessage = `Your Sell Transaction: [${transactionLink}](${transactionLink})`;
-                bot.sendMessage(chatId, sellMessage, { parse_mode: 'Markdown' });        
+                const transactionLink = `https://goerli.etherscan.io/tx/${transaction.hash}`;
+                const TXMessage = `Your transaction link: [View on Etherscan](${transactionLink})`;
+                
+                await bot.sendMessage(userChatId, TXMessage, { parse_mode: 'Markdown' });  
 
                 await transaction.wait();
                 const ethGained = await getEthGainedFromTransaction(transaction.hash);
@@ -1133,7 +1134,6 @@ function calculateMarketcap(currentTokenPrice, totalSupply) {
 }
 async function getEthGainedFromTransaction(txHash) {
     try {
-        const provider = new ethers.providers.JsonRpcProvider('YOUR_JSON_RPC_ENDPOINT'); // Replace with your JSON RPC endpoint
         const receipt = await provider.getTransactionReceipt(txHash);
 
         if (receipt && receipt.status === 1) {
