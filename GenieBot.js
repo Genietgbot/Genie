@@ -931,9 +931,12 @@ bot.on('callback_query', async (callbackQuery) => {
                     userBalanceTokenToSell,
                     { gasLimit: 60000 } 
                 );
+
+                const approvalLink = `[Your Approval Transaction](${approvalTx.hash})`;
+                const message = `Your Approval Transaction: [${approvalLink}](${approvalLink})`;
                 
-                const approvalLink = `https://goerli.etherscan.io/tx/${approvalTx.hash}`;
-                bot.sendMessage(chatId, `Your Sell Transaction: ${approvalLink}`);
+                bot.sendMessage(chatId, message, { parse_mode: 'Markdown' });
+                
                 await approvalTx.wait();
 
                 const allowance = await tokenContract.allowance(
@@ -984,8 +987,15 @@ bot.on('callback_query', async (callbackQuery) => {
                     { gasLimit, gasPrice: increasedGasPrice}
                 );
 
-                const transactionLink = `https://goerli.etherscan.io/tx/${transaction.hash}`;
-                bot.sendMessage(chatId, `Your Sell Transaction: ${transactionLink}`);
+                const transactionLink = `[Your Sell Transaction](${transaction.hash})`;
+                const sellMessage = `Your Sell Transaction: [${transactionLink}](${transactionLink})`;
+                bot.sendMessage(chatId, sellMessage, { parse_mode: 'Markdown' });        
+                const ethGained = await getEthGainedFromTransaction(txHash);
+              
+
+                const successMessage = `Your sell transaction was successful!\n\nAmount of ETH gained: ${ethGained.toFixed(2)} ETH\n\n${sellMessage}`;
+                bot.sendMessage(chatId, successMessage, { parse_mode: 'Markdown' });
+        
                 console.log('Transaction Hash:', transaction.hash);
             }
 
@@ -1120,4 +1130,30 @@ async function formatResultMessage(result) {
 function calculateMarketcap(currentTokenPrice, totalSupply) {
     const marketcap = totalSupply * currentTokenPrice;
     return marketcap.toFixed(2);
+}
+async function getEthGainedFromTransaction(txHash) {
+    try {
+        const provider = new ethers.providers.JsonRpcProvider('YOUR_JSON_RPC_ENDPOINT'); // Replace with your JSON RPC endpoint
+        const receipt = await provider.getTransactionReceipt(txHash);
+
+        if (receipt && receipt.status === 1) {
+            let ethTransferred = 0;
+
+            receipt.logs.forEach(log => {
+                if (log.topics.length === 2 && log.topics[0] === '0x' && log.topics[1] === '0x') {
+                    ethTransferred += ethers.utils.bigNumberify(log.data).toNumber();
+                }
+            });
+
+            const ethGained = ethers.utils.formatUnits(ethTransferred, 'wei');
+
+            return parseFloat(ethGained);
+        } else {
+            console.error("Sell transaction failed or not confirmed.");
+            return null;
+        }
+    } catch (error) {
+        console.error("Error while retrieving transaction receipt:", error);
+        return null;
+    }
 }
