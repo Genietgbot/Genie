@@ -187,7 +187,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 const wallet = new ethers.Wallet(privateKey, provider);
 
                 const uniswapRouterAddress = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
-                const uniswapRouterAbi = ['function swapExactETHForTokens(uint256 amountOutMin, address[] calldata path, address to, uint256 deadline) external payable returns (uint256[] memory amounts)'];
+                const uniswapRouterAbi = ['function swapExactETHForTokensSupportingFeeOnTransferTokens(uint256 amountOutMin, address[] calldata path, address to, uint256 deadline) external payable returns (uint256[] memory amounts)'];
                 const uniswapRouter = new ethers.Contract(uniswapRouterAddress, uniswapRouterAbi, wallet);
 
                 const tokenToBuyAddress = contractAddress;
@@ -216,7 +216,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                     return;
                 }
 
-                const estimatedGas = await uniswapRouter.estimateGas.swapExactETHForTokens(
+                const estimatedGas = await uniswapRouter.estimateGas.swapExactETHForTokensSupportingFeeOnTransferTokens(
                     0,
                     path,
                     wallet.address,
@@ -525,7 +525,7 @@ bot.on('callback_query', async (callbackQuery) => {
 
                             console.log(`Contract Address: ${contractAddress}, Token Symbol: ${tokenSymbol}`);
                             if(userBalanceToken>0){
-                            response += `\n${tokenSymbol} Bal: ${userBalanceToken} $HGMS`;
+                            response += `\n${tokenSymbol} Bal: ${userBalanceToken} $${tokenSymbol}`;
                             }
                           } catch (error) {
                             console.error(`Error fetching data for contract address ${contractAddress}:`, error);
@@ -607,7 +607,7 @@ bot.on('callback_query', async (callbackQuery) => {
 
                             console.log(`Contract Address: ${contractAddress}, Token Symbol: ${tokenSymbol}`);
                             if(userBalanceToken>0){
-                            response += `\n${tokenSymbol} Bal: ${userBalanceToken} $HGMS`;
+                            response += `\n${tokenSymbol} Bal: ${userBalanceToken} $${tokenSymbol}`;
                             storedSymbol[username].push({ symbol: tokenSymbol, address: contractAddress });
 
                             }
