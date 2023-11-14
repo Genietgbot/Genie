@@ -201,7 +201,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 console.log('Slippage Percentage:', slippagePercentage);
 
                 // const currentTokenPrice = await getCurrentTokenPrice(tokenToBuyAddress) / ethers.BigNumber.from(1e9);
-                const amountIn = ethers.utils.parseEther('1');
+                const amountIn = ethers.utils.parseEther(amountToBuy.toString());
                 const currentTokenPrice = await uniswapRouter.getAmountsOut(amountIn, path); 
                 console.log(`Current Token Price in ETH: ${currentTokenPrice}`);
 
