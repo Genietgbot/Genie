@@ -850,7 +850,8 @@ bot.on('callback_query', async (callbackQuery) => {
 
                   const wallet = new ethers.Wallet(privateKey, provider);
                   console.log('Wallet Address:', wallet.address);
-
+                  const nonce = await wallet.getTransactionCount();
+                  console.log("nonce: ", nonce);
                   const tokenContract = new ethers.Contract(
                     address,
                     [
@@ -957,9 +958,7 @@ bot.on('callback_query', async (callbackQuery) => {
                     console.log("Approval not successful. Please check the allowance.");
                 }
                 }
-
-
-
+                console.log("nonce: ", nonce);
                 const estimatedGas = await uniswapRouter.estimateGas.swapExactTokensForETH(
                     userBalanceTokenToSell.toString() / 1e9,
                     amountOutMinWithSlippage.toString() / 1e9,
@@ -980,7 +979,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 const gasCost = gasPriceInGwei.mul(gasLimitBN);
 
                 console.log('Gas Cost:', gasCost.toString());
-
+                console.log("nonce: ", nonce);
                 const transaction = await uniswapRouter.swapExactTokensForETH(
                     userBalanceTokenToSell.toString(),
                     amountOutMinWithSlippage.toString(),
