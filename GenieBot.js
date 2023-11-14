@@ -203,7 +203,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 const amountIn = ethers.utils.parseEther(amountToBuy.toString());
                 const amountOut = await uniswapRouter.getAmountsOut(amountIn, path); 
                 const amountOutMinWithSlippage = amountOut * (1 - slippagePercentage / 100) / 1e9;
-                console.log(`amountOut: ${amountOutMinWithSlippage[1]}`);
+                console.log(`amountOut: ${amountOut}`);
                 console.log(`amountOutMinWithSlippage: ${amountOutMinWithSlippage[1]}`);
 
                 const gasPrice = await provider.getGasPrice();
