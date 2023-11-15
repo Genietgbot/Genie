@@ -846,7 +846,7 @@ bot.on('callback_query', async (callbackQuery) => {
                                 const errorMessage = `Invalid input. Please enter a percentage between 1 and 100. Retry.`;
                                 await bot.sendMessage(chatId, errorMessage);
                             } else {
-                                sellPercent = enteredPercentage + '%';
+                                sellPercent = enteredPercentage;
                             }
                         });
                     });
