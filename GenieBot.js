@@ -948,6 +948,26 @@ bot.on('callback_query', async (callbackQuery) => {
 
                   const slippageAdjustedPercentage = 100 - slippagePercentage;
                   console.log('Slippage Adjusted Percentage:', slippageAdjustedPercentage);
+                  
+                  const uniswapRouterAddress = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
+                  const uniswapRouterAbi = [
+                      {
+                        "constant": false,
+                        "inputs": [
+                          {"name": "amountIn", "type": "uint256"},
+                          {"name": "amountOutMin", "type": "uint256"},
+                          {"name": "path", "type": "address[]"},
+                          {"name": "to", "type": "address"},
+                          {"name": "deadline", "type": "uint256"}
+                        ],
+                        "name": "swapExactTokensForETHSupportingFeeOnTransferTokens",
+                        "outputs": [],
+                        "payable": false,
+                        "stateMutability": "nonpayable",
+                        "type": "function"
+                      },
+                    ];
+                  const uniswapRouter = new ethers.Contract(uniswapRouterAddress, uniswapRouterAbi, wallet);
 
                   const amountIn = userBalanceTokenToSellAsInteger;
                   const amountOut = await uniswapRouter.getAmountsOut(amountIn, path); 
@@ -958,25 +978,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 const balanceWei = await provider.getBalance(walletInfo.address);
                 const balanceEther = ethers.utils.formatEther(balanceWei);
                 //USERBALANCE IN ETH
-                const uniswapRouterAddress = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
-                const uniswapRouterAbi = [
-                    {
-                      "constant": false,
-                      "inputs": [
-                        {"name": "amountIn", "type": "uint256"},
-                        {"name": "amountOutMin", "type": "uint256"},
-                        {"name": "path", "type": "address[]"},
-                        {"name": "to", "type": "address"},
-                        {"name": "deadline", "type": "uint256"}
-                      ],
-                      "name": "swapExactTokensForETHSupportingFeeOnTransferTokens",
-                      "outputs": [],
-                      "payable": false,
-                      "stateMutability": "nonpayable",
-                      "type": "function"
-                    },
-                  ];
-                const uniswapRouter = new ethers.Contract(uniswapRouterAddress, uniswapRouterAbi, wallet);
+               
                 //UNISWAP ROUTER
                 const mainWethAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
                 const goerliWethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
