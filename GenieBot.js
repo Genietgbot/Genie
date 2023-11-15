@@ -845,6 +845,7 @@ bot.on('callback_query', async (callbackQuery) => {
                             if (isNaN(enteredPercentage) || enteredPercentage < 1 || enteredPercentage > 100) {
                                 const errorMessage = `Invalid input. Please enter a percentage between 1 and 100. Retry.`;
                                 await bot.sendMessage(chatId, errorMessage);
+                                bot.sendMessage(chatId, `Sell Amount of ${sellPercent} was initiated`);
                             } else {
                                 sellPercent = enteredPercentage;
                             }
