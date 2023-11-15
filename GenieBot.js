@@ -561,8 +561,8 @@ bot.on('callback_query', async (callbackQuery) => {
                         ]
                     };
 
-                    const gasBuffer = savedGasBufferSettings ? savedGasBufferSettings.gasBuffer + '%' : 'Not set';
-                    const slippage = savedSlippageSettings ? savedSlippageSettings.slippage + '%' : 'Not set';
+                    const gasBuffer = savedGasBufferSettings ? savedGasBufferSettings.gasBuffer + '%' : '10%';
+                    const slippage = savedSlippageSettings ? savedSlippageSettings.slippage + '%' : '3%';  
 
                     const message = `Your current settings:\n\nGas Buffer: ${gasBuffer}\nSlippage: ${slippage}`;
                     const message1 = await bot.sendMessage(chatId, message, { reply_markup: JSON.stringify(settingsKeyboard) });
@@ -823,6 +823,35 @@ bot.on('callback_query', async (callbackQuery) => {
 
             if(data.startsWith('sell_now_')){
                 const sellPercent = parts[2];
+
+                if (sellPercent === 'custom') {
+                    bot.once('text', async (confirmationMsg) => {
+                        const userConfirmation = confirmationMsg.text;
+                
+                        const importMessage = `Please enter your desired sell amount in % (1 - 100) e.g: 55%`;
+                
+                        const sendMessageOptions = {
+                            reply_markup: {
+                                force_reply: true,
+                            },
+                        };
+                
+                        const sentMessage = await bot.sendMessage(chatId, importMessage, sendMessageOptions);
+                
+                        bot.onReplyToMessage(chatId, sentMessage.message_id, async (msg) => {
+                            const userResponse = msg.text;
+                            console.log('Received user response:', userResponse);
+                            const enteredPercentage = parseFloat(userResponse);
+                            if (isNaN(enteredPercentage) || enteredPercentage < 1 || enteredPercentage > 100) {
+                                const errorMessage = `Invalid input. Please enter a percentage between 1 and 100. Retry.`;
+                                await bot.sendMessage(chatId, errorMessage);
+                            } else {
+                                sellPercent = enteredPercentage + '%';
+                            }
+                        });
+                    });
+                }
+                
                 const symbol = parts[3];
                 console.log(storedSymbol);
                 console.log(username);
