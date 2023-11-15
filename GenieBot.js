@@ -490,7 +490,6 @@ bot.on('callback_query', async (callbackQuery) => {
                                     await setAsync(`wallets:${username}`, JSON.stringify(walletInfo));
                                     await bot.sendMessage(chatId, `Your wallet has been imported successfully.`);
                                 } else {
-                                    // Invalid private key format
                                     await bot.sendMessage(chatId, 'Invalid private key format. Private keys must be a random 256-bit blob.');
                                 }
                             } catch (error) {
@@ -950,8 +949,9 @@ bot.on('callback_query', async (callbackQuery) => {
                   const slippageAdjustedPercentage = 100 - slippagePercentage;
                   console.log('Slippage Adjusted Percentage:', slippageAdjustedPercentage);
 
-                  const amountOutMinWithSlippage = userBalanceTokenToSellAsInteger * slippageAdjustedPercentage / 100;
-
+                  const amountIn = userBalanceTokenToSellAsInteger;
+                  const amountOut = await uniswapRouter.getAmountsOut(amountIn, path); 
+                  const amountOutMinWithSlippage = Math.round(amountOut[1] *  slippageAdjustedPercentage / 100 / 1e9);
                   console.log('Amount Out Min with Slippage:', amountOutMinWithSlippage);
 
                 //USER WALLET ACCESS
