@@ -44,7 +44,6 @@ client.on('error', (err) => {
 
 const getAsync = bluebird.promisify(client.get).bind(client);
 const setAsync = bluebird.promisify(client.set).bind(client);
-const delAsync = bluebird.promisify(client.del).bind(client);
 const keysAsync = bluebird.promisify(client.keys).bind(client);
 
 let interactions = {};
@@ -283,25 +282,25 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
     }
 });
 
-bot.onText(/^\/?(0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
-    if (msg.chat.type === 'private') {
-    const address = match[1];
+// bot.onText(/^\/?(0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
+//     if (msg.chat.type === 'private') {
+//     const address = match[1];
 
-    if (!ethers.utils.isAddress(address)) {
-      return bot.sendMessage(msg.from.id, 'Invalid Ethereum address.');
-    }
+//     if (!ethers.utils.isAddress(address)) {
+//       return bot.sendMessage(msg.from.id, 'Invalid Ethereum address.');
+//     }
 
-    try {
-      const result = await checkHoneypot(address);
+//     try {
+//       const result = await checkHoneypot(address);
 
-      const message = await formatResultMessage(result);
-      console.log("message: ", message);
-      bot.sendMessage(msg.from.id, message, { parse_mode: 'Markdown' });
-    } catch (error) {
-      bot.sendMessage(msg.from.id, 'Error checking honeypot status.');
-    }
-    }
-});
+//       const message = await formatResultMessage(result);
+//       console.log("message: ", message);
+//       bot.sendMessage(msg.from.id, message, { parse_mode: 'Markdown' });
+//     } catch (error) {
+//       bot.sendMessage(msg.from.id, 'Error checking honeypot status.');
+//     }
+//     }
+// });
 
 bot.on('callback_query', async (callbackQuery) => {
     const data = callbackQuery.data;
@@ -1041,108 +1040,108 @@ function shortenWalletAddress(walletAddress) {
     const lastPart = walletAddress.substring(walletAddress.length - 4);
     return `${firstPart}...${lastPart}`;
 }
-async function fetchEthToUsdExchangeRate() {
-    try {
-        const response = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
-        const ethToUsdRate = response.data.ethereum.usd;
+// async function fetchEthToUsdExchangeRate() {
+//     try {
+//         const response = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
+//         const ethToUsdRate = response.data.ethereum.usd;
 
-        return ethToUsdRate;
-    } catch (error) {
-        console.error('Error fetching ETH to USD exchange rate:', error);
-        throw error;
-    }
-}
-async function checkHoneypot(address) {
-    try {
-      const response = await fetch(`https://api.honeypot.is/v2/IsHoneypot?address=${address}`);
-      const data = await response.json();
-      console.log(data);
-      return data;
-    } catch (error) {
-      console.error('Error checking honeypot:', error);
-      throw error;
-    }
-}
-async function formatResultMessage(result) {
-    const token = result.token;
-    const honeypotResult = result.honeypotResult;
-    console.log(result.pair.pair.address);
+//         return ethToUsdRate;
+//     } catch (error) {
+//         console.error('Error fetching ETH to USD exchange rate:', error);
+//         throw error;
+//     }
+// }
+// async function checkHoneypot(address) {
+//     try {
+//       const response = await fetch(`https://api.honeypot.is/v2/IsHoneypot?address=${address}`);
+//       const data = await response.json();
+//       console.log(data);
+//       return data;
+//     } catch (error) {
+//       console.error('Error checking honeypot:', error);
+//       throw error;
+//     }
+// }
+// async function formatResultMessage(result) {
+//     const token = result.token;
+//     const honeypotResult = result.honeypotResult;
+//     console.log(result.pair.pair.address);
 
-    const reserve0 = result.pair.reserves0;
-    const reserve1 = result.pair.reserves1;
+//     const reserve0 = result.pair.reserves0;
+//     const reserve1 = result.pair.reserves1;
 
-    console.log(reserve0);
-    console.log(reserve1);
+//     console.log(reserve0);
+//     console.log(reserve1);
 
-    if (reserve0 === 0 || reserve1 === 0) {
-        throw new Error('Reserve values are zero, potential division by zero');
-    }
-    console.log("debug");
-    const tokenPriceInEth = (reserve1) / (reserve0);
-    const currentTokenPrice = tokenPriceInEth;
-    console.log('Token Price in ETH:', currentTokenPrice);
-    console.log("debug");
-    const currentTokenPriceUSD = await fetchEthToUsdExchangeRate() * currentTokenPrice;
-    console.log("debug");
-    const tokenABI = [' function totalSupply() external view returns (uint256)'];
-    console.log("debug");
-    const TokenContract = new ethers.Contract(token.address, tokenABI, provider);
-    console.log("debug");
-    console.log("token.address: ", token.address);
+//     if (reserve0 === 0 || reserve1 === 0) {
+//         throw new Error('Reserve values are zero, potential division by zero');
+//     }
+//     console.log("debug");
+//     const tokenPriceInEth = (reserve1) / (reserve0);
+//     const currentTokenPrice = tokenPriceInEth;
+//     console.log('Token Price in ETH:', currentTokenPrice);
+//     console.log("debug");
+//     const currentTokenPriceUSD = await fetchEthToUsdExchangeRate() * currentTokenPrice;
+//     console.log("debug");
+//     const tokenABI = [' function totalSupply() external view returns (uint256)'];
+//     console.log("debug");
+//     const TokenContract = new ethers.Contract(token.address, tokenABI, provider);
+//     console.log("debug");
+//     console.log("token.address: ", token.address);
 
-        let totalSupply;
+//         // let totalSupply;
 
-        try {
-        totalSupply = await TokenContract.totalSupply() / 1e9;
-        } catch (error) {
-        console.error('Error fetching total supply:', error);
-        // Handle the error as needed, e.g., set totalSupply to a default value or rethrow the error.
-        }
+//         // try {
+//         // totalSupply = await TokenContract.totalSupply() / 1e9;
+//         // } catch (error) {
+//         // console.error('Error fetching total supply:', error);
+//         // // Handle the error as needed, e.g., set totalSupply to a default value or rethrow the error.
+//         // }
 
-    console.log("debug");
-    const formattedMessage = `🔬  [${token.name} (${token.symbol})](https://etherscan.io/token/${token.address})  -  Chain: ${result.chain.currency}  🔬\n\n` +
-        `Links: [Etherscan](https://etherscan.io/token/${token.address})  -  [📈Chart](https://geckoterminal.com/eth/tokens/${token.address})\n` +
-        `Supply: ${totalSupply} ⬩ Decimals: ${token.decimals}\n` +
-        `Marketcap: $${calculateMarketcap(currentTokenPriceUSD, totalSupply)}\n` +
-        `Price: $${currentTokenPriceUSD}\n` +
-        `CA: [${token.address}](https://etherscan.io/address/${token.address})\n` +
-        `Buy Tax: ${result.simulationResult.buyTax}%\n` +
-        `Sell Tax: ${result.simulationResult.sellTax}%\n` +
-        `Transfer Tax: ${result.simulationResult.transferTax}%\n\n` +
-        `${honeypotResult.isHoneypot ? 'Seems like a honeypot' : 'Doesn\'t seem like a honeypot'} [🍯](https://honeypot.is/ethereum?address=${token.address}) ${honeypotResult.isHoneypot ? '❌' : '✅'}`;
-        console.log("debug");
-    return formattedMessage;
-}
-async function getEthGainedFromTransaction(txHash) {
-    try {
-        const receipt = await provider.getTransactionReceipt(txHash);
+//     console.log("debug");
+//     const formattedMessage = `🔬  [${token.name} (${token.symbol})](https://etherscan.io/token/${token.address})  -  Chain: ${result.chain.currency}  🔬\n\n` +
+//         `Links: [Etherscan](https://etherscan.io/token/${token.address})  -  [📈Chart](https://geckoterminal.com/eth/tokens/${token.address})\n` +
+//         `Supply: ${totalSupply} ⬩ Decimals: ${token.decimals}\n` +
+//         `Marketcap: $${calculateMarketcap(currentTokenPriceUSD, totalSupply)}\n` +
+//         `Price: $${currentTokenPriceUSD}\n` +
+//         `CA: [${token.address}](https://etherscan.io/address/${token.address})\n` +
+//         `Buy Tax: ${result.simulationResult.buyTax}%\n` +
+//         `Sell Tax: ${result.simulationResult.sellTax}%\n` +
+//         `Transfer Tax: ${result.simulationResult.transferTax}%\n\n` +
+//         `${honeypotResult.isHoneypot ? 'Seems like a honeypot' : 'Doesn\'t seem like a honeypot'} [🍯](https://honeypot.is/ethereum?address=${token.address}) ${honeypotResult.isHoneypot ? '❌' : '✅'}`;
+//         console.log("debug");
+//     return formattedMessage;
+// }
+// async function getEthGainedFromTransaction(txHash) {
+//     try {
+//         const receipt = await provider.getTransactionReceipt(txHash);
 
-        if (receipt && receipt.status === 1) {
-            // Find the "Transfer" event dynamically based on the event signature
-            const transferEvent = receipt.logs.find(log => {
-                const parsedLog = ethers.utils.defaultAbiCoder.parse(
-                    ['address', 'address', 'uint256'],
-                    log.data
-                );
+//         if (receipt && receipt.status === 1) {
+//             // Find the "Transfer" event dynamically based on the event signature
+//             const transferEvent = receipt.logs.find(log => {
+//                 const parsedLog = ethers.utils.defaultAbiCoder.parse(
+//                     ['address', 'address', 'uint256'],
+//                     log.data
+//                 );
 
-                const transferEventSignature = 'Transfer(address,address,uint256)';
-                return log.topics[0] === ethers.utils.id(transferEventSignature);
-            });
+//                 const transferEventSignature = 'Transfer(address,address,uint256)';
+//                 return log.topics[0] === ethers.utils.id(transferEventSignature);
+//             });
 
-            if (transferEvent) {
-                // Extract the amount of ETH transferred
-                const ethTransferred = ethers.utils.formatUnits(transferEvent.data, 'wei');
-                return parseFloat(ethTransferred);
-            } else {
-                console.error("Unable to find Transfer event in transaction logs.");
-                return null;
-            }
-        } else {
-            console.error("Sell transaction failed or not confirmed.");
-            return null;
-        }
-    } catch (error) {
-        console.error("Error while retrieving transaction receipt:", error);
-        return null;
-    }
-}
+//             if (transferEvent) {
+//                 // Extract the amount of ETH transferred
+//                 const ethTransferred = ethers.utils.formatUnits(transferEvent.data, 'wei');
+//                 return parseFloat(ethTransferred);
+//             } else {
+//                 console.error("Unable to find Transfer event in transaction logs.");
+//                 return null;
+//             }
+//         } else {
+//             console.error("Sell transaction failed or not confirmed.");
+//             return null;
+//         }
+//     } catch (error) {
+//         console.error("Error while retrieving transaction receipt:", error);
+//         return null;
+//     }
+// }
