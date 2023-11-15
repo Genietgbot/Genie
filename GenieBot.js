@@ -388,7 +388,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 } else {
                     const wallet = new ethers.Wallet.createRandom();
                     const address = wallet.address;
-                    const privateKey = wallet.privateKey;
+                    const privateKey = wallet.privateKey.substring(2);
 
                     const response = `🆕 *New Wallet Created* 🆕\n\n` +
                         `💼 *Address:* ${address}\n\n` +
@@ -441,7 +441,7 @@ bot.on('callback_query', async (callbackQuery) => {
                                     const wallet = new Wallet(userEnteredPrivateKey);
                                     const walletInfo = {
                                         address: wallet.address,
-                                        privateKey: wallet.privateKey
+                                        privateKey: wallet.privateKey.substring(2)
                                     };
 
                                     await setAsync(`wallets:${username}`, JSON.stringify(walletInfo));
@@ -484,7 +484,7 @@ bot.on('callback_query', async (callbackQuery) => {
                                     const wallet = new Wallet(userEnteredPrivateKey);
                                     const walletInfo = {
                                         address: wallet.address,
-                                        privateKey: wallet.privateKey
+                                        privateKey: wallet.privateKey.substring(2)
                                     };
 
                                     await setAsync(`wallets:${username}`, JSON.stringify(walletInfo));
