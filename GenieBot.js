@@ -1055,7 +1055,7 @@ async function checkHoneypot(address) {
     try {
       const response = await fetch(`https://api.honeypot.is/v2/IsHoneypot?address=${address}`);
       const data = await response.json();
-      console.log(data);
+      bot.sendMessage(chatId, data);
       return data;
     } catch (error) {
       console.error('Error checking honeypot:', error);
