@@ -1088,7 +1088,17 @@ async function formatResultMessage(result) {
     console.log("debug");
     const TokenContract = new ethers.Contract(token.address, tokenABI, provider);
     console.log("debug");
-    const totalSupply = await TokenContract.totalSupply() / 1e9;
+    console.log("token.address: ", token.address);
+
+        let totalSupply;
+
+        try {
+        totalSupply = await TokenContract.totalSupply() / 1e9;
+        } catch (error) {
+        console.error('Error fetching total supply:', error);
+        // Handle the error as needed, e.g., set totalSupply to a default value or rethrow the error.
+        }
+
     console.log("debug");
     const formattedMessage = `🔬  [${token.name} (${token.symbol})](https://etherscan.io/token/${token.address})  -  Chain: ${result.chain.currency}  🔬\n\n` +
         `Links: [Etherscan](https://etherscan.io/token/${token.address})  -  [📈Chart](https://geckoterminal.com/eth/tokens/${token.address})\n` +
