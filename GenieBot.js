@@ -948,7 +948,11 @@ bot.on('callback_query', async (callbackQuery) => {
 
                   const slippageAdjustedPercentage = 100 - slippagePercentage;
                   console.log('Slippage Adjusted Percentage:', slippageAdjustedPercentage);
-                  
+
+                  const mainWethAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
+                  const goerliWethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
+                  const gasPrice = await provider.getGasPrice();
+                  const path = [address, goerliWethAddress];
                   const uniswapRouterAddress = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
                   const uniswapRouterAbi = [
                     {
@@ -989,16 +993,9 @@ bot.on('callback_query', async (callbackQuery) => {
                   const amountOutMinWithSlippage = Math.round(amountOut[1] *  slippageAdjustedPercentage / 100 / 1e9);
                   console.log('Amount Out Min with Slippage:', amountOutMinWithSlippage);
 
-                //USER WALLET ACCESS
                 const balanceWei = await provider.getBalance(walletInfo.address);
                 const balanceEther = ethers.utils.formatEther(balanceWei);
-                //USERBALANCE IN ETH
-               
-                //UNISWAP ROUTER
-                const mainWethAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
-                const goerliWethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
-                const gasPrice = await provider.getGasPrice();
-                const path = [address, goerliWethAddress];
+              
                 let gasBuffer = await getAsync(`settings:gas_buffer:${username}`);
                 gasBuffer = JSON.parse(gasBuffer).gasBuffer;
 
