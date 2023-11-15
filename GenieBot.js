@@ -823,11 +823,11 @@ bot.on('callback_query', async (callbackQuery) => {
 
             if(data.startsWith('sell_now_')){
                 const sellPercent = parts[2];
-
+                console.log("debug");
                 if (sellPercent === 'custom') {
                     bot.once('text', async (confirmationMsg) => {
                         const userConfirmation = confirmationMsg.text;
-                
+                        console.log("debug");
                         const importMessage = `Please enter your desired sell amount in % (1 - 100) e.g: 55%`;
                 
                         const sendMessageOptions = {
@@ -835,9 +835,9 @@ bot.on('callback_query', async (callbackQuery) => {
                                 force_reply: true,
                             },
                         };
-                
+                        console.log("debug");
                         const sentMessage = await bot.sendMessage(chatId, importMessage, sendMessageOptions);
-                
+                        console.log("debug");
                         bot.onReplyToMessage(chatId, sentMessage.message_id, async (msg) => {
                             const userResponse = msg.text;
                             console.log('Received user response:', userResponse);
