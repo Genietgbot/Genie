@@ -962,35 +962,41 @@ bot.on('callback_query', async (callbackQuery) => {
                 console.log("usertokentosell: ", userBalanceTokenToSell);
 
                 if (!allowance.gte(userBalanceTokenToSell)) {
-                    
+                    const unlimitedAllowance = ethers.constants.MaxUint256;
+                
                     const estimatedGasApprove = await tokenContract.estimateGas.approve(
                         uniswapRouterAddress,
-                        userBalanceTokenToSell,
+                        unlimitedAllowance,
                     );
                     console.log("estimatedGasApprove: ", estimatedGasApprove);
+                
                     const increasedEstimatedGasApprove = Math.ceil(estimatedGasApprove.toNumber() * (1 + gasBuffer / 100));
+                
                     const approvalTx = await tokenContract.approve(
                         uniswapRouterAddress,
-                        userBalanceTokenToSell,
+                        unlimitedAllowance,
                         { gasLimit: increasedEstimatedGasApprove }
                     );
-
-                const approvalLink = `https://goerli.etherscan.io/tx/${approvalTx.hash}`;
-                const APPMessage = `Your approval link: [View on Etherscan](${approvalLink})`;
-
-                await bot.sendMessage(chatId, APPMessage, { parse_mode: 'Markdown' });
-
-                await approvalTx.wait();
-                allowance = await tokenContract.allowance(
-                    walletInfo.address,
-                    uniswapRouterAddress
-                );
-                if (allowance.gte(userBalanceTokenToSell)) {
-                    console.log("Approval successful!");
-                } else {
-                    console.log("Approval not successful. Please check the allowance.");
+                
+                    const approvalLink = `https://goerli.etherscan.io/tx/${approvalTx.hash}`;
+                    const APPMessage = `Your approval link: [View on Etherscan](${approvalLink})`;
+                
+                    await bot.sendMessage(chatId, APPMessage, { parse_mode: 'Markdown' });
+                
+                    await approvalTx.wait();
+                
+                    allowance = await tokenContract.allowance(
+                        walletInfo.address,
+                        uniswapRouterAddress
+                    );
+                
+                    if (allowance.gte(userBalanceTokenToSell)) {
+                        console.log("Approval successful!");
+                    } else {
+                        console.log("Approval not successful. Please check the allowance.");
+                    }
                 }
-                }
+                
                 console.log("nonce: ", nonce);
                 const estimatedGas = await uniswapRouter.estimateGas.swapExactTokensForETHSupportingFeeOnTransferTokens(
                     userBalanceTokenToSell.toString(),
