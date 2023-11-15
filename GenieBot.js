@@ -632,9 +632,8 @@ bot.on('callback_query', async (callbackQuery) => {
                         inline_keyboard: inlineKeyboard,
                     };
 
-
-                    await bot.sendMessage(chatId, response, { parse_mode: 'HTML', reply_markup: keyboard });
-
+                   const message = await bot.sendMessage(chatId, response, { parse_mode: 'HTML', reply_markup: keyboard });
+                   lastMessageId1 = message.message_id;
                 } catch (error) {
                     console.error('Error fetching wallet information:', error);
                     return "An error occurred while fetching wallet information.";
@@ -816,12 +815,18 @@ bot.on('callback_query', async (callbackQuery) => {
                     ]
                 };
 
-                const message2 = await bot.sendMessage(chatId, 'Select sell Amount:', { reply_markup: JSON.stringify(sellNowKeyboard) });
-                lastMessageId2 = message2.message_id;
+                if (lastMessageId1!= null) {
+                    await bot.deleteMessage(chatId, lastMessageId1);
+                }
 
+                const message2 = await bot.sendMessage(chatId, 'Select sell Amount:', { reply_markup: JSON.stringify(sellNowKeyboard) });
+                lastMessageId1 = message2.message_id;
             }
 
             if (data.startsWith('sell_now_')) {
+                if (lastMessageId1!= null) {
+                    await bot.deleteMessage(chatId, lastMessageId1);
+                }
                 let sellPercent;
                 console.log("parts[2] ", parts[2]);
                 if (parts[2] === 'custom') {
@@ -851,17 +856,14 @@ bot.on('callback_query', async (callbackQuery) => {
                                 sellPercent = enteredPercentage;
                             }
             
-                            // Resolve the Promise to indicate that the reply has been processed
                             resolve();
                         });
                     });
-                    
-                    // Wait for the reply callback to complete before moving on
+
                     await replyPromise;
                 } else {
                     sellPercent = parts[2];
                 }
-            
             
                 const symbol = parts[3];
                 console.log(storedSymbol);
