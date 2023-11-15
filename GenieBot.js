@@ -821,38 +821,48 @@ bot.on('callback_query', async (callbackQuery) => {
 
             }
 
-            if(data.startsWith('sell_now_')){
+            if (data.startsWith('sell_now_')) {
                 let sellPercent;
                 console.log("parts[2] ", parts[2]);
                 if (parts[2] === 'custom') {
                     const importMessage = `Please enter your desired sell amount in % (1 - 100) e.g: 55%`;
-                
+            
                     const sendMessageOptions = {
                         reply_markup: {
                             force_reply: true,
                         },
                     };
-                    
+            
                     console.log("debug");
                     const sentMessage = await bot.sendMessage(chatId, importMessage, sendMessageOptions);
                     console.log("debug");
-                    bot.onReplyToMessage(chatId, sentMessage.message_id, async (msg) => {
-                        const userResponse = msg.text;
-                        console.log('Received user response:', userResponse);
-                        const enteredPercentage = parseFloat(userResponse);
-                        if (isNaN(enteredPercentage) || enteredPercentage < 1 || enteredPercentage > 100) {
-                            const errorMessage = `Invalid input. Please enter a percentage between 1 and 100. Retry /start.`;
-                            await bot.sendMessage(chatId, errorMessage);
-                            bot.sendMessage(chatId, `Sell Amount of ${sellPercent} was initiated`);
-                        } else {
-                            sellPercent = enteredPercentage;
-                        }
+            
+                    const replyPromise = new Promise((resolve) => {
+                        bot.onReplyToMessage(chatId, sentMessage.message_id, async (msg) => {
+                            const userResponse = msg.text;
+                            console.log('Received user response:', userResponse);
+                            const enteredPercentage = parseFloat(userResponse);
+            
+                            if (isNaN(enteredPercentage) || enteredPercentage < 1 || enteredPercentage > 100) {
+                                const errorMessage = `Invalid input. Please enter a percentage between 1 and 100. Retry /start.`;
+                                await bot.sendMessage(chatId, errorMessage);
+                                bot.sendMessage(chatId, `Sell Amount of ${sellPercent} was initiated`);
+                            } else {
+                                sellPercent = enteredPercentage;
+                            }
+            
+                            // Resolve the Promise to indicate that the reply has been processed
+                            resolve();
+                        });
                     });
+                    
+                    // Wait for the reply callback to complete before moving on
+                    await replyPromise;
                 } else {
                     sellPercent = parts[2];
                 }
-                
-                
+            
+            
                 const symbol = parts[3];
                 console.log(storedSymbol);
                 console.log(username);
