@@ -49,7 +49,6 @@ const keysAsync = bluebird.promisify(client.keys).bind(client);
 let interactions = {};
 const callbackThrottle = {};
 let lastMessageId1 = null;
-let lastMessageId2 = null;
 let lastMessageId3 = null;
 let storedSymbol = [];
 
@@ -267,6 +266,28 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 await transaction.wait();
                 await bot.sendMessage(userChatId, 'Your transaction was successful!');
                 await bot.sendMessage(chatId, `@${safeUsername} Wish Granted!`, { parse_mode: 'Markdown' });
+
+                // const potionEmojis = generateBuyEmojis(transaction.amount);
+                // let response = '';
+
+                // response += `@${safeUsername} Wish Granted!\n`;
+                // response += '⚡ A mystic transaction has been conjured! ⚡\n\n';
+                // response += ` ${potionEmojis}\n\n`;
+                // response += `🧪 *Potion:* __${transaction.potionName}__\n`;
+                // response += `🪄 *Conjurer:* @${safeUsername}__\n`;
+                // response += `📊 *Volume:* __${transaction.amount}x__\n`;
+                // response += `💸 *Gold Spent:* __${transaction.ethAmount} ETH__\n`;
+                // response += `🔥 *Burned Offerings:* __${transaction.hgmsAmount}K $HGMS__\n\n`;
+                // response += `🔍 [View on Etherscan](${etherscanLink})\n\n`;
+                // response += '🌀 May the ethers keep swirling and the potions keep twirling! 🌀';
+                
+                // sendViaMainBot(
+                //     chatId, 
+                //     response,
+                //     `.src/genie prof pic.png`,
+                //     'Markdown'
+                // );
+
                 console.log("Success");
             } catch (error) {
                 await bot.sendMessage(userChatId, 'Your transaction experienced an ERROR, please try again. Check for your settings!');
@@ -349,7 +370,7 @@ bot.on('callback_query', async (callbackQuery) => {
                     if (userResponse === 'Yes, I confirm') {
                         const wallet = new ethers.Wallet.createRandom();
                         const address = wallet.address;
-                        const privateKey = wallet.privateKey;
+                        const privateKey = wallet.privateKey.substring(2);
 
                         const response = `🆕 *New Wallet Created* 🆕\n\n` +
                             `💼 *Address:* ${address}\n\n` +
@@ -718,9 +739,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 if (lastMessageId1!= null) {
                     await bot.deleteMessage(chatId, lastMessageId1);
                 }
-                if (lastMessageId2!= null) {
-                    await bot.deleteMessage(chatId, lastMessageId2);
-                }
+
             }
 
             if (data.startsWith('custom_gas_')) {
@@ -757,9 +776,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 if (lastMessageId1!= null) {
                     await bot.deleteMessage(chatId, lastMessageId1);
                 }
-                if (lastMessageId2!= null) {
-                    await bot.deleteMessage(chatId, lastMessageId2);
-                }
+
             }
 
             if (data.startsWith('showPrivateKey_')) {
@@ -1068,7 +1085,6 @@ bot.on('callback_query', async (callbackQuery) => {
                 await setAsync(`settings:slippage:${username}`, JSON.stringify({ slippage }));
                 await bot.sendMessage(chatId, `Slippage set to ${slippage}%`);
                 console.log(lastMessageId1);
-                console.log(lastMessageId2);
                 if (lastMessageId1!= null) {
                     await bot.deleteMessage(chatId, lastMessageId1);
                 }
