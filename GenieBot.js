@@ -822,8 +822,6 @@ bot.on('callback_query', async (callbackQuery) => {
             }
 
             if(data.startsWith('sell_now_')){
-                const sellPercent = parts[2];
-                console.log("debug");
                 if (sellPercent === 'custom') {
                     bot.once('text', async (confirmationMsg) => {
                         const userConfirmation = confirmationMsg.text;
@@ -851,6 +849,8 @@ bot.on('callback_query', async (callbackQuery) => {
                         });
                     });
                 }
+                const sellPercent = parts[2];
+                console.log("debug");
                 
                 const symbol = parts[3];
                 console.log(storedSymbol);
