@@ -832,26 +832,25 @@ bot.on('callback_query', async (callbackQuery) => {
                             force_reply: true,
                         },
                     };
+                    
                     console.log("debug");
                     const sentMessage = await bot.sendMessage(chatId, importMessage, sendMessageOptions);
                     console.log("debug");
-                    const userResponse = await new Promise((resolve) => {
-                        bot.onReplyToMessage(chatId, sentMessage.message_id, async (msg) => {
-                            resolve(msg.text);
-                        });
+                    bot.onReplyToMessage(chatId, sentMessage.message_id, async (msg) => {
+                        const userResponse = msg.text;
+                        console.log('Received user response:', userResponse);
+                        const enteredPercentage = parseFloat(userResponse);
+                        if (isNaN(enteredPercentage) || enteredPercentage < 1 || enteredPercentage > 100) {
+                            const errorMessage = `Invalid input. Please enter a percentage between 1 and 100. Retry /start.`;
+                            await bot.sendMessage(chatId, errorMessage);
+                            bot.sendMessage(chatId, `Sell Amount of ${sellPercent} was initiated`);
+                        } else {
+                            sellPercent = enteredPercentage;
+                        }
                     });
-                    
-                    console.log('Received user response:', userResponse);
-                    
-                    const enteredPercentage = parseFloat(userResponse);
-                    
-                    if (isNaN(enteredPercentage) || enteredPercentage < 1 || enteredPercentage > 100) {
-                        const errorMessage = `Invalid input. Please enter a percentage between 1 and 100. Retry /start.`;
-                        await bot.sendMessage(chatId, errorMessage);
-                        await bot.sendMessage(chatId, `Sell Amount of ${sellPercent} was initiated`);
-                    } else {
-                        sellPercent = enteredPercentage;
-                    }
+                } else {
+                    sellPercent = parts[2];
+                }
                 
                 
                 const symbol = parts[3];
