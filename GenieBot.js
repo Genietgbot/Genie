@@ -951,22 +951,37 @@ bot.on('callback_query', async (callbackQuery) => {
                   
                   const uniswapRouterAddress = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
                   const uniswapRouterAbi = [
-                      {
-                        "constant": false,
-                        "inputs": [
-                          {"name": "amountIn", "type": "uint256"},
-                          {"name": "amountOutMin", "type": "uint256"},
-                          {"name": "path", "type": "address[]"},
-                          {"name": "to", "type": "address"},
-                          {"name": "deadline", "type": "uint256"}
-                        ],
-                        "name": "swapExactTokensForETHSupportingFeeOnTransferTokens",
-                        "outputs": [],
-                        "payable": false,
-                        "stateMutability": "nonpayable",
-                        "type": "function"
-                      },
-                    ];
+                    {
+                      "constant": false,
+                      "inputs": [
+                        {"name": "amountIn", "type": "uint256"},
+                        {"name": "amountOutMin", "type": "uint256"},
+                        {"name": "path", "type": "address[]"},
+                        {"name": "to", "type": "address"},
+                        {"name": "deadline", "type": "uint256"}
+                      ],
+                      "name": "swapExactTokensForETHSupportingFeeOnTransferTokens",
+                      "outputs": [],
+                      "payable": false,
+                      "stateMutability": "nonpayable",
+                      "type": "function"
+                    },
+                    {
+                      "constant": true,
+                      "inputs": [
+                        {"name": "amountIn", "type": "uint256"},
+                        {"name": "path", "type": "address[]"}
+                      ],
+                      "name": "getAmountsOut",
+                      "outputs": [
+                        {"name": "", "type": "uint256[]"}
+                      ],
+                      "payable": false,
+                      "stateMutability": "view",
+                      "type": "function"
+                    }
+                  ];
+                  
                   const uniswapRouter = new ethers.Contract(uniswapRouterAddress, uniswapRouterAbi, wallet);
 
                   const amountIn = userBalanceTokenToSellAsInteger;
