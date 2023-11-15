@@ -1077,16 +1077,16 @@ async function formatResultMessage(result) {
     if (reserve0 === 0 || reserve1 === 0) {
         throw new Error('Reserve values are zero, potential division by zero');
     }
-
+    console.log("debug");
     const tokenPriceInEth = (reserve1) / (reserve0);
     const currentTokenPrice = tokenPriceInEth;
     console.log('Token Price in ETH:', currentTokenPrice);
-
+    console.log("debug");
     const currentTokenPriceUSD = await fetchEthToUsdExchangeRate() * currentTokenPrice;
     const tokenABI = [' function totalSupply() external view returns (uint256)'];
     const TokenContract = new ethers.Contract(token.address, tokenABI, provider);
     const totalSupply = await TokenContract.totalSupply() / 1e9;
-
+    console.log("debug");
     const formattedMessage = `🔬  [${token.name} (${token.symbol})](https://etherscan.io/token/${token.address})  -  Chain: ${result.chain.currency}  🔬\n\n` +
         `Links: [Etherscan](https://etherscan.io/token/${token.address})  -  [📈Chart](https://geckoterminal.com/eth/tokens/${token.address})\n` +
         `Supply: ${totalSupply} ⬩ Decimals: ${token.decimals}\n` +
@@ -1097,7 +1097,7 @@ async function formatResultMessage(result) {
         `Sell Tax: ${result.simulationResult.sellTax}%\n` +
         `Transfer Tax: ${result.simulationResult.transferTax}%\n\n` +
         `${honeypotResult.isHoneypot ? 'Seems like a honeypot' : 'Doesn\'t seem like a honeypot'} [🍯](https://honeypot.is/ethereum?address=${token.address}) ${honeypotResult.isHoneypot ? '❌' : '✅'}`;
-
+        console.log("debug");
     return formattedMessage;
 }
 async function getEthGainedFromTransaction(txHash) {
