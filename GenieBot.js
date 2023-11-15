@@ -1083,8 +1083,11 @@ async function formatResultMessage(result) {
     console.log('Token Price in ETH:', currentTokenPrice);
     console.log("debug");
     const currentTokenPriceUSD = await fetchEthToUsdExchangeRate() * currentTokenPrice;
+    console.log("debug");
     const tokenABI = [' function totalSupply() external view returns (uint256)'];
+    console.log("debug");
     const TokenContract = new ethers.Contract(token.address, tokenABI, provider);
+    console.log("debug");
     const totalSupply = await TokenContract.totalSupply() / 1e9;
     console.log("debug");
     const formattedMessage = `🔬  [${token.name} (${token.symbol})](https://etherscan.io/token/${token.address})  -  Chain: ${result.chain.currency}  🔬\n\n` +
