@@ -656,9 +656,11 @@ bot.on('callback_query', async (callbackQuery) => {
                         ]
                     ]
                 };
-
+                if (lastMessageId1!= null) {
+                    await bot.deleteMessage(chatId, lastMessageId1);
+                }
                 const message2 = await bot.sendMessage(chatId, 'Select your Gas Buffer:', { reply_markup: JSON.stringify(gasBufferKeyboard) });
-                lastMessageId2 = message2.message_id;
+                lastMessageId1 = message2.message_id;
             } else if (data.startsWith('set_slippage_')) {
                 const slippageKeyboard = {
                     inline_keyboard: [
@@ -675,9 +677,11 @@ bot.on('callback_query', async (callbackQuery) => {
                         ]
                     ]
                 };
-
+                if (lastMessageId1!= null) {
+                    await bot.deleteMessage(chatId, lastMessageId1);
+                }
                 const message2 = await bot.sendMessage(chatId, 'Select your Slippage:', { reply_markup: JSON.stringify(slippageKeyboard) });
-                lastMessageId2 = message2.message_id;
+                lastMessageId1 = message2.message_id;
             }
 
             if (data.startsWith('custom_slippage_')) {
@@ -1058,9 +1062,6 @@ bot.on('callback_query', async (callbackQuery) => {
                 if (lastMessageId1!= null) {
                     await bot.deleteMessage(chatId, lastMessageId1);
                 }
-                if (lastMessageId2!= null) {
-                    await bot.deleteMessage(chatId, lastMessageId2);
-                }
 
             } else if (data.startsWith('slippage_')) {
                 const slippage = parseInt(parts[1]);
@@ -1070,9 +1071,6 @@ bot.on('callback_query', async (callbackQuery) => {
                 console.log(lastMessageId2);
                 if (lastMessageId1!= null) {
                     await bot.deleteMessage(chatId, lastMessageId1);
-                }
-                if (lastMessageId2!= null) {
-                    await bot.deleteMessage(chatId, lastMessageId2);
                 }
 
             }
