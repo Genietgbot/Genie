@@ -823,7 +823,7 @@ bot.on('callback_query', async (callbackQuery) => {
 
             if(data.startsWith('sell_now_')){
                 let sellPercent;
-                console.log("debug");
+                console.log("parts[2] ", parts[2]);
                 if (parts[2] === 'custom') {
                     bot.once('text', async (confirmationMsg) => {
                         const userConfirmation = confirmationMsg.text;
@@ -835,6 +835,7 @@ bot.on('callback_query', async (callbackQuery) => {
                                 force_reply: true,
                             },
                         };
+
                         console.log("debug");
                         const sentMessage = await bot.sendMessage(chatId, importMessage, sendMessageOptions);
                         console.log("debug");
