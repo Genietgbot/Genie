@@ -884,7 +884,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 } else {
                     sellPercent = parts[2];
                 }
-
+                const userChatId = await getAsync(`chatID:${username}`);
                 const safeUsername = username.replace(/_/g, '\\_');
                 const symbol = parts[3];
                 console.log(storedSymbol);
