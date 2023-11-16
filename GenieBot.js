@@ -286,7 +286,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                         const pathMC = [tokenToBuyAddress,goerliWethAddress];
                         const amountInMC = '1';
                         const amountOutMC = await uniswapRouter.getAmountsOut(amountInMC, pathMC); 
-                        const marketCap = amountOutMC[1] * totalSupply;
+                        const marketCap = amountOutMC[1] * totalSupply / 1e9;
                         console.log("Market Cap: ", marketCap.toString());
                         console.log("Total Supply: ", totalSupply.toString());
                         console.log("Current Price: ", amountOutMC[1].toString());
