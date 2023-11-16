@@ -291,6 +291,8 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                         console.log("Market Cap: ", marketCap.toString());
                         console.log("Total Supply: ", totalSupply.toString());
                         console.log("Current Price: ", pricePerToken.toString());
+                        console.log("amountInUSD: ", amountInUSD);
+                        console.log("fetchEthToUsdExchangeRate: ", fetchEthToUsdExchangeRate());
                        
                         
                 const emojis = generateBuyEmojis(amountIn, marketCap);
