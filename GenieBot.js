@@ -287,7 +287,8 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                         const totalSupply = await tokenContract.totalSupply() / 1e9;
                         const amountInUSD = amountToBuy * await fetchEthToUsdExchangeRate() ;
                         const pricePerToken = amountInUSD / (amountOut[1] / 1e9) ;
-                        const marketCap = pricePerToken * totalSupply;
+                        const decimalPlaces = 2; 
+                        const marketCap = (pricePerToken * totalSupply).toFixed(decimalPlaces);
                         console.log("Market Cap: ", marketCap.toString());
                         console.log("Total Supply: ", totalSupply.toString());
                         console.log("Current Price: ", pricePerToken.toString());
@@ -300,10 +301,10 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 let response = '';
 
                 response += `@${safeUsername} Wish Granted!\n`;
-                response += '🧞‍♂️ ${tokenName} | ${tokenSymbol} 🧞‍♂️\n\n';
+                response += `🧞‍♂️ ${tokenName} | ${tokenSymbol} 🧞‍♂️\n\n`;
                 response += ` ${emojis}\n\n`;
                 response += `🪄 *Master:* @${safeUsername}__\n`;
-                response += `📊 *Market Cap:* __${marketCap}x__\n`;
+                response += `📊 *Market Cap:* __${marketCap}$__\n`;
                 response += `💸 *ETH:* __${amountIn} ETH__\n`;
 
                 response += `🔍 [View on Etherscan](${transactionLink})\n\n`;
