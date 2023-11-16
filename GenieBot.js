@@ -292,7 +292,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                         console.log("Total Supply: ", totalSupply.toString());
                         console.log("Current Price: ", pricePerToken.toString());
                         console.log("amountInUSD: ", amountInUSD);
-                        console.log("amountout[1]: ", amountOut[1]);
+                        console.log("amountout[1]: ", amountOut[1].toString());
                         console.log("fetchEthToUsdExchangeRate: ", await fetchEthToUsdExchangeRate());
                        
                         
@@ -311,7 +311,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 sendViaMainBot(
                     chatId, 
                     response,
-                    `.src/genie prof pic.png`,
+                    `./src/genie prof pic.png`,
                     'Markdown'
                 );
 
