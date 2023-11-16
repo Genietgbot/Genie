@@ -51,7 +51,7 @@ const TELEGRAM_BASE_URL = `https://api.telegram.org/bot${token}/`;
 const callbackThrottle = {};
 let interactions = {};
 let lastMessageId1 = null;
-let lastMessageId3 = null;
+let lastMessageId2 = null;
 let storedSymbol = [];
 
 bot.onText(/\/start/i, async (msg) => {
@@ -294,7 +294,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                         console.log("Current Price: ", amountOutMC[1].toString());
                        
                         
-                const emojis = generateBuyEmojis(transaction.amount);
+                const emojis = generateBuyEmojis(amountIn, marketCap);
                 let response = '';
 
                 response += `@${safeUsername} Wish Granted!\n`;
@@ -821,8 +821,8 @@ bot.on('callback_query', async (callbackQuery) => {
                             ],
                         },
                     });
-                    lastMessageId3 = replyMessage.message_id;
-                    console.log(lastMessageId3);
+                    lastMessageId2 = replyMessage.message_id;
+                    console.log(lastMessageId2);
                 } catch (error) {
                     console.error('Error retrieving and showing private key:', error);
                     bot.sendMessage(chatId, "An error occurred while retrieving the private key.");
@@ -830,10 +830,10 @@ bot.on('callback_query', async (callbackQuery) => {
             }
 
             if (data.startsWith('deleteMessage_')) {
-            console.log(lastMessageId3);
-                if (lastMessageId3) {
+            console.log(lastMessageId2);
+                if (lastMessageId2) {
                     try {
-                        await bot.deleteMessage(chatId, lastMessageId3);
+                        await bot.deleteMessage(chatId, lastMessageId2);
                     } catch (error) {
                         console.error('Error deleting message:', error);
                     }
@@ -1279,4 +1279,16 @@ async function sendViaMainBot(chatId, text, animationPath = null, parseMode = nu
     } catch (error) {
         console.error("Failed to send message:", error);
     }
+}
+function generateBuyEmojis(amount, mcap) {
+    // Calculate the market cap ratio
+    const ratio = amount / mcap;
+
+    // Calculate the number of emojis based on the ratio and 0.01%
+    const emojisCount = Math.max(1, Math.ceil(ratio / 0.0001));
+
+    // Ensure that the calculated count does not exceed the specified amount
+    const finalCount = Math.min(amount, emojisCount);
+
+    return '🧞‍♂️'.repeat(finalCount);
 }
