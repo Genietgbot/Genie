@@ -1067,6 +1067,7 @@ bot.on('callback_query', async (callbackQuery) => {
                     console.log("balanceEther: ", balanceEther);
                 if(balanceEther<=totalMaxCostInEth){
                     bot.sendMessage(userChatId, `@${safeUsername} Funds too low!`, { parse_mode: 'Markdown' });
+                    return;
                 }
 
                 console.log('Gas Cost:', gasCost.toString());
