@@ -305,7 +305,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 response += ` ${emojis}\n\n`;
                 response += `🪄 *Master:* @${safeUsername}__\n`;
                 response += `📊 *Market Cap:* __${marketCap}$__\n`;
-                response += `💸 *ETH:* __${amountToBuy} ETH__\n`;
+                response += `💸 *ETH:* __${amountToBuy} ETH__\n\n`;
 
                 response += `🔍 [View on Etherscan](${transactionLink})\n\n`;
                 
@@ -1256,21 +1256,21 @@ async function getEthGainedFromTransaction(txHash) {
         return null;
     }
 }
-async function sendViaMainBot(chatId, text, animationPath = null, parseMode = null) {
+async function sendViaMainBot(chatId, text, imagePath = null, parseMode = null) {
     try {
-        if (animationPath) {
+        if (imagePath) {
             const formData = new FormData();
             formData.append('chat_id', chatId);
-            formData.append('animation', fs.createReadStream(animationPath));
+            formData.append('photo', fs.createReadStream(imagePath));
             formData.append('caption', text);
             formData.append('parse_mode', parseMode || 'Markdown');
 
-            const response = await axios.post(TELEGRAM_BASE_URL + 'sendAnimation', formData, {
+            const response = await axios.post(TELEGRAM_BASE_URL + 'sendPhoto', formData, {
                 headers: {
                     ...formData.getHeaders(),
                 },
             });
-            console.log("Animation (GIF) with caption sent:", response.data);
+            console.log("Photo with caption sent:", response.data);
         } else {
             const response = await axios.post(TELEGRAM_BASE_URL + 'sendMessage', {
                 chat_id: chatId,
@@ -1283,6 +1283,7 @@ async function sendViaMainBot(chatId, text, animationPath = null, parseMode = nu
         console.error("Failed to send message:", error);
     }
 }
+
 function generateBuyEmojis(amount, mcap) {
     const ratio = amount / mcap;
     const emojisCount = Math.max(1, Math.ceil(ratio / 0.1));
