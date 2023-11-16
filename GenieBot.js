@@ -288,8 +288,8 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                         const marketCap = amountOutMC[1] * totalSupply;
                         console.log("Market Cap: ", marketCap.toString());
                         console.log("Total Supply: ", totalSupply.toString());
-                        console.log("Current Price: ", currentPrice.toString());
-                        console.log("marketCap: ", marketCap.toString());                        
+                        console.log("Current Price: ", amountOutMC[1].toString());
+                       
                         
                 // const emojis = generateBuyEmojis(transaction.amount);
                 // let response = '';
