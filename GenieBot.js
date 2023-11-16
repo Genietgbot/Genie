@@ -277,7 +277,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                         ],
                         provider
                       );
-                    try {
+                    
 
                         const tokenSymbol = await tokenContract.symbol();
                         const tokenName = await tokenContract.name();
