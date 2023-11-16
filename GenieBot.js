@@ -1,6 +1,7 @@
 require('dotenv').config();
 const { ethers, Wallet, utils } = require('ethers');
 const TelegramBot = require('node-telegram-bot-api');
+const fs = require('fs');
 const token = process.env.BOT_TOKEN;
 const redis = require('redis');
 const axios = require('axios');
@@ -45,9 +46,9 @@ client.on('error', (err) => {
 const getAsync = bluebird.promisify(client.get).bind(client);
 const setAsync = bluebird.promisify(client.set).bind(client);
 const keysAsync = bluebird.promisify(client.keys).bind(client);
-
-let interactions = {};
+const TELEGRAM_BASE_URL = `https://api.telegram.org/bot${mainBotToken}/`;
 const callbackThrottle = {};
+let interactions = {};
 let lastMessageId1 = null;
 let lastMessageId3 = null;
 let storedSymbol = [];
@@ -292,24 +293,24 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                         console.log("Current Price: ", amountOutMC[1].toString());
                        
                         
-                // const emojis = generateBuyEmojis(transaction.amount);
-                // let response = '';
+                const emojis = generateBuyEmojis(transaction.amount);
+                let response = '';
 
-                // response += `@${safeUsername} Wish Granted!\n`;
-                // response += '🧞‍♂️ ${tokenName} | ${tokenSymbol} 🧞‍♂️\n\n';
-                // response += ` ${emojis}\n\n`;
-                // response += `🪄 *Master:* @${safeUsername}__\n`;
-                // response += `📊 *Market Cap:* __${transaction.amount}x__\n`;
-                // response += `💸 *ETH:* __${transaction.ethAmount} ETH__\n`;
+                response += `@${safeUsername} Wish Granted!\n`;
+                response += '🧞‍♂️ ${tokenName} | ${tokenSymbol} 🧞‍♂️\n\n';
+                response += ` ${emojis}\n\n`;
+                response += `🪄 *Master:* @${safeUsername}__\n`;
+                response += `📊 *Market Cap:* __${marketCap}x__\n`;
+                response += `💸 *ETH:* __${amountIn} ETH__\n`;
 
-                // response += `🔍 [View on Etherscan](${etherscanLink})\n\n`;
+                response += `🔍 [View on Etherscan](${transactionLink})\n\n`;
                 
-                // sendViaMainBot(
-                //     chatId, 
-                //     response,
-                //     `.src/genie prof pic.png`,
-                //     'Markdown'
-                // );
+                sendViaMainBot(
+                    chatId, 
+                    response,
+                    `.src/genie prof pic.png`,
+                    'Markdown'
+                );
 
                 console.log("Success");
             } catch (error) {
@@ -1249,5 +1250,32 @@ async function getEthGainedFromTransaction(txHash) {
     } catch (error) {
         console.error("Error while retrieving transaction receipt:", error);
         return null;
+    }
+}
+async function sendViaMainBot(chatId, text, animationPath = null, parseMode = null) {
+    try {
+        if (animationPath) {
+            const formData = new FormData();
+            formData.append('chat_id', chatId);
+            formData.append('animation', fs.createReadStream(animationPath));
+            formData.append('caption', text);
+            formData.append('parse_mode', parseMode || 'Markdown');
+
+            const response = await axios.post(TELEGRAM_BASE_URL + 'sendAnimation', formData, {
+                headers: {
+                    ...formData.getHeaders(),
+                },
+            });
+            console.log("Animation (GIF) with caption sent:", response.data);
+        } else {
+            const response = await axios.post(TELEGRAM_BASE_URL + 'sendMessage', {
+                chat_id: chatId,
+                text: text,
+                parse_mode: parseMode || 'Markdown',
+            });
+            console.log("Message sent:", response.data);
+        }
+    } catch (error) {
+        console.error("Failed to send message:", error);
     }
 }
