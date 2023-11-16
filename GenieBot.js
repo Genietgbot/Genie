@@ -286,7 +286,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                         const amountInMC = '1';
                         const amountOutMC = await uniswapRouter.getAmountsOut(amountInMC, pathMC); 
                         const marketCap = amountOutMC[1] * totalSupply;
-
+                        console.log("marketCap: ", marketCap);
                 // const emojis = generateBuyEmojis(transaction.amount);
                 // let response = '';
 
