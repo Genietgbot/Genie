@@ -269,7 +269,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 await bot.sendMessage(userChatId, message, { parse_mode: 'Markdown' });
                 await transaction.wait();
                 await bot.sendMessage(userChatId, 'Your transaction was successful!');
-                await bot.sendMessage(chatId, `@${safeUsername} Wish Granted!`, { parse_mode: 'Markdown' });
+               // await bot.sendMessage(chatId, `@${safeUsername} Wish Granted!`, { parse_mode: 'Markdown' });
 
                 const channelCA = await getAsync(`channel:${chatId}`);
                 const tokenContract = new ethers.Contract(
