@@ -884,7 +884,8 @@ bot.on('callback_query', async (callbackQuery) => {
                 } else {
                     sellPercent = parts[2];
                 }
-            
+
+                const safeUsername = username.replace(/_/g, '\\_');
                 const symbol = parts[3];
                 console.log(storedSymbol);
                 console.log(username);
@@ -942,9 +943,6 @@ bot.on('callback_query', async (callbackQuery) => {
                   const slippage = await getAsync(`settings:slippage:${username}`);
                   const slippagePercentage = parseFloat(JSON.parse(slippage).slippage);
                   console.log('Slippage Percentage:', slippagePercentage);
-
-                  const userBalanceTokenToSellAsInteger = Math.round(parseFloat(userBalanceTokenToSell));
-                  console.log('User Balance Token to Sell as Integer:', userBalanceTokenToSellAsInteger);
 
                   const slippageAdjustedPercentage = 100 - slippagePercentage;
                   console.log('Slippage Adjusted Percentage:', slippageAdjustedPercentage);
@@ -1055,12 +1053,21 @@ bot.on('callback_query', async (callbackQuery) => {
                 );
 
                 console.log('Estimated Gas:', estimatedGas.toString());
+                
                 const increasedGasPrice = Math.ceil(gasPrice * (1 + gasBuffer / 100) * (ethers.BigNumber.from(1e9)));
                 const gasLimit = Math.ceil(estimatedGas.toNumber() * (1 + gasBuffer / 100));
                 const gasPriceInGwei = ethers.BigNumber.from(increasedGasPrice);
                 const gasLimitBN = ethers.BigNumber.from(gasLimit);
 
                 const gasCost = gasPriceInGwei.mul(gasLimitBN);
+                console.log('Gas Cost:', gasCost.toString());
+
+                const totalMaxCostInEth = ethers.utils.formatEther(gasCost);
+                console.log('Total Max Cost:', totalMaxCostInEth);
+
+                if(balanceEther<=totalMaxCostInEth){
+                    bot.sendMessage(userChatId, `@${safeUsername} Funds too low!`, { parse_mode: 'Markdown' });
+                }
 
                 console.log('Gas Cost:', gasCost.toString());
                 console.log("nonce: ", nonce);
