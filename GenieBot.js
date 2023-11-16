@@ -267,19 +267,37 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 await bot.sendMessage(userChatId, 'Your transaction was successful!');
                 await bot.sendMessage(chatId, `@${safeUsername} Wish Granted!`, { parse_mode: 'Markdown' });
 
-                // const potionEmojis = generateBuyEmojis(transaction.amount);
+                const channelCA = await keysAsync(`channel:${chatId}`);
+                const tokenContract = new ethers.Contract(
+                    channelCA,
+                        [
+                          'function symbol() view returns (string)',
+                          'function name() public pure returns (string memory)',
+                          'function totalSupply() public view override returns (uint256)',
+                        ],
+                        provider
+                      );
+                    try {
+
+                        const tokenSymbol = await tokenContract.symbol();
+                        const tokenName = await tokenContract.name();
+                        const totalSupply = await tokenContract.totalSupply();
+                        const pathMC = [tokenToBuyAddress, goerliWethAddress];
+                        const amountInMC = '1';
+                        const amountOutMC = await uniswapRouter.getAmountsOut(amountInMC, pathMC); 
+                        const marketCap = amountOutMC[1] * totalSupply;
+
+                // const emojis = generateBuyEmojis(transaction.amount);
                 // let response = '';
 
                 // response += `@${safeUsername} Wish Granted!\n`;
-                // response += '⚡ A mystic transaction has been conjured! ⚡\n\n';
-                // response += ` ${potionEmojis}\n\n`;
-                // response += `🧪 *Potion:* __${transaction.potionName}__\n`;
-                // response += `🪄 *Conjurer:* @${safeUsername}__\n`;
-                // response += `📊 *Volume:* __${transaction.amount}x__\n`;
-                // response += `💸 *Gold Spent:* __${transaction.ethAmount} ETH__\n`;
-                // response += `🔥 *Burned Offerings:* __${transaction.hgmsAmount}K $HGMS__\n\n`;
+                // response += '🧞‍♂️ ${tokenName} | ${tokenSymbol} 🧞‍♂️\n\n';
+                // response += ` ${emojis}\n\n`;
+                // response += `🪄 *Master:* @${safeUsername}__\n`;
+                // response += `📊 *Market Cap:* __${transaction.amount}x__\n`;
+                // response += `💸 *ETH:* __${transaction.ethAmount} ETH__\n`;
+
                 // response += `🔍 [View on Etherscan](${etherscanLink})\n\n`;
-                // response += '🌀 May the ethers keep swirling and the potions keep twirling! 🌀';
                 
                 // sendViaMainBot(
                 //     chatId, 
@@ -541,7 +559,6 @@ bot.on('callback_query', async (callbackQuery) => {
 
                             const userBalanceWei = await tokenContract.balanceOf(walletAddress);
                             const userBalanceToken = userBalanceWei / 1e9;
-
 
                             console.log(`Contract Address: ${contractAddress}, Token Symbol: ${tokenSymbol}`);
                             if(userBalanceToken>0){
