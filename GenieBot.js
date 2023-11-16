@@ -14,6 +14,7 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
@@ -46,7 +47,7 @@ client.on('error', (err) => {
 const getAsync = bluebird.promisify(client.get).bind(client);
 const setAsync = bluebird.promisify(client.set).bind(client);
 const keysAsync = bluebird.promisify(client.keys).bind(client);
-const TELEGRAM_BASE_URL = `https://api.telegram.org/bot${mainBotToken}/`;
+const TELEGRAM_BASE_URL = `https://api.telegram.org/bot${token}/`;
 const callbackThrottle = {};
 let interactions = {};
 let lastMessageId1 = null;
