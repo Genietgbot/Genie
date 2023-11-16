@@ -285,9 +285,9 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                         const tokenSymbol = await tokenContract.symbol();
                         const tokenName = await tokenContract.name();
                         const totalSupply = await tokenContract.totalSupply() / 1e9;
-                        const amountInUSD = amountIn * await fetchEthToUsdExchangeRate() ;
+                        const amountInUSD = amountToBuy * await fetchEthToUsdExchangeRate() ;
                         const pricePerToken = amountInUSD / amountOut[1] / 1e9 ;
-                        const marketCap = pricePerToken * totalSupply / 1e9;
+                        const marketCap = pricePerToken * totalSupply;
                         console.log("Market Cap: ", marketCap.toString());
                         console.log("Total Supply: ", totalSupply.toString());
                         console.log("Current Price: ", pricePerToken.toString());
