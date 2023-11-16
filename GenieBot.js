@@ -305,7 +305,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 response += ` ${emojis}\n\n`;
                 response += `🪄 *Master:* @${safeUsername}__\n`;
                 response += `📊 *Market Cap:* __${marketCap}$__\n`;
-                response += `💸 *ETH:* __${amountIn} ETH__\n`;
+                response += `💸 *ETH:* __${amountToBuy} ETH__\n`;
 
                 response += `🔍 [View on Etherscan](${transactionLink})\n\n`;
                 
