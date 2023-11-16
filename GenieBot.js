@@ -988,7 +988,7 @@ bot.on('callback_query', async (callbackQuery) => {
                   
                   const uniswapRouter = new ethers.Contract(uniswapRouterAddress, uniswapRouterAbi, wallet);
 
-                  const amountIn = userBalanceTokenToSellAsInteger;
+                  const amountIn = userBalanceTokenToSell;
                   const amountOut = await uniswapRouter.getAmountsOut(amountIn, path); 
                   const amountOutMinWithSlippage = Math.round(amountOut[1] *  slippageAdjustedPercentage / 100 / 1e9);
                   console.log('Amount Out Min with Slippage:', amountOutMinWithSlippage);
