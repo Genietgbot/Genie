@@ -273,7 +273,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                         [
                           'function symbol() view returns (string)',
                           'function name() public pure returns (string memory)',
-                          'function totalSupply() public view override returns (uint256)',
+                          'function totalSupply() external view returns (uint256)',
                         ],
                         provider
                       );
@@ -286,10 +286,10 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                         const amountInMC = '1';
                         const amountOutMC = await uniswapRouter.getAmountsOut(amountInMC, pathMC); 
                         const marketCap = amountOutMC[1] * totalSupply;
-                        console.log("marketCap: ", marketCap);
-                        console.log("totalSupply: ", totalSupply);
-                        console.log("amountOutMC: ", amountOutMC);
-
+                        console.log("Market Cap: ", marketCap.toString());
+                        console.log("Total Supply: ", totalSupply.toString());
+                        console.log("Current Price: ", currentPrice.toString());
+                        console.log("marketCap: ", marketCap.toString());                        
                         
                 // const emojis = generateBuyEmojis(transaction.amount);
                 // let response = '';
