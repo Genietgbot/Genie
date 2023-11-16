@@ -139,6 +139,7 @@ bot.onText(/^\/setGenie (0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
 bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
 
     if (msg.chat.type !== 'private') {
+        
         const chatId = msg.chat.id;
         const username = msg.from.username;
         const safeUsername = username.replace(/_/g, '\\_');
@@ -146,7 +147,8 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
         const amountToBuy = parseFloat(match[1]);
         console.log('Parsed amountToBuy:', amountToBuy);
         if (isNaN(amountToBuy) || amountToBuy <= 0) {
-            throw new Error('Invalid buy amount.');
+            bot.sendMessage(chatId, "Invalid Buy amount.");
+            return;
         }
         console.log(chatId, username, amountToBuy);
         const contractAddress = await getAsync(`channel:${chatId}`);
@@ -278,7 +280,6 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                         provider
                       );
                     
-
                         const tokenSymbol = await tokenContract.symbol();
                         const tokenName = await tokenContract.name();
                         const totalSupply = await tokenContract.totalSupply();
