@@ -1281,13 +1281,8 @@ async function sendViaMainBot(chatId, text, animationPath = null, parseMode = nu
     }
 }
 function generateBuyEmojis(amount, mcap) {
-    // Calculate the market cap ratio
     const ratio = amount / mcap;
-
-    // Calculate the number of emojis based on the ratio and 0.01%
-    const emojisCount = Math.max(1, Math.ceil(ratio / 0.0001));
-
-    // Ensure that the calculated count does not exceed the specified amount
+    const emojisCount = Math.max(1, Math.ceil(ratio / 0.1));
     const finalCount = Math.min(amount, emojisCount);
 
     return '🧞‍♂️'.repeat(finalCount);
