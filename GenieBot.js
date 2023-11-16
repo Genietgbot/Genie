@@ -284,14 +284,14 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                     
                         const tokenSymbol = await tokenContract.symbol();
                         const tokenName = await tokenContract.name();
-                        const totalSupply = await tokenContract.totalSupply();
+                        const totalSupply = await tokenContract.totalSupply() / 1e9;
                         const pathMC = [tokenToBuyAddress,goerliWethAddress];
                         const amountInMC = '1';
                         const amountOutMC = await uniswapRouter.getAmountsOut(amountInMC, pathMC); 
                         const marketCap = amountOutMC[1] * totalSupply / 1e9;
                         console.log("Market Cap: ", marketCap.toString());
                         console.log("Total Supply: ", totalSupply.toString());
-                        console.log("Current Price: ", amountOutMC[1].toString());
+                        console.log("Current Price: ", amountOutMC.toString());
                        
                         
                 const emojis = generateBuyEmojis(amountIn, marketCap);
