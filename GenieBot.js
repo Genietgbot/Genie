@@ -1285,7 +1285,7 @@ async function sendViaMainBot(chatId, text, imagePath = null, parseMode = null) 
 }
 
 function generateBuyEmojis(amount, mcap) {
-    const ratio = amount / mcap;
+    const ratio = mcap / amount;
     const emojisCount = Math.max(1, Math.ceil(ratio / 0.1));
     const finalCount = Math.min(amount, emojisCount);
 
