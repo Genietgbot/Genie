@@ -1081,19 +1081,19 @@ bot.on('callback_query', async (callbackQuery) => {
 
                 console.log('Estimated Gas:', estimatedGas.toString());
                 
-                const increasedGasPrice = Math.ceil(gasPrice * (1 + gasBuffer / 100) * (ethers.BigNumber.from(1e9)));
+                const increasedGasPrice = Math.ceil(gasPrice * (1 + gasBuffer / 100));
                 const gasLimit = Math.ceil(estimatedGas.toNumber() * (1 + gasBuffer / 100));
                 console.log("gasLimit: ", gasLimit);
                 const gasPriceInGwei = ethers.BigNumber.from(increasedGasPrice);
                 console.log("debug");
                 const gasLimitBN = ethers.BigNumber.from(gasLimit);
-                    console.log("debug");
+                console.log("debug");
                 const gasCost = gasPriceInGwei.mul(gasLimitBN);
                 console.log('Gas Cost:', gasCost.toString());
 
                 const totalMaxCostInEth = ethers.utils.formatEther(gasCost);
                 console.log('Total Max Cost:', totalMaxCostInEth);
-                    console.log("balanceEther: ", balanceEther);
+                console.log("balanceEther: ", balanceEther);
                 if(balanceEther<=totalMaxCostInEth){
                     bot.sendMessage(userChatId, `@${safeUsername} Funds too low!`, { parse_mode: 'Markdown' });
                     return;
