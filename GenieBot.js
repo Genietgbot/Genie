@@ -613,11 +613,11 @@ bot.on('callback_query', async (callbackQuery) => {
 
                     if(gasBuffer == null){
                         await setAsync(`settings:gas_buffer:${username}`, '10');
-                        gasBuffer = '10%';
+                        gasBuffer = 10 + '%';
                     }
                     if(slippage == null){
                         await setAsync(`settings:slippage:${username}`, '3');
-                        slippage = '3%';
+                        slippage = 3 + '%';
                     }
 
                     const message = `Your current settings:\n\nGas Buffer: ${gasBuffer}\nSlippage: ${slippage}`;
