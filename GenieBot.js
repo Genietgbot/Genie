@@ -302,13 +302,13 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
 
                 response += `@${safeUsername} Wish Granted!\n`;
                 response += `🧞‍♂️ ${tokenName} | ${tokenSymbol} 🧞‍♂️\n\n`;
-                response += ` ${emojis}\n\n`;
+                response += `${emojis}\n\n`;
                 response += `🪄 *Master:* @${safeUsername}__\n`;
                 response += `📊 *Market Cap:* __${marketCap}$__\n`;
                 response += `💸 *ETH:* __${amountToBuy} ETH__\n\n`;
 
                 response += `🔍 [View on Etherscan](${transactionLink})\n\n`;
-                
+                response += `🔍 [View on Dextools](${transactionLink})\n\n`;
                 sendViaMainBot(
                     chatId, 
                     response,
@@ -1083,9 +1083,10 @@ bot.on('callback_query', async (callbackQuery) => {
                 
                 const increasedGasPrice = Math.ceil(gasPrice * (1 + gasBuffer / 100) * (ethers.BigNumber.from(1e9)));
                 const gasLimit = Math.ceil(estimatedGas.toNumber() * (1 + gasBuffer / 100));
+                console.log("gasLimit: ", gasLimit);
                 const gasPriceInGwei = ethers.BigNumber.from(increasedGasPrice);
                 const gasLimitBN = ethers.BigNumber.from(gasLimit);
-
+                    console.log("debug");
                 const gasCost = gasPriceInGwei.mul(gasLimitBN);
                 console.log('Gas Cost:', gasCost.toString());
 
