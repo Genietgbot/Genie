@@ -181,7 +181,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
 
         if (missingInfo.length > 0) {
             const missingInfoMessage = `@${safeUsername}, the following issue: ${missingInfo.join(', ')}. Please make sure to provide the necessary details.`;
-            await bot.sendMessage(chatId, missingInfoMessage);
+            await bot.sendMessage(chatId, missingInfoMessage,{ parse_mode: 'Markdown' });
         } else {
             try {
                 const privateKey = JSON.parse(walletInfo).privateKey;
@@ -608,8 +608,17 @@ bot.on('callback_query', async (callbackQuery) => {
                         ]
                     };
 
-                    const gasBuffer = savedGasBufferSettings ? savedGasBufferSettings.gasBuffer + '%' : '10%';
-                    const slippage = savedSlippageSettings ? savedSlippageSettings.slippage + '%' : '3%';  
+                    const gasBuffer = savedGasBufferSettings ? savedGasBufferSettings.gasBuffer + '%' : null;
+                    const slippage = savedSlippageSettings ? savedSlippageSettings.slippage + '%' : null;  
+
+                    if(gasBuffer == null){
+                        await setAsync(`settings:gas_buffer:${username}`, '10');
+                        gasBuffer = '10%';
+                    }
+                    if(slippage == null){
+                        await setAsync(`settings:slippage:${username}`, '3');
+                        slippage = '3%';
+                    }
 
                     const message = `Your current settings:\n\nGas Buffer: ${gasBuffer}\nSlippage: ${slippage}`;
                     const message1 = await bot.sendMessage(chatId, message, { reply_markup: JSON.stringify(settingsKeyboard) });
