@@ -8,7 +8,7 @@ const axios = require('axios');
 const bluebird = require('bluebird');
 const bot = new TelegramBot(token, { polling: true });
 const redisUrl = process.env.REDIS_URL;
-const provider = new ethers.providers.JsonRpcProvider(process.env.GOERLI_PROVIDER_URL);
+const provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URL);
 process.env.NTBA_FIX_350 = true;
 const express = require('express');
 const app = express();
@@ -194,7 +194,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 const tokenToBuyAddress = contractAddress;
                 const mainWethAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
                 const goerliWethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
-                const path = [goerliWethAddress, tokenToBuyAddress];
+                const path = [mainWethAddress, tokenToBuyAddress];
                 const slippagePercentage = parseFloat(JSON.parse(slippage).slippage);
 
                 gasBuffer = JSON.parse(gasBuffer).gasBuffer;
@@ -977,7 +977,7 @@ bot.on('callback_query', async (callbackQuery) => {
                   const mainWethAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
                   const goerliWethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
                   const gasPrice = await provider.getGasPrice();
-                  const path = [address, goerliWethAddress];
+                  const path = [address, mainWethAddress];
                   const uniswapRouterAddress = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
                   const uniswapRouterAbi = [
                     {
