@@ -1085,6 +1085,7 @@ bot.on('callback_query', async (callbackQuery) => {
                 const gasLimit = Math.ceil(estimatedGas.toNumber() * (1 + gasBuffer / 100));
                 console.log("gasLimit: ", gasLimit);
                 const gasPriceInGwei = ethers.BigNumber.from(increasedGasPrice);
+                console.log("debug");
                 const gasLimitBN = ethers.BigNumber.from(gasLimit);
                     console.log("debug");
                 const gasCost = gasPriceInGwei.mul(gasLimitBN);
