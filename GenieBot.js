@@ -303,12 +303,12 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 response += `@${safeUsername} Wish Granted!\n`;
                 response += `🧞‍♂️ ${tokenName} | ${tokenSymbol} 🧞‍♂️\n\n`;
                 response += `${emojis}\n\n`;
-                response += `🪄 *Master:* @${safeUsername}__\n`;
+                //response += `🪄 *Master:* @${safeUsername}__\n`;
                 response += `📊 *Market Cap:* __${marketCap}$__\n`;
                 response += `💸 *ETH:* __${amountToBuy} ETH__\n\n`;
 
                 response += `🔍 [View on Etherscan](${transactionLink})\n\n`;
-                response += `🔍 [View on Dextools](${transactionLink})\n\n`;
+                //response += `🔍 [View on Dextools](${transactionLink})\n\n`;
                 sendViaMainBot(
                     chatId, 
                     response,
