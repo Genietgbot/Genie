@@ -608,8 +608,8 @@ bot.on('callback_query', async (callbackQuery) => {
                         ]
                     };
 
-                    const gasBuffer = savedGasBufferSettings ? savedGasBufferSettings.gasBuffer + '%' : null;
-                    const slippage = savedSlippageSettings ? savedSlippageSettings.slippage + '%' : null;  
+                    let gasBuffer = savedGasBufferSettings ? savedGasBufferSettings.gasBuffer + '%' : null;
+                    let slippage = savedSlippageSettings ? savedSlippageSettings.slippage + '%' : null;  
 
                     if(gasBuffer == null){
                         await setAsync(`settings:gas_buffer:${username}`, '10');
