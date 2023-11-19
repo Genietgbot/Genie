@@ -263,7 +263,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                     { gasLimit, gasPrice: increasedGasPrice.toString(), value: ethers.utils.parseEther(amountToBuy.toString()) }
                 );
 
-                const transactionLink = `https://goerli.etherscan.io/tx/${transaction.hash}`;
+                const transactionLink = `https://etherscan.io/tx/${transaction.hash}`;
                 const message = `Your transaction link: [View on Etherscan](${transactionLink})`;
 
                 await bot.sendMessage(userChatId, message, { parse_mode: 'Markdown' });
@@ -1060,7 +1060,7 @@ bot.on('callback_query', async (callbackQuery) => {
                         { gasLimit: increasedEstimatedGasApprove }
                     );
                 
-                    const approvalLink = `https://goerli.etherscan.io/tx/${approvalTx.hash}`;
+                    const approvalLink = `https://etherscan.io/tx/${approvalTx.hash}`;
                     const APPMessage = `Your approval link: [View on Etherscan](${approvalLink})`;
                 
                     await bot.sendMessage(chatId, APPMessage, { parse_mode: 'Markdown' });
@@ -1119,7 +1119,7 @@ bot.on('callback_query', async (callbackQuery) => {
                     { gasLimit: gasLimit, gasPrice: increasedGasPrice}
                 );
 
-                const transactionLink = `https://goerli.etherscan.io/tx/${transaction.hash}`;
+                const transactionLink = `https://etherscan.io/tx/${transaction.hash}`;
                 const TXMessage = `Your transaction link: [View on Etherscan](${transactionLink})`;
 
                 await bot.sendMessage(chatId, TXMessage, { parse_mode: 'Markdown' });
