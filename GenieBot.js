@@ -196,7 +196,7 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
                 const goerliWethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
                 const path = [mainWethAddress, tokenToBuyAddress];
                 const slippagePercentage = parseFloat(JSON.parse(slippage).slippage);
-
+//
                 gasBuffer = JSON.parse(gasBuffer).gasBuffer;
                 console.log("gasbuffer: ", gasBuffer);
                 console.log('Amount to Buy:', amountToBuy);
