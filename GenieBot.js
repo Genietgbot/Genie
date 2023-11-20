@@ -138,198 +138,198 @@ bot.onText(/^\/setGenie (0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
 }
 });
 
-bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
+// bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
 
-    if (msg.chat.type !== 'private') {
+//     if (msg.chat.type !== 'private') {
         
-        const chatId = msg.chat.id;
-        const username = msg.from.username;
-        const safeUsername = username.replace(/_/g, '\\_');
-        console.log('Raw input:', match[1]);
-        const amountToBuy = parseFloat(match[1]);
-        console.log('Parsed amountToBuy:', amountToBuy);
-        if (isNaN(amountToBuy) || amountToBuy <= 0) {
-            bot.sendMessage(chatId, "Invalid Buy amount.");
-            return;
-        }
-        console.log(chatId, username, amountToBuy);
-        const contractAddress = await getAsync(`channel:${chatId}`);
-        let gasBuffer = await getAsync(`settings:gas_buffer:${username}`);
-        const slippage = await getAsync(`settings:slippage:${username}`);
-        const walletInfo = await getAsync(`wallets:${username}`);
-        const userChatId = await getAsync(`chatID:${username}`);
-        const missingInfo = [];
+//         const chatId = msg.chat.id;
+//         const username = msg.from.username;
+//         const safeUsername = username.replace(/_/g, '\\_');
+//         console.log('Raw input:', match[1]);
+//         const amountToBuy = parseFloat(match[1]);
+//         console.log('Parsed amountToBuy:', amountToBuy);
+//         if (isNaN(amountToBuy) || amountToBuy <= 0) {
+//             bot.sendMessage(chatId, "Invalid Buy amount.");
+//             return;
+//         }
+//         console.log(chatId, username, amountToBuy);
+//         const contractAddress = await getAsync(`channel:${chatId}`);
+//         let gasBuffer = await getAsync(`settings:gas_buffer:${username}`);
+//         const slippage = await getAsync(`settings:slippage:${username}`);
+//         const walletInfo = await getAsync(`wallets:${username}`);
+//         const userChatId = await getAsync(`chatID:${username}`);
+//         const missingInfo = [];
 
-        if (!contractAddress) {
-            missingInfo.push('contract address');
-        }
+//         if (!contractAddress) {
+//             missingInfo.push('contract address');
+//         }
 
-        if (!gasBuffer) {
-            missingInfo.push('gas buffer setting');
-        }
+//         if (!gasBuffer) {
+//             missingInfo.push('gas buffer setting');
+//         }
 
-        if (!slippage) {
-            missingInfo.push('slippage setting');
-        }
+//         if (!slippage) {
+//             missingInfo.push('slippage setting');
+//         }
 
-        if (!walletInfo) {
-            missingInfo.push('wallet information');
-        }
+//         if (!walletInfo) {
+//             missingInfo.push('wallet information');
+//         }
 
-        const balanceWei = await provider.getBalance(JSON.parse(walletInfo).address);
-        const balanceEther = ethers.utils.formatEther(balanceWei);
+//         const balanceWei = await provider.getBalance(JSON.parse(walletInfo).address);
+//         const balanceEther = ethers.utils.formatEther(balanceWei);
 
-        if (missingInfo.length > 0) {
-            const missingInfoMessage = `@${safeUsername}, the following issue: ${missingInfo.join(', ')}. Please make sure to provide the necessary details.`;
-            await bot.sendMessage(chatId, missingInfoMessage,{ parse_mode: 'Markdown' });
-        } else {
-            try {
-                const privateKey = JSON.parse(walletInfo).privateKey;
-                const wallet = new ethers.Wallet(privateKey, provider);
+//         if (missingInfo.length > 0) {
+//             const missingInfoMessage = `@${safeUsername}, the following issue: ${missingInfo.join(', ')}. Please make sure to provide the necessary details.`;
+//             await bot.sendMessage(chatId, missingInfoMessage,{ parse_mode: 'Markdown' });
+//         } else {
+//             try {
+//                 const privateKey = JSON.parse(walletInfo).privateKey;
+//                 const wallet = new ethers.Wallet(privateKey, provider);
 
-                const uniswapRouterAddress = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
-                const uniswapRouterAbi = ['function swapExactETHForTokensSupportingFeeOnTransferTokens(uint256 amountOutMin, address[] calldata path, address to, uint256 deadline) external payable returns (uint256[] memory amounts)', 'function getAmountsOut(uint amountIn, address[] memory path) internal view returns (uint[] memory amounts)', 'function getAmountsIn(address factory, uint amountOut, address[] memory path) internal view returns (uint[] memory amounts)'];
-                const uniswapRouter = new ethers.Contract(uniswapRouterAddress, uniswapRouterAbi, wallet);
+//                 const uniswapRouterAddress = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
+//                 const uniswapRouterAbi = ['function swapExactETHForTokensSupportingFeeOnTransferTokens(uint256 amountOutMin, address[] calldata path, address to, uint256 deadline) external payable returns (uint256[] memory amounts)', 'function getAmountsOut(uint amountIn, address[] memory path) internal view returns (uint[] memory amounts)', 'function getAmountsIn(address factory, uint amountOut, address[] memory path) internal view returns (uint[] memory amounts)'];
+//                 const uniswapRouter = new ethers.Contract(uniswapRouterAddress, uniswapRouterAbi, wallet);
 
-                const tokenToBuyAddress = contractAddress;
-                const mainWethAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
-                const goerliWethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
-                const path = [mainWethAddress, tokenToBuyAddress];
-                const slippagePercentage = parseFloat(JSON.parse(slippage).slippage);
-//
-                gasBuffer = JSON.parse(gasBuffer).gasBuffer;
-                console.log("gasbuffer: ", gasBuffer);
-                console.log('Amount to Buy:', amountToBuy);
-                console.log('Slippage Percentage:', slippagePercentage);
+//                 const tokenToBuyAddress = contractAddress;
+//                 const mainWethAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
+//                 const goerliWethAddress = '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6';
+//                 const path = [mainWethAddress, tokenToBuyAddress];
+//                 const slippagePercentage = parseFloat(JSON.parse(slippage).slippage);
+// //
+//                 gasBuffer = JSON.parse(gasBuffer).gasBuffer;
+//                 console.log("gasbuffer: ", gasBuffer);
+//                 console.log('Amount to Buy:', amountToBuy);
+//                 console.log('Slippage Percentage:', slippagePercentage);
 
-                const amountIn = ethers.utils.parseEther(amountToBuy.toString());
-                const amountOut = await uniswapRouter.getAmountsOut(amountIn, path); 
-                const amountOutMinWithSlippage = Math.round(amountOut[1] * (1 - slippagePercentage / 100) / 1e9);
-                console.log(`amountOut: ${amountOut}`);
-                console.log(`amountOutMinWithSlippage: ${amountOutMinWithSlippage}`);
+//                 const amountIn = ethers.utils.parseEther(amountToBuy.toString());
+//                 const amountOut = await uniswapRouter.getAmountsOut(amountIn, path); 
+//                 const amountOutMinWithSlippage = Math.round(amountOut[1] * (1 - slippagePercentage / 100) / 1e9);
+//                 console.log(`amountOut: ${amountOut}`);
+//                 console.log(`amountOutMinWithSlippage: ${amountOutMinWithSlippage}`);
 
-                const gasPrice = await provider.getGasPrice();
-                console.log('Current Gas Price:', gasPrice.toString());
-                console.log(balanceEther);
-                console.log(amountToBuy);
+//                 const gasPrice = await provider.getGasPrice();
+//                 console.log('Current Gas Price:', gasPrice.toString());
+//                 console.log(balanceEther);
+//                 console.log(amountToBuy);
 
-                if(balanceEther<=amountToBuy){
-                    bot.sendMessage(chatId, `@${safeUsername} Funds too low!`, { parse_mode: 'Markdown' });
-                    return;
-                }
+//                 if(balanceEther<=amountToBuy){
+//                     bot.sendMessage(chatId, `@${safeUsername} Funds too low!`, { parse_mode: 'Markdown' });
+//                     return;
+//                 }
 
-                const estimatedGas = await uniswapRouter.estimateGas.swapExactETHForTokensSupportingFeeOnTransferTokens(
-                    0,
-                    path,
-                    wallet.address,
-                    Date.now() + 1000 * 60 * 10,
-                    { value: ethers.utils.parseEther(amountToBuy.toString()) }
-                );
+//                 const estimatedGas = await uniswapRouter.estimateGas.swapExactETHForTokensSupportingFeeOnTransferTokens(
+//                     0,
+//                     path,
+//                     wallet.address,
+//                     Date.now() + 1000 * 60 * 10,
+//                     { value: ethers.utils.parseEther(amountToBuy.toString()) }
+//                 );
 
-                const increasedGasPrice = Math.ceil(gasPrice * (1 + gasBuffer / 100) );
-                console.log(increasedGasPrice);
-                console.log('Estimated Gas:', estimatedGas.toString());
+//                 const increasedGasPrice = Math.ceil(gasPrice * (1 + gasBuffer / 100) );
+//                 console.log(increasedGasPrice);
+//                 console.log('Estimated Gas:', estimatedGas.toString());
 
-                const gasLimit = Math.ceil(estimatedGas.toNumber() * (1 + gasBuffer / 100));
-                console.log('Calculated Gas Limit:', gasLimit);
+//                 const gasLimit = Math.ceil(estimatedGas.toNumber() * (1 + gasBuffer / 100));
+//                 console.log('Calculated Gas Limit:', gasLimit);
 
-                if (gasLimit <= 0) {
-                    console.error('Invalid Gas Limit:', gasLimit);
-                    throw new Error('Invalid Gas Limit');
-                }
+//                 if (gasLimit <= 0) {
+//                     console.error('Invalid Gas Limit:', gasLimit);
+//                     throw new Error('Invalid Gas Limit');
+//                 }
 
-                const gasPriceInGwei = ethers.BigNumber.from(increasedGasPrice);
+//                 const gasPriceInGwei = ethers.BigNumber.from(increasedGasPrice);
 
-                const gasLimitBN = ethers.BigNumber.from(gasLimit);
+//                 const gasLimitBN = ethers.BigNumber.from(gasLimit);
 
-                const gasCost = gasPriceInGwei.mul(gasLimitBN);
-                console.log('Gas Cost:', gasCost.toString());
+//                 const gasCost = gasPriceInGwei.mul(gasLimitBN);
+//                 console.log('Gas Cost:', gasCost.toString());
 
-                const amountToBuyInWei = ethers.utils.parseEther(amountToBuy.toString());
-                const totalMaxCost = gasCost.add(amountToBuyInWei);
-                const totalMaxCostInEth = ethers.utils.formatEther(totalMaxCost);
-                console.log('Total Max Cost:', totalMaxCostInEth);
+//                 const amountToBuyInWei = ethers.utils.parseEther(amountToBuy.toString());
+//                 const totalMaxCost = gasCost.add(amountToBuyInWei);
+//                 const totalMaxCostInEth = ethers.utils.formatEther(totalMaxCost);
+//                 console.log('Total Max Cost:', totalMaxCostInEth);
 
-                if(balanceEther<=totalMaxCostInEth){
-                    bot.sendMessage(chatId, `@${safeUsername} Funds too low!`, { parse_mode: 'Markdown' });
-                }
+//                 if(balanceEther<=totalMaxCostInEth){
+//                     bot.sendMessage(chatId, `@${safeUsername} Funds too low!`, { parse_mode: 'Markdown' });
+//                 }
 
-                await bot.sendMessage(userChatId, 'Your transaction was initiated!');
-                const transaction = await uniswapRouter.swapExactETHForTokensSupportingFeeOnTransferTokens(
-                    amountOutMinWithSlippage.toString(),
-                    path,
-                    wallet.address,
-                    Date.now() + 1000 * 60 * 10,
-                    { gasLimit, gasPrice: increasedGasPrice.toString(), value: ethers.utils.parseEther(amountToBuy.toString()) }
-                );
+//                 await bot.sendMessage(userChatId, 'Your transaction was initiated!');
+//                 const transaction = await uniswapRouter.swapExactETHForTokensSupportingFeeOnTransferTokens(
+//                     amountOutMinWithSlippage.toString(),
+//                     path,
+//                     wallet.address,
+//                     Date.now() + 1000 * 60 * 10,
+//                     { gasLimit, gasPrice: increasedGasPrice.toString(), value: ethers.utils.parseEther(amountToBuy.toString()) }
+//                 );
 
-                const transactionLink = `https://etherscan.io/tx/${transaction.hash}`;
-                const message = `Your transaction link: [View on Etherscan](${transactionLink})`;
+//                 const transactionLink = `https://etherscan.io/tx/${transaction.hash}`;
+//                 const message = `Your transaction link: [View on Etherscan](${transactionLink})`;
 
-                await bot.sendMessage(userChatId, message, { parse_mode: 'Markdown' });
-                await transaction.wait();
-                await bot.sendMessage(userChatId, 'Your transaction was successful!');
-               // await bot.sendMessage(chatId, `@${safeUsername} Wish Granted!`, { parse_mode: 'Markdown' });
+//                 await bot.sendMessage(userChatId, message, { parse_mode: 'Markdown' });
+//                 await transaction.wait();
+//                 await bot.sendMessage(userChatId, 'Your transaction was successful!');
+//                // await bot.sendMessage(chatId, `@${safeUsername} Wish Granted!`, { parse_mode: 'Markdown' });
 
-                const channelCA = await getAsync(`channel:${chatId}`);
-                const tokenContract = new ethers.Contract(
-                    channelCA,
-                        [
-                          'function symbol() view returns (string)',
-                          'function name() public pure returns (string memory)',
-                          'function totalSupply() external view returns (uint256)',
-                        ],
-                        provider
-                      );
+//                 const channelCA = await getAsync(`channel:${chatId}`);
+//                 const tokenContract = new ethers.Contract(
+//                     channelCA,
+//                         [
+//                           'function symbol() view returns (string)',
+//                           'function name() public pure returns (string memory)',
+//                           'function totalSupply() external view returns (uint256)',
+//                         ],
+//                         provider
+//                       );
                     
-                        const tokenSymbol = await tokenContract.symbol();
-                        const tokenName = await tokenContract.name();
-                        const totalSupply = await tokenContract.totalSupply() / 1e9;
-                        const amountInUSD = amountToBuy * await fetchEthToUsdExchangeRate() ;
-                        const pricePerToken = amountInUSD / (amountOut[1] / 1e9) ;
-                        const decimalPlaces = 2; 
-                        const marketCap = (pricePerToken * totalSupply).toFixed(decimalPlaces);
-                        console.log("Market Cap: ", marketCap.toString());
-                        console.log("Total Supply: ", totalSupply.toString());
-                        console.log("Current Price: ", pricePerToken.toString());
-                        console.log("amountInUSD: ", amountInUSD);
-                        console.log("amountout[1]: ", amountOut[1].toString());
-                        console.log("fetchEthToUsdExchangeRate: ", await fetchEthToUsdExchangeRate());
+//                         const tokenSymbol = await tokenContract.symbol();
+//                         const tokenName = await tokenContract.name();
+//                         const totalSupply = await tokenContract.totalSupply() / 1e9;
+//                         const amountInUSD = amountToBuy * await fetchEthToUsdExchangeRate() ;
+//                         const pricePerToken = amountInUSD / (amountOut[1] / 1e9) ;
+//                         const decimalPlaces = 2; 
+//                         const marketCap = (pricePerToken * totalSupply).toFixed(decimalPlaces);
+//                         console.log("Market Cap: ", marketCap.toString());
+//                         console.log("Total Supply: ", totalSupply.toString());
+//                         console.log("Current Price: ", pricePerToken.toString());
+//                         console.log("amountInUSD: ", amountInUSD);
+//                         console.log("amountout[1]: ", amountOut[1].toString());
+//                         console.log("fetchEthToUsdExchangeRate: ", await fetchEthToUsdExchangeRate());
                        
                         
-                const emojis = generateBuyEmojis(amountInUSD, marketCap);
-                let response = '';
+//                 const emojis = generateBuyEmojis(amountInUSD, marketCap);
+//                 let response = '';
 
-                response += `@${safeUsername} Wish Granted!\n`;
-                response += `🧞‍♂️ ${tokenName} | ${tokenSymbol} 🧞‍♂️\n\n`;
-                response += `${emojis}\n\n`;
-                //response += `🪄 *Master:* @${safeUsername}__\n`;
-                response += `📊 *Market Cap:* __${marketCap}$__\n`;
-                response += `💸 *ETH:* __${amountToBuy} ETH__\n\n`;
+//                 response += `@${safeUsername} Wish Granted!\n`;
+//                 response += `🧞‍♂️ ${tokenName} | ${tokenSymbol} 🧞‍♂️\n\n`;
+//                 response += `${emojis}\n\n`;
+//                 //response += `🪄 *Master:* @${safeUsername}__\n`;
+//                 response += `📊 *Market Cap:* __${marketCap}$__\n`;
+//                 response += `💸 *ETH:* __${amountToBuy} ETH__\n\n`;
 
-                response += `🔍 [View on Etherscan](${transactionLink})\n\n`;
-                //response += `🔍 [View on Dextools](${transactionLink})\n\n`;
-                sendViaMainBot(
-                    chatId, 
-                    response,
-                    `./src/genie prof pic.png`,
-                    'Markdown'
-                );
+//                 response += `🔍 [View on Etherscan](${transactionLink})\n\n`;
+//                 //response += `🔍 [View on Dextools](${transactionLink})\n\n`;
+//                 sendViaMainBot(
+//                     chatId, 
+//                     response,
+//                     `./src/genie prof pic.png`,
+//                     'Markdown'
+//                 );
 
-                console.log("Success");
-            } catch (error) {
-                await bot.sendMessage(userChatId, 'Your transaction experienced an ERROR, please try again. Check for your settings!');
-                if (error.message.includes("UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT")) {
-                    await bot.sendMessage(userChatId, "Transaction failed. Please adjust your slippage.");
-                } else {
-                    console.error('Error executing Uniswap transaction:', error);
-                }
+//                 console.log("Success");
+//             } catch (error) {
+//                 await bot.sendMessage(userChatId, 'Your transaction experienced an ERROR, please try again. Check for your settings!');
+//                 if (error.message.includes("UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT")) {
+//                     await bot.sendMessage(userChatId, "Transaction failed. Please adjust your slippage.");
+//                 } else {
+//                     console.error('Error executing Uniswap transaction:', error);
+//                 }
 
-            }
+//             }
 
-        }
-    }
-});
+//         }
+//     }
+// });
 
 // bot.onText(/^\/?(0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
 //     if (msg.chat.type === 'private') {
