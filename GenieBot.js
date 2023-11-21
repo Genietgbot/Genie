@@ -58,7 +58,7 @@ bot.onText(/\/start/i, async (msg) => {
     try {
         if (msg.chat.type === 'private') {
             console.log("DEBUG");
-            const username = msg.from.username.normalize('NFC');
+            const username = msg.from.username;
             console.log(username);
             console.log("DEBUG");
             const chatId = msg.chat.id;
@@ -94,7 +94,7 @@ bot.onText(/\/start/i, async (msg) => {
                 username: username
             };
             console.log("DEBUG");
-            try {
+            
             const keyboard = {
                 inline_keyboard: [
                     [
@@ -110,9 +110,9 @@ bot.onText(/\/start/i, async (msg) => {
                     ],
                 ]
             };
-        } catch (error) {
+        
             console.error('Telegram error: User not found');
-        }
+        
             console.log("DEBUG");
             bot.sendPhoto(chatId, imagePath, { caption: response, parse_mode: 'Markdown', reply_markup: keyboard, fileOptions: { contentType: 'png' } })
                 .catch((err) => {
