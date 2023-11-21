@@ -144,6 +144,11 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
         
         const chatId = msg.chat.id;
         const username = msg.from.username;
+        if (!username) {
+            console.error("Username is not defined.");
+            bot.sendMessage(msg.chat.id, `❌ You haven't set up a Telegram Username.`);
+            return;
+        }
         const safeUsername = username.replace(/_/g, '\\_');
         console.log('Raw input:', match[1]);
         const amountToBuy = parseFloat(match[1]);
