@@ -57,7 +57,7 @@ let storedSymbol = [];
 bot.onText(/\/start/i, async (msg) => {
     try {
         if (msg.chat.type === 'private') {
-            console.log("DEBUG");
+
             const username = msg.from.username;
             console.log(username);
             console.log("DEBUG");
