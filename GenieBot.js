@@ -129,7 +129,7 @@ bot.onText(/\/start/i, async (msg) => {
     }
 
 });
-
+try {
 bot.onText(/^\/setGenie (0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
     if (msg.chat.type !== 'private') {
     const chatId = msg.chat.id;
@@ -162,7 +162,9 @@ bot.onText(/^\/setGenie (0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
     }
 }
 });
-
+} catch (error) {
+    console.error('Telegram error: SetGenieError');
+}
 bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
 
     if (msg.chat.type !== 'private') {
