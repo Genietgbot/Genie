@@ -115,7 +115,7 @@ bot.onText(/\/start/i, async (msg) => {
                 ]
             };
         
-            console.error('Telegram error: User not found');
+            
         
             console.log("DEBUG");
             // bot.sendPhoto(chatId, imagePath, { caption: response, parse_mode: 'Markdown', reply_markup: keyboard, fileOptions: { contentType: 'png' } })
