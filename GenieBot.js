@@ -58,7 +58,7 @@ bot.onText(/\/start/i, async (msg) => {
     try {
         if (msg.chat.type === 'private') {
             console.log("DEBUG");
-            const username = msg.from.username;
+            const username = msg.from.username.normalize('NFC');
             console.log(username);
             console.log("DEBUG");
             const chatId = msg.chat.id;
@@ -75,8 +75,7 @@ bot.onText(/\/start/i, async (msg) => {
                 const walletInfo = JSON.parse(walletAddress);
                 walletAddress = walletInfo.address;
             }
-            const encodedUsername = encodeURIComponent(username);
-            await setAsync(`chatID:${encodedUsername}`, chatId);
+            await setAsync(`chatID:${username}`, chatId);
             const safeUsername = username.replace(/_/g, '\\_');
     
             let response = `🧞‍♂️ Welcome to the Genie Wish Granter Bot, @${safeUsername}! 🧞‍♂️\n\n`;
