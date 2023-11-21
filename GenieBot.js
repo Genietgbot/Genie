@@ -370,6 +370,11 @@ bot.on('callback_query', async (callbackQuery) => {
         let interactionId = parts.slice(parts.length-2).join('_');
         let interaction = interactions[interactionId];
         let username = interaction.username;
+        if (!username) {
+            console.error("Username is not defined.");
+            bot.sendMessage(msg.chat.id, `❌ You haven't set up a Telegram Username.`);
+            return;
+        }
         console.log(username);
         console.log(data);
 
