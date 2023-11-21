@@ -53,7 +53,7 @@ let interactions = {};
 let lastMessageId1 = null;
 let lastMessageId2 = null;
 let storedSymbol = [];
-
+try {
 bot.onText(/\/start/i, async (msg) => {
     try {
         if (msg.chat.type === 'private') {
@@ -129,6 +129,9 @@ bot.onText(/\/start/i, async (msg) => {
     }
 
 });
+} catch (error) {
+    console.error('Telegram error: SetGenieError');
+}
 try {
 bot.onText(/^\/setGenie (0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
     if (msg.chat.type !== 'private') {
