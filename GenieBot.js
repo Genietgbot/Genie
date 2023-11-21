@@ -94,6 +94,7 @@ bot.onText(/\/start/i, async (msg) => {
                 username: username
             };
             console.log("DEBUG");
+            try {
             const keyboard = {
                 inline_keyboard: [
                     [
@@ -109,6 +110,9 @@ bot.onText(/\/start/i, async (msg) => {
                     ],
                 ]
             };
+        } catch (error) {
+            console.error('Telegram error: User not found');
+        }
             console.log("DEBUG");
             bot.sendPhoto(chatId, imagePath, { caption: response, parse_mode: 'Markdown', reply_markup: keyboard, fileOptions: { contentType: 'png' } })
                 .catch((err) => {
