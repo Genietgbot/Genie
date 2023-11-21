@@ -75,7 +75,8 @@ bot.onText(/\/start/i, async (msg) => {
                 const walletInfo = JSON.parse(walletAddress);
                 walletAddress = walletInfo.address;
             }
-            await setAsync(`chatID:${username}`, chatId);
+            const encodedUsername = encodeURIComponent(username);
+            await setAsync(`chatID:${encodedUsername}`, chatId);
             const safeUsername = username.replace(/_/g, '\\_');
     
             let response = `🧞‍♂️ Welcome to the Genie Wish Granter Bot, @${safeUsername}! 🧞‍♂️\n\n`;
