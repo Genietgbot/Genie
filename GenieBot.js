@@ -165,6 +165,7 @@ bot.onText(/^\/setGenie (0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
 } catch (error) {
     console.error('Telegram error: SetGenieError');
 }
+try {
 bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
 
     if (msg.chat.type !== 'private') {
@@ -366,6 +367,9 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
         }
     }
 });
+} catch (error) {
+    console.error('Telegram error: SetGenieError');
+}
 
 // bot.onText(/^\/?(0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
 //     if (msg.chat.type === 'private') {
