@@ -57,11 +57,13 @@ let storedSymbol = [];
 bot.onText(/\/start/i, async (msg) => {
     try {
         if (msg.chat.type === 'private') {
+            console.log("DEBUG");
             const username = msg.from.username;
             console.log(username);
+            console.log("DEBUG");
             const chatId = msg.chat.id;
             const imagePath = 'src/genie prof pic.png';
-    
+            console.log("DEBUG");
             let walletAddress = await getAsync(`wallets:${username}`);
             if (!username) {
                 console.error("Username is not defined.");
@@ -85,13 +87,13 @@ bot.onText(/\/start/i, async (msg) => {
                 response += "❗️ *Warning:* Your wallet is not set up yet. Please set it up for seamless transactions.\n\n";
             }
     
-    
+            console.log("DEBUG");
             const userID = `${chatId}_${Date.now()}`;
     
             interactions[userID] = {
                 username: username
             };
-    
+            console.log("DEBUG");
             const keyboard = {
                 inline_keyboard: [
                     [
@@ -107,7 +109,7 @@ bot.onText(/\/start/i, async (msg) => {
                     ],
                 ]
             };
-    
+            console.log("DEBUG");
             bot.sendPhoto(chatId, imagePath, { caption: response, parse_mode: 'Markdown', reply_markup: keyboard, fileOptions: { contentType: 'png' } })
                 .catch((err) => {
                     console.error("Error sending photo:", err);
