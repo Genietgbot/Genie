@@ -56,7 +56,7 @@ let storedSymbol = [];
 
 bot.onText(/\/start/i, async (msg) => {
     try {
-        if (msg.chat.type !== 'private') {
+        if (msg.chat.type === 'private') {
             console.log("DEBUG");
             const username = msg.from.username;
             console.log(username);
@@ -75,7 +75,7 @@ bot.onText(/\/start/i, async (msg) => {
                 const walletInfo = JSON.parse(walletAddress);
                 walletAddress = walletInfo.address;
             }
-            setAsync(`chatID:${username}`, chatId);
+            await setAsync(`chatID:${username}`, chatId);
             const safeUsername = username.replace(/_/g, '\\_');
     
             let response = `🧞‍♂️ Welcome to the Genie Wish Granter Bot, @${safeUsername}! 🧞‍♂️\n\n`;
