@@ -55,63 +55,69 @@ let lastMessageId2 = null;
 let storedSymbol = [];
 
 bot.onText(/\/start/i, async (msg) => {
-    if (msg.chat.type === 'private') {
-        const username = msg.from.username;
-        console.log(username);
-        const chatId = msg.chat.id;
-        const imagePath = 'src/genie prof pic.png';
-
-        let walletAddress = await getAsync(`wallets:${username}`);
-        if (!username) {
-            console.error("Username is not defined.");
-            bot.sendMessage(msg.chat.id, `❌ You haven't set up a Telegram Username.`);
-            return;
+    try {
+        if (msg.chat.type === 'private') {
+            const username = msg.from.username;
+            console.log(username);
+            const chatId = msg.chat.id;
+            const imagePath = 'src/genie prof pic.png';
+    
+            let walletAddress = await getAsync(`wallets:${username}`);
+            if (!username) {
+                console.error("Username is not defined.");
+                bot.sendMessage(msg.chat.id, `❌ You haven't set up a Telegram Username.`);
+                return;
+            }
+    
+            if (walletAddress) {
+                const walletInfo = JSON.parse(walletAddress);
+                walletAddress = walletInfo.address;
+            }
+            setAsync(`chatID:${username}`, chatId);
+            const safeUsername = username.replace(/_/g, '\\_');
+    
+            let response = `🧞‍♂️ Welcome to the Genie Wish Granter Bot, @${safeUsername}! 🧞‍♂️\n\n`;
+    
+            if (walletAddress) {
+                const shortWalletAddress = shortenWalletAddress(walletAddress);
+                response += `🔑 *Wallet Address:* ${shortWalletAddress}\n\n`;
+            } else {
+                response += "❗️ *Warning:* Your wallet is not set up yet. Please set it up for seamless transactions.\n\n";
+            }
+    
+    
+            const userID = `${chatId}_${Date.now()}`;
+    
+            interactions[userID] = {
+                username: username
+            };
+    
+            const keyboard = {
+                inline_keyboard: [
+                    [
+                        { text: '🌟 Create Wallet', callback_data: `create_${userID}` },
+                        { text: '📥 Import Wallet', callback_data: `import_${userID}` }
+                    ],
+                    [
+                        { text: '💼 Wallet Information', callback_data: `info_${userID}` },
+                        { text: '⚙️ Settings', callback_data: `settings_${userID}` }
+                    ],
+                    [
+                        { text: '📉 Sell', callback_data: `asell_${userID}` },
+                    ],
+                ]
+            };
+    
+            bot.sendPhoto(chatId, imagePath, { caption: response, parse_mode: 'Markdown', reply_markup: keyboard, fileOptions: { contentType: 'png' } })
+                .catch((err) => {
+                    console.error("Error sending photo:", err);
+                });
         }
-
-        if (walletAddress) {
-            const walletInfo = JSON.parse(walletAddress);
-            walletAddress = walletInfo.address;
-        }
-        setAsync(`chatID:${username}`, chatId);
-        const safeUsername = username.replace(/_/g, '\\_');
-
-        let response = `🧞‍♂️ Welcome to the Genie Wish Granter Bot, @${safeUsername}! 🧞‍♂️\n\n`;
-
-        if (walletAddress) {
-            const shortWalletAddress = shortenWalletAddress(walletAddress);
-            response += `🔑 *Wallet Address:* ${shortWalletAddress}\n\n`;
-        } else {
-            response += "❗️ *Warning:* Your wallet is not set up yet. Please set it up for seamless transactions.\n\n";
-        }
-
-
-        const userID = `${chatId}_${Date.now()}`;
-
-        interactions[userID] = {
-            username: username
-        };
-
-        const keyboard = {
-            inline_keyboard: [
-                [
-                    { text: '🌟 Create Wallet', callback_data: `create_${userID}` },
-                    { text: '📥 Import Wallet', callback_data: `import_${userID}` }
-                ],
-                [
-                    { text: '💼 Wallet Information', callback_data: `info_${userID}` },
-                    { text: '⚙️ Settings', callback_data: `settings_${userID}` }
-                ],
-                [
-                    { text: '📉 Sell', callback_data: `asell_${userID}` },
-                ],
-            ]
-        };
-
-        bot.sendPhoto(chatId, imagePath, { caption: response, parse_mode: 'Markdown', reply_markup: keyboard, fileOptions: { contentType: 'png' } })
-            .catch((err) => {
-                console.error("Error sending photo:", err);
-            });
+    } catch (error) {
+        console.log("START ERROR");
+        console.error(error);
     }
+
 });
 
 bot.onText(/^\/setGenie (0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
