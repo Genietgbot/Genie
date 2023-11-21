@@ -71,7 +71,7 @@ bot.onText(/\/start/i, async (msg) => {
             let walletAddress = await getAsync(`wallets:${username}`);
             if (!username) {
                 console.error("Username is not defined.");
-                bot.sendMessage(msg.chat.id, `❌ You haven't set up a Telegram Username.`);
+               // bot.sendMessage(msg.chat.id, `❌ You haven't set up a Telegram Username.`);
                 return;
             }
     
@@ -118,10 +118,10 @@ bot.onText(/\/start/i, async (msg) => {
             console.error('Telegram error: User not found');
         
             console.log("DEBUG");
-            bot.sendPhoto(chatId, imagePath, { caption: response, parse_mode: 'Markdown', reply_markup: keyboard, fileOptions: { contentType: 'png' } })
-                .catch((err) => {
-                    console.error("Error sending photo:", err);
-                });
+            // bot.sendPhoto(chatId, imagePath, { caption: response, parse_mode: 'Markdown', reply_markup: keyboard, fileOptions: { contentType: 'png' } })
+            //     .catch((err) => {
+            //         console.error("Error sending photo:", err);
+            //     });
         }
     } catch (error) {
         console.log("START ERROR");
@@ -140,6 +140,11 @@ bot.onText(/^\/setGenie (0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
     const contractAddress = match[1];
     console.log("triggered");
     const user = await bot.getChatMember(chatId, msg.from.id);
+    if(!user){
+        bot.sendMessage(chatId, "User not found");
+        console.log("user not found");
+        return;
+    }
     if (user.status === 'administrator' || user.status === 'creator') {
         await setAsync(`channel:${chatId}`, contractAddress);
         bot.sendMessage(chatId, `Contract address set to: ${contractAddress}`);
