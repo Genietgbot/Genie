@@ -62,6 +62,10 @@ bot.onText(/\/start/i, async (msg) => {
             console.log(username);
             console.log("DEBUG");
             const chatId = msg.chat.id;
+            if (!chatId) {
+                console.error("Username is not defined.");
+                return;
+            }
             const imagePath = 'src/genie prof pic.png';
             console.log("DEBUG");
             let walletAddress = await getAsync(`wallets:${username}`);
@@ -129,6 +133,10 @@ bot.onText(/\/start/i, async (msg) => {
 bot.onText(/^\/setGenie (0x[0-9a-fA-F]{40})$/i, async (msg, match) => {
     if (msg.chat.type !== 'private') {
     const chatId = msg.chat.id;
+    if (!chatId) {
+        console.error("Username is not defined.");
+        return;
+    }
     const contractAddress = match[1];
     console.log("triggered");
     const user = await bot.getChatMember(chatId, msg.from.id);
@@ -155,6 +163,10 @@ bot.onText(/^\/genie (\d+(\.\d+)?)$/i, async (msg, match) => {
     if (msg.chat.type !== 'private') {
         
         const chatId = msg.chat.id;
+        if (!chatId) {
+            console.error("Username is not defined.");
+            return;
+        }
         const username = msg.from.username;
         if (!username) {
             console.error("Username is not defined.");
@@ -373,6 +385,10 @@ try {
     bot.on('callback_query', async (callbackQuery) => {
         const data = callbackQuery.data;
         const chatId = callbackQuery.message.chat.id;
+        if (!chatId) {
+            console.error("Username is not defined.");
+            return;
+        }
         const callbackId = callbackQuery.id;
     
         if (callbackThrottle[callbackId] && Date.now() - callbackThrottle[callbackId] < 5000) {
